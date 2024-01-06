@@ -1,4 +1,6 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
+
 import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -12,7 +14,6 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
@@ -98,7 +99,11 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-export function Navigation() {
+interface NavigationProps {
+    children?: React.ReactNode;
+  }
+
+export const Navigation: React.FC<NavigationProps> = ({ children }) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
   const [open2, setOpen2] = React.useState(true);
@@ -115,50 +120,110 @@ export function Navigation() {
     setOpen2(!open2);
   };
 
-  return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && { display: "none" }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <div
-            style={{ flexGrow: 2, display: "flex", justifyContent: "center" }}
-          >
-            <PolicyIcon></PolicyIcon>
-            <Typography variant="h6" style={{ fontWeight: "bold" }}>
-              DAIA
+    return (
+      <Box sx={{ display: "flex" }}>
+        <CssBaseline />
+        <AppBar position="fixed" open={open}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                marginRight: 5,
+                ...(open && { display: "none" }),
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              Mini variant drawer
             </Typography>
-          </div>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
-            ) : (
-              <ChevronLeftIcon />
-            )}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-          <ListItem disablePadding sx={{ display: "block" }}>
+          </Toolbar>
+        </AppBar>
+        <Drawer variant="permanent" open={open}>
+          <DrawerHeader>
+            <div
+              style={{ flexGrow: 2, display: "flex", justifyContent: "center" }}
+            >
+              <PolicyIcon></PolicyIcon>
+              <Typography variant="h6" style={{ fontWeight: "bold" }}>
+                DAIA
+              </Typography>
+            </div>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === "rtl" ? (
+                <ChevronRightIcon />
+              ) : (
+                <ChevronLeftIcon />
+              )}
+            </IconButton>
+          </DrawerHeader>
+          <Divider />
+          <List>
+            <Link
+              to="/inicio"
+              style={{
+                textDecoration: "none",
+                cursor: "default",
+                color: "black",
+              }}
+            >
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <HomeIcon></HomeIcon>
+                </ListItemIcon>
+                <ListItemText
+                  primary={"Inicio"}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </Link>
+            <Link
+              to="/registros"
+              style={{
+                textDecoration: "none",
+                cursor: "default",
+                color: "black",
+              }}
+            >
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <SourceIcon></SourceIcon>
+                </ListItemIcon>
+                <ListItemText
+                  primary={"Registros"}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </Link>
             <ListItemButton
+              onClick={handleClick}
               sx={{
                 minHeight: 48,
                 justifyContent: open ? "initial" : "center",
@@ -172,113 +237,60 @@ export function Navigation() {
                   justifyContent: "center",
                 }}
               >
-                <HomeIcon></HomeIcon>
+                <SensorOccupiedIcon />
               </ListItemIcon>
-              <ListItemText primary={"Inicio"} sx={{ opacity: open ? 1 : 0 }} />
+              <ListItemText primary={"IA"} sx={{ opacity: open ? 1 : 0 }} />
+              {open2 ? (
+                <ExpandLess sx={{ display: open ? 1 : "none" }} />
+              ) : (
+                <ExpandMore sx={{ display: open ? 1 : "none" }} />
+              )}
             </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
+            <Collapse
+              in={open2}
+              timeout="auto"
+              unmountOnExit
+              sx={{ opacity: open ? 1 : 0, display: open ? 1 : "none" }}
             >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
-                }}
-              >
-                <SourceIcon></SourceIcon>
-              </ListItemIcon>
-              <ListItemText
-                primary={"Registros"}
-                sx={{ opacity: open ? 1 : 0 }}
-              />
-            </ListItemButton>
-          </ListItem>
-          <ListItemButton
-            onClick={handleClick}
-            sx={{
-              minHeight: 48,
-              justifyContent: open ? "initial" : "center",
-              px: 2.5,
-            }}
-          >
-            <ListItemIcon
-              sx={{
-                minWidth: 0,
-                mr: open ? 3 : "auto",
-                justifyContent: "center",
-              }}
-            >
-              <SensorOccupiedIcon />
-            </ListItemIcon>
-            <ListItemText primary={"IA"} sx={{ opacity: open ? 1 : 0 }} />
-            {open2 ? (
-              <ExpandLess sx={{ display: open ? 1 : "none" }} />
-            ) : (
-              <ExpandMore sx={{ display: open ? 1 : "none" }} />
-            )}
-          </ListItemButton>
-          <Collapse
-            in={open2}
-            timeout="auto"
-            unmountOnExit
-            sx={{ opacity: open ? 1 : 0, display: open ? 1 : "none" }}
-          >
-            <List component="div" disablePadding>
-              <ListItemButton sx={{ pl: 4 }}>
-                <ListItemIcon>
-                  <PortraitIcon />
-                </ListItemIcon>
-                <ListItemText primary="Sketch Generativo" />
-              </ListItemButton>
-              <ListItemButton sx={{ pl: 4 }}>
-                <ListItemIcon>
-                  <PersonSearchIcon />
-                </ListItemIcon>
-                <ListItemText primary="Reconocimiento Facial" />
-              </ListItemButton>
-            </List>
-          </Collapse>
-        </List>
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
-        <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Rhoncus
-          dolor purus non enim praesent elementum facilisis leo vel. Risus at
-          ultrices mi tempus imperdiet. Semper risus in hendrerit gravida rutrum
-          quisque non tellus. Convallis convallis tellus id interdum velit
-          laoreet id donec ultrices. Odio morbi quis commodo odio aenean sed
-          adipiscing. Amet nisl suscipit adipiscing bibendum est ultricies
-          integer quis. Cursus euismod quis viverra nibh cras. Metus vulputate
-          eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo
-          quis imperdiet massa tincidunt. Cras tincidunt lobortis feugiat
-          vivamus at augue. At augue eget arcu dictum varius duis at consectetur
-          lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa sapien
-          faucibus et molestie ac.
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est
-          ullamcorper eget nulla facilisi etiam dignissim diam. Pulvinar
-          elementum integer enim neque volutpat ac tincidunt. Ornare suspendisse
-          sed nisi lacus sed viverra tellus. Purus sit amet volutpat consequat
-          mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis
-          risus sed vulputate odio. Morbi tincidunt ornare massa eget egestas
-          purus viverra accumsan in. In hendrerit gravida rutrum quisque non
-          tellus orci ac. Pellentesque nec nam aliquam sem et tortor. Habitant
-          morbi tristique senectus et. Adipiscing elit duis tristique
-          sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-          eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-          posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
+              <List component="div" disablePadding>
+                <Link
+                  to={"/sketch"}
+                  style={{
+                    textDecoration: "none",
+                    cursor: "default",
+                    color: "black",
+                  }}
+                >
+                  <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemIcon>
+                      <PortraitIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Sketch Generativo" />
+                  </ListItemButton>
+                </Link>
+                <Link
+                  to={"/busqueda"}
+                  style={{
+                    textDecoration: "none",
+                    cursor: "default",
+                    color: "black",
+                  }}
+                >
+                  <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemIcon>
+                      <PersonSearchIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Reconocimiento Facial" />
+                  </ListItemButton>
+                </Link>
+              </List>
+            </Collapse>
+          </List>
+        </Drawer>
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <DrawerHeader />
+          {children}
+        </Box>
       </Box>
-    </Box>
-  );
-}
+    );
+  };
