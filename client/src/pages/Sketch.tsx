@@ -94,10 +94,6 @@ export const Sketch: React.FC = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleStep = (step: number) => () => {
-    setActiveStep(step);
-  };
-
   const handleComplete = () => {
     const newCompleted = completed;
     newCompleted[activeStep] = true;
@@ -121,13 +117,26 @@ export const Sketch: React.FC = () => {
     <Navigation>
       <Box sx={{ width: "100%", padding: 5 }}>
         <Stepper activeStep={activeStep}>
-          {steps.map((label, index) => (
-            <Step key={label} completed={completed[index]}>
-              <StepButton color="#0a934e" onClick={handleStep(index)}>
-                {label}
-              </StepButton>
-            </Step>
-          ))}
+          <Step key={0}>
+            <StepButton sx={{ pointerEvents: "none" }}>
+              Tipo de Imagen
+            </StepButton>
+          </Step>
+          <Step key={1}>
+            <StepButton sx={{ pointerEvents: "none", color: "primary" }}>
+              Dibujo <br />
+              {activeStep === 2 && selectedValue === "Subir Foto" ? (
+                <Typography variant="caption">Omitido</Typography>
+              ) : (
+                <div></div>
+              )}
+            </StepButton>
+          </Step>
+          <Step key={2}>
+            <StepButton sx={{ pointerEvents: "none" }}>
+              Generar Identikit
+            </StepButton>
+          </Step>
         </Stepper>
         <div>
           {allStepsCompleted() ? (
@@ -280,24 +289,6 @@ export const Sketch: React.FC = () => {
                     />
                   </div>
                   <Box sx={{ display: "flex", justifyContent: "end", pt: 2 }}>
-                    {/* {activeStep !== steps.length &&
-                      (completed[activeStep] ? (
-                        <Typography
-                          variant="caption"
-                          sx={{ display: "inline-block" }}
-                        >
-                          Paso {activeStep + 1} ya completado
-                        </Typography>
-                      ) : (
-                        <Button
-                          variant="contained"
-                          onClick={handleComplete}
-                        >
-                          {completedSteps() === totalSteps() - 1
-                            ? "Finish"
-                            : "Siguiente"}
-                        </Button>
-                      ))} */}
                     {selectedValue === sketchType[0] ? (
                       <Button variant="contained" onClick={handleComplete}>
                         Siguiente
@@ -309,32 +300,26 @@ export const Sketch: React.FC = () => {
                     )}
                   </Box>
                 </div>
-              ) : (
+              ) : activeStep === 1 ? (
                 <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                  <Button
-                    color="inherit"
-                    disabled={activeStep === 0}
-                    onClick={handleBack}
-                    sx={{ mr: 1 }}
-                  >
-                    Back
+                  <Button color="inherit" onClick={handleBack} sx={{ mr: 1 }}>
+                    Atrás
                   </Button>
                   <Box sx={{ flex: "1 1 auto" }} />
-                  {activeStep !== steps.length &&
-                    (completed[activeStep] ? (
-                      <Typography
-                        variant="caption"
-                        sx={{ display: "inline-block" }}
-                      >
-                        Paso {activeStep + 1} ya completado
-                      </Typography>
-                    ) : (
-                      <Button onClick={handleComplete}>
-                        {completedSteps() === totalSteps() - 1
-                          ? "Finish"
-                          : "Complete Step"}
-                      </Button>
-                    ))}
+                  <Button
+                    color="inherit"
+                    onClick={handleComplete}
+                    sx={{ mr: 1 }}
+                  >
+                    Siguiente
+                  </Button>
+                </Box>
+              ) : (
+                <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+                  <Button color="inherit" onClick={handleBack} sx={{ mr: 1 }}>
+                    Atrás
+                  </Button>
+                  <Box sx={{ flex: "1 1 auto" }} />
                 </Box>
               )}
             </React.Fragment>

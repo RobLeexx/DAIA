@@ -63,11 +63,7 @@ const PhotoDialog: React.FC<SimpleDialogProps> = (props) => {
         </b>
         <br />
         <b>* Se debe encuadrar lo mejor posible a la cara.</b> <br />
-        <b>* Se recomienda usar flash</b> <br />
-        <b>
-          * De tener desenfoque por movimiento se recomienda tomar otra
-          fotografía
-        </b>
+        <b>* Se recomienda usar flash.</b>
       </div>
       <div style={{ display: "flex", justifyContent: "space-around" }}>
         <div>
@@ -81,7 +77,7 @@ const PhotoDialog: React.FC<SimpleDialogProps> = (props) => {
           >
             X
           </DangerousIcon>
-          <img src={foto1} alt="" style={{ maxWidth: 500, height: 500 }} />
+          <img src={foto1} alt="" style={{ maxWidth: 450, height: 450 }} />
         </div>
         <div>
           <CheckCircleIcon
@@ -92,7 +88,7 @@ const PhotoDialog: React.FC<SimpleDialogProps> = (props) => {
               fontSize: 100,
             }}
           ></CheckCircleIcon>
-          <img src={foto2} alt="" style={{ maxWidth: 500, height: 500 }} />
+          <img src={foto2} alt="" style={{ maxWidth: 450, height: 450 }} />
         </div>
       </div>
       <div
