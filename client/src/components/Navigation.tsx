@@ -21,8 +21,6 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import PortraitIcon from "@mui/icons-material/Portrait";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
-import { ThemeProvider } from "@mui/material/styles";
-import { theme } from "../theme/colors";
 
 const drawerWidth = 300;
 
@@ -37,90 +35,54 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <AppBar
-          position="fixed"
-          sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        >
-          <Toolbar>
-            <div
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 , backgroundColor: "#0a934e"}}
+      >
+        <Toolbar>
+          <div
+            style={{
+              flexGrow: 2,
+              display: "flex",
+              justifyContent: "start",
+              paddingLeft: 80,
+            }}
+          >
+            <PolicyIcon></PolicyIcon>
+            <Typography variant="h6" style={{ fontWeight: "bold" }}>
+              DAIA
+            </Typography>
+          </div>
+          <Typography variant="h6" noWrap component="div">
+            Mini variant drawer
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: {
+            width: drawerWidth,
+            boxSizing: "border-box",
+          },
+        }}
+      >
+        <Toolbar />
+        <Box sx={{ overflow: "auto" }}>
+          <List>
+            <Link
+              to="/inicio"
               style={{
-                flexGrow: 2,
-                display: "flex",
-                justifyContent: "start",
-                paddingLeft: 80,
+                textDecoration: "none",
+                cursor: "default",
+                color: "black",
               }}
             >
-              <PolicyIcon></PolicyIcon>
-              <Typography variant="h6" style={{ fontWeight: "bold" }}>
-                DAIA
-              </Typography>
-            </div>
-            <Typography variant="h6" noWrap component="div">
-              Mini variant drawer
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Drawer
-          variant="permanent"
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            [`& .MuiDrawer-paper`]: {
-              width: drawerWidth,
-              boxSizing: "border-box",
-            },
-          }}
-        >
-          <Toolbar />
-          <Box sx={{ overflow: "auto" }}>
-            <List>
-              <Link
-                to="/inicio"
-                style={{
-                  textDecoration: "none",
-                  cursor: "default",
-                  color: "black",
-                }}
-              >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                  }}
-                >
-                  <ListItemIcon>
-                    <HomeIcon></HomeIcon>
-                  </ListItemIcon>
-                  <ListItemText primary={"Inicio"} />
-                </ListItemButton>
-              </Link>
-              <Link
-                to="/registros"
-                style={{
-                  textDecoration: "none",
-                  cursor: "default",
-                  color: "black",
-                }}
-              >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                  }}
-                >
-                  <ListItemIcon>
-                    <SourceIcon></SourceIcon>
-                  </ListItemIcon>
-                  <ListItemText primary={"Registros"} />
-                </ListItemButton>
-              </Link>
               <ListItemButton
-                onClick={handleClick}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
@@ -128,57 +90,91 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
                 }}
               >
                 <ListItemIcon>
-                  <SensorOccupiedIcon />
+                  <HomeIcon></HomeIcon>
                 </ListItemIcon>
-                <ListItemText primary={"IA"} />
-                {open ? <ExpandLess /> : <ExpandMore />}
+                <ListItemText primary={"Inicio"} />
               </ListItemButton>
-              <Collapse
-                in={open}
-                timeout="auto"
-                unmountOnExit
-                sx={{ opacity: open ? 1 : 0, display: open ? 1 : "none" }}
+            </Link>
+            <Link
+              to="/registros"
+              style={{
+                textDecoration: "none",
+                cursor: "default",
+                color: "black",
+              }}
+            >
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
               >
-                <List component="div" disablePadding>
-                  <Link
-                    to={"/sketch"}
-                    style={{
-                      textDecoration: "none",
-                      cursor: "default",
-                      color: "black",
-                    }}
-                  >
-                    <ListItemButton sx={{ pl: 4 }}>
-                      <ListItemIcon>
-                        <PortraitIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Sketch Generativo" />
-                    </ListItemButton>
-                  </Link>
-                  <Link
-                    to={"/busqueda"}
-                    style={{
-                      textDecoration: "none",
-                      cursor: "default",
-                      color: "black",
-                    }}
-                  >
-                    <ListItemButton sx={{ pl: 4 }}>
-                      <ListItemIcon>
-                        <PersonSearchIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Reconocimiento Facial" />
-                    </ListItemButton>
-                  </Link>
-                </List>
-              </Collapse>
-            </List>
-          </Box>
-        </Drawer>
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          {children}
+                <ListItemIcon>
+                  <SourceIcon></SourceIcon>
+                </ListItemIcon>
+                <ListItemText primary={"Registros"} />
+              </ListItemButton>
+            </Link>
+            <ListItemButton
+              onClick={handleClick}
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? "initial" : "center",
+                px: 2.5,
+              }}
+            >
+              <ListItemIcon>
+                <SensorOccupiedIcon />
+              </ListItemIcon>
+              <ListItemText primary={"IA"} />
+              {open ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse
+              in={open}
+              timeout="auto"
+              unmountOnExit
+              sx={{ opacity: open ? 1 : 0, display: open ? 1 : "none" }}
+            >
+              <List component="div" disablePadding>
+                <Link
+                  to={"/sketch"}
+                  style={{
+                    textDecoration: "none",
+                    cursor: "default",
+                    color: "black",
+                  }}
+                >
+                  <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemIcon>
+                      <PortraitIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Sketch Generativo" />
+                  </ListItemButton>
+                </Link>
+                <Link
+                  to={"/busqueda"}
+                  style={{
+                    textDecoration: "none",
+                    cursor: "default",
+                    color: "black",
+                  }}
+                >
+                  <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemIcon>
+                      <PersonSearchIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Reconocimiento Facial" />
+                  </ListItemButton>
+                </Link>
+              </List>
+            </Collapse>
+          </List>
         </Box>
+      </Drawer>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        {children}
       </Box>
-    </ThemeProvider>
+    </Box>
   );
 };
