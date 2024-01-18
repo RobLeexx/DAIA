@@ -16,11 +16,12 @@ interface SimpleDialogProps {
 
 interface UploadDialogProps extends SimpleDialogProps {
   handlePhoto: () => void;
+  setSelectedImage: React.Dispatch<React.SetStateAction<File | null>>; // Nueva prop
 }
 
 const UploadDialog: React.FC<UploadDialogProps> = (props) => {
-  const { onClose, selectedValue, open, handlePhoto } = props;
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const { onClose, selectedValue, open, handlePhoto, setSelectedImage } = props;
+  const [selectedImage, setSelectedImageLocal] = useState<File | null>(null);
 
   const handleClose = () => {
     onClose(selectedValue);
@@ -30,6 +31,7 @@ const UploadDialog: React.FC<UploadDialogProps> = (props) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       setSelectedImage(file);
+      setSelectedImageLocal(file);
     }
   };
 

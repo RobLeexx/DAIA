@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -22,6 +22,7 @@ export const Sketch: React.FC = () => {
   const [completed, setCompleted] = React.useState<{
     [k: number]: boolean;
   }>({});
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [open, setOpen] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
   const [open3, setOpen3] = React.useState(false);
@@ -92,6 +93,10 @@ export const Sketch: React.FC = () => {
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleBack2 = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 2);
   };
 
   const handleComplete = () => {
@@ -286,6 +291,7 @@ export const Sketch: React.FC = () => {
                       open={open3}
                       onClose={handleClose3}
                       handlePhoto={handlePhoto}
+                      setSelectedImage={setSelectedImage}
                     />
                   </div>
                   <Box sx={{ display: "flex", justifyContent: "end", pt: 2 }}>
@@ -300,7 +306,8 @@ export const Sketch: React.FC = () => {
                     )}
                   </Box>
                 </div>
-              ) : activeStep === 1 ? (
+              ) : /* Step 2 */
+              activeStep === 1 ? (
                 <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
                   <Button color="inherit" onClick={handleBack} sx={{ mr: 1 }}>
                     Atrás
@@ -315,10 +322,34 @@ export const Sketch: React.FC = () => {
                   </Button>
                 </Box>
               ) : (
-                <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                  <Button color="inherit" onClick={handleBack} sx={{ mr: 1 }}>
-                    Atrás
-                  </Button>
+                /* Step 3 */
+                <Box>
+                  <div>
+                    <img
+                      src={
+                        selectedImage ? URL.createObjectURL(selectedImage) : ""
+                      }
+                      alt="Seleccionada"
+                      style={{ maxWidth: 512, padding: 30 }}
+                    />
+                  </div>
+                  <div style={{display: "flex", justifyContent: "space-between"}}>
+                    <Button
+                      variant="contained"
+                      onClick={handleBack2}
+                      sx={{
+                        mr: 1,
+                        backgroundColor: "#FF5733",
+                        "&:hover": {
+                          backgroundColor: "#A7331B",
+                        },
+                      }}
+                    >
+                      Volver a Seleccionar Imagen
+                    </Button>
+                    <Button variant="contained">Guardar Identikit</Button>
+                  </div>
+
                   <Box sx={{ flex: "1 1 auto" }} />
                 </Box>
               )}
