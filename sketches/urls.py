@@ -8,5 +8,5 @@ router.register(r'sketches', views.SketchView, 'sketches')
 
 urlpatterns = [
     path('api/v1/', include(router.urls)),
-    path('docs/', include_docs_urls(title='Sketches API'))
+    path('docs/', include_docs_urls(title='Sketches API')),
 ]

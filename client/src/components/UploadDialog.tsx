@@ -2,11 +2,15 @@ import React, { useState, ChangeEvent } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Input, Paper, Typography } from "@mui/material";
+import Textarea from "@mui/joy/Textarea";
 import CameraFrontIcon from "@mui/icons-material/CameraFront";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import { useForm } from "react-hook-form";
+
+import { uploadSketch } from "../api/sketch.api";
 
 interface SimpleDialogProps {
   open: boolean;
@@ -22,6 +26,18 @@ interface UploadDialogProps extends SimpleDialogProps {
 const UploadDialog: React.FC<UploadDialogProps> = (props) => {
   const { onClose, selectedValue, open, handlePhoto, setSelectedImage } = props;
   const [selectedImage, setSelectedImageLocal] = useState<File | null>(null);
+  const { register, handleSubmit, watch } = useForm();
+  const description = watch("description");
+
+  const onSubmit = handleSubmit(async (data) => {
+    const formData = new FormData();
+    if (selectedImage) {
+      formData.append("image", selectedImage);
+    }
+    formData.append("description", data.description);
+    formData.append("canvas", data.canvas);
+    await uploadSketch(formData);
+  });
 
   const handleClose = () => {
     onClose(selectedValue);
@@ -37,6 +53,7 @@ const UploadDialog: React.FC<UploadDialogProps> = (props) => {
 
   const handleDeleteImage = () => {
     setSelectedImage(null);
+    setSelectedImageLocal(null);
   };
 
   return (
@@ -63,52 +80,90 @@ const UploadDialog: React.FC<UploadDialogProps> = (props) => {
       </IconButton>
       <Divider></Divider>
       <Paper elevation={3} style={{ padding: 20 }}>
-        <Input
-          type="file"
-          onChange={handleFileChange}
-          style={{ display: "none" }}
-          id="image-upload-input"
-        />
-        <label
-          htmlFor="image-upload-input"
-          style={{ display: "flex", flexDirection: "column" }}
-        >
-          <Button
-            variant="contained"
-            color="primary"
-            component="span"
-            startIcon={<CameraFrontIcon />}
+        <form onSubmit={onSubmit}>
+          <input
+            style={{ display: "none" }}
+            type="checkbox"
+            defaultChecked={false}
+            {...register("canvas")}
+          ></input>
+          <Input
+            type="file"
+            style={{ display: "none" }}
+            id="image-upload-input"
+            {...register("image", { required: true })}
+            onChange={handleFileChange}
+          />
+          <label
+            htmlFor="image-upload-input"
+            style={{ display: "flex", flexDirection: "column" }}
           >
-            Seleccionar Imagen
-          </Button>
-        </label>
-        {selectedImage && (
-          <div style={{ marginTop: 20 }}>
-            <Typography variant="subtitle1">Imagen Seleccionada:</Typography>
-            <img
-              src={URL.createObjectURL(selectedImage)}
-              alt="Seleccionada"
-              style={{ maxWidth: 512 }}
-            />
-            <div style={{ display: "flex", flexDirection: "column" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              component="span"
+              startIcon={<CameraFrontIcon />}
+            >
+              Seleccionar Imagen
+            </Button>
+          </label>
+          {selectedImage && (
+            <div style={{ marginTop: 20 }}>
+              <Typography variant="subtitle1">Imagen Seleccionada:</Typography>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  maxWidth: 512,
+                }}
+              >
+                <img
+                  src={URL.createObjectURL(selectedImage)}
+                  alt="Seleccionada"
+                  style={{
+                    maxWidth: 512,
+                  }}
+                />
+              </div>
+              <Textarea
+                disabled={false}
+                minRows={2}
+                placeholder="description"
+                size="lg"
+                variant="soft"
+                sx={{ margin: 2 }}
+                {...register("description", { required: true })}
+              />
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <Button
+                  variant="contained"
+                  onClick={handleDeleteImage}
+                  sx={{
+                    color: "white",
+                    backgroundColor: "red",
+                    "&:hover": {
+                      backgroundColor: "#AF0505",
+                    },
+                  }}
+                  startIcon={<DeleteIcon />}
+                ></Button>
+              </div>
               <Button
                 variant="contained"
-                onClick={handleDeleteImage}
-                sx={{ backgroundColor: "red" }}
-                startIcon={<DeleteIcon />}
-              ></Button>
+                disabled={!description?.trim()}
+                style={{ width: "100%", padding: 20, marginTop: 20 }}
+                onClick={(e) => {
+                  e.preventDefault(); // Evitar el envío automático del formulario
+                  handlePhoto(); // Manejar el evento click
+                  onSubmit(); // Enviar el formulario manualmente
+                }}
+              >
+                Generar Identikit
+              </Button>
             </div>
-          </div>
-        )}
+          )}
+        </form>
       </Paper>
-      <Button
-        variant="contained"
-        disabled={!selectedImage}
-        onClick={handlePhoto}
-        style={{ width: "100%", padding: 20, marginTop: 20 }}
-      >
-        Generar Identikit
-      </Button>
     </Dialog>
   );
 };

@@ -9,15 +9,21 @@ import Avatar from "@mui/material/Avatar";
 import SketchDialog from "../components/SketchDialog";
 import PhotoDialog from "../components/PhotoDialog";
 import UploadDialog from "../components/UploadDialog";
+import axios from "axios";
 
 import canvaImage from "../assets/canva.jpg";
 import photoImage from "../assets/photo.jpeg";
+import convertImage from "../assets/convert2.png";
 import { Navigation } from "../components/Navigation";
 
 const steps = ["Tipo de Imagen", "Canva", "Generar Identikit"];
 const sketchType = ["Dibujar Identikit", "Subir Foto"];
 
-export const Sketch: React.FC = () => {
+interface ImageUploadProps {
+  onImageUpload: (file: File) => void;
+}
+
+export const Sketch: React.FC<ImageUploadProps> = ({ onImageUpload }) => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState<{
     [k: number]: boolean;
@@ -111,6 +117,24 @@ export const Sketch: React.FC = () => {
     newCompleted[activeStep] = true;
     setCompleted(newCompleted);
     handleNext2();
+    if (selectedImage) {
+      const formData = new FormData();
+      formData.append("image", selectedImage);
+
+      axios
+        .post("/api/upload", formData)
+        .then((response) => {
+          if (response.data.image_url) {
+            // Use the processed image URL to display or further actions
+            onImageUpload(response.data.image_url);
+          } else {
+            console.log("error xd")
+          }
+        })
+        .catch((error) => {
+          console.error("Error uploading image:", error);
+        });
+    }
   };
 
   const handleReset = () => {
@@ -324,16 +348,46 @@ export const Sketch: React.FC = () => {
               ) : (
                 /* Step 3 */
                 <Box>
-                  <div>
+                  <div
+                    style={{
+                      display: "flex",
+                      padding: 30,
+                      justifyContent: "space-evenly",
+                    }}
+                  >
                     <img
                       src={
                         selectedImage ? URL.createObjectURL(selectedImage) : ""
                       }
                       alt="Seleccionada"
-                      style={{ maxWidth: 512, padding: 30 }}
+                      style={{
+                        maxWidth: 512,
+                        maxHeight: 512,
+                        minWidth: 308,
+                        minHeight: 308,
+                      }}
+                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Button variant="outlined">CONVERTIR</Button>
+                    </div>
+                    <img
+                      src={convertImage}
+                      alt="Seleccionada"
+                      style={{
+                        width: 308,
+                        height: 308,
+                      }}
                     />
                   </div>
-                  <div style={{display: "flex", justifyContent: "space-between"}}>
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
                     <Button
                       variant="contained"
                       onClick={handleBack2}
