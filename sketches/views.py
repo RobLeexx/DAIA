@@ -24,8 +24,8 @@ class SketchView(viewsets.ModelViewSet):
 
         # Ruta de la imagen original
         original_image_path = sketch.image.path
-        print('xD'+original_image_path)
-        output_gan_path = 'media/sketches/generated/new.jpeg'
+        img_name = os.path.basename(sketch.image.path)
+        output_gan_path = 'media/sketches/generated/'+img_name
 
         # Aplicar la función de procesamiento de imagen GAN
         generated_image = process_image(original_image_path, output_gan_path, model='Simple')

@@ -15,6 +15,7 @@ import photoImage from "../assets/photo.jpeg";
 import convertImage from "../assets/convert2.png";
 import { Navigation } from "../components/Navigation";
 import { getLatestSketch, getSketchs } from "../api/sketch.api";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const steps = ["Tipo de Imagen", "Canva", "Generar Identikit"];
 const sketchType = ["Dibujar Identikit", "Subir Foto"];
@@ -42,6 +43,7 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
 
   const [selectedValue, setSelectedValue] = React.useState(sketchType[0]);
   const [imageURL, setImageURL] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -134,21 +136,15 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
 
   const handleButtonClick = async () => {
     try {
-      // Obtener el ID de la última imagen guardada
+      setLoading(true);
       const latestSketchResponse = await getLatestSketch();
       const latestSketchId =
         latestSketchResponse.data.length > 0
           ? latestSketchResponse.data[latestSketchResponse.data.length - 1].id
           : null;
-
-      // Verificar si se obtuvo el ID antes de hacer la solicitud
       if (latestSketchId !== null) {
-        // Llamada a la API para obtener la URL de la imagen en blanco y negro
         const response = await getSketchs(latestSketchId);
-
-        // Verificar si la URL está definida antes de actualizar el estado
         if (response.config.url) {
-          // Actualizar el estado con la URL de la imagen
           setImageURL(response.config.url);
         } else {
           console.error("La URL de la imagen es indefinida.");
@@ -158,6 +154,8 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
       }
     } catch (error) {
       console.error("Error al obtener la imagen:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -393,27 +391,65 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
                         justifyContent: "center",
                       }}
                     >
-                      <Button variant="outlined" onClick={handleButtonClick}>
-                        CONVERTIR
-                      </Button>
+                      {!loading ? (
+                        <Button variant="contained" onClick={handleButtonClick}>
+                          CONVERTIR
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outlined"
+                          disabled
+                          onClick={handleButtonClick}
+                        >
+                          CARGANDO
+                        </Button>
+                      )}
                     </div>
-                    <img
-                      src={!imageURL ? convertImage : imageURL}
-                      alt="Seleccionada"
-                      style={
-                        !imageURL
-                          ? {
-                              width: 308,
-                              height: 308,
-                            }
-                          : {
-                              maxWidth: 512,
-                              maxHeight: 512,
-                              minWidth: 308,
-                              minHeight: 308,
-                            }
-                      }
-                    />
+                    {!loading ? (
+                      <img
+                        src={!imageURL ? convertImage : imageURL}
+                        alt="Seleccionada"
+                        style={
+                          !imageURL
+                            ? {
+                                width: 308,
+                                height: 308,
+                              }
+                            : {
+                                maxWidth: 512,
+                                maxHeight: 512,
+                                minWidth: 308,
+                                minHeight: 308,
+                              }
+                        }
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          maxWidth: 512,
+                          maxHeight: 512,
+                          minWidth: 308,
+                          minHeight: 308,
+                        }}
+                      >
+                        <img
+                          src={convertImage}
+                          style={{
+                            width: 308,
+                            height: 308,
+                            position: "absolute",
+                            opacity: "35%",
+                          }}
+                        />
+                        <CircularProgress
+                          size={140}
+                          style={{
+                            marginTop: 28,
+                            marginLeft: 88,
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
