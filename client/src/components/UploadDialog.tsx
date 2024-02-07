@@ -128,7 +128,7 @@ const UploadDialog: React.FC<UploadDialogProps> = (props) => {
               <Textarea
                 disabled={false}
                 minRows={2}
-                placeholder="description"
+                placeholder="Descripción"
                 size="lg"
                 variant="soft"
                 sx={{ margin: 2 }}

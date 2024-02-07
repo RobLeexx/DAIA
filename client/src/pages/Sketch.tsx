@@ -9,12 +9,12 @@ import Avatar from "@mui/material/Avatar";
 import SketchDialog from "../components/SketchDialog";
 import PhotoDialog from "../components/PhotoDialog";
 import UploadDialog from "../components/UploadDialog";
-import axios from "axios";
 
 import canvaImage from "../assets/canva.jpg";
 import photoImage from "../assets/photo.jpeg";
 import convertImage from "../assets/convert2.png";
 import { Navigation } from "../components/Navigation";
+import { getLatestSketch, getSketchs } from "../api/sketch.api";
 
 const steps = ["Tipo de Imagen", "Canva", "Generar Identikit"];
 const sketchType = ["Dibujar Identikit", "Subir Foto"];
@@ -23,7 +23,14 @@ interface ImageUploadProps {
   onImageUpload: (file: File) => void;
 }
 
-export const Sketch: React.FC<ImageUploadProps> = ({ onImageUpload }) => {
+interface Sketch {
+  id: number;
+  canvas: boolean;
+  image: string;
+  description: string;
+}
+
+export const Sketch: React.FC<ImageUploadProps> = () => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState<{
     [k: number]: boolean;
@@ -34,6 +41,7 @@ export const Sketch: React.FC<ImageUploadProps> = ({ onImageUpload }) => {
   const [open3, setOpen3] = React.useState(false);
 
   const [selectedValue, setSelectedValue] = React.useState(sketchType[0]);
+  const [imageURL, setImageURL] = useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -101,8 +109,8 @@ export const Sketch: React.FC<ImageUploadProps> = ({ onImageUpload }) => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleBack2 = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 2);
+  const handleReload = () => {
+    window.location.reload();
   };
 
   const handleComplete = () => {
@@ -117,29 +125,40 @@ export const Sketch: React.FC<ImageUploadProps> = ({ onImageUpload }) => {
     newCompleted[activeStep] = true;
     setCompleted(newCompleted);
     handleNext2();
-    if (selectedImage) {
-      const formData = new FormData();
-      formData.append("image", selectedImage);
-
-      axios
-        .post("/api/upload", formData)
-        .then((response) => {
-          if (response.data.image_url) {
-            // Use the processed image URL to display or further actions
-            onImageUpload(response.data.image_url);
-          } else {
-            console.log("error xd")
-          }
-        })
-        .catch((error) => {
-          console.error("Error uploading image:", error);
-        });
-    }
   };
 
   const handleReset = () => {
     setActiveStep(0);
     setCompleted({});
+  };
+
+  const handleButtonClick = async () => {
+    try {
+      // Obtener el ID de la última imagen guardada
+      const latestSketchResponse = await getLatestSketch();
+      const latestSketchId =
+        latestSketchResponse.data.length > 0
+          ? latestSketchResponse.data[latestSketchResponse.data.length - 1].id
+          : null;
+
+      // Verificar si se obtuvo el ID antes de hacer la solicitud
+      if (latestSketchId !== null) {
+        // Llamada a la API para obtener la URL de la imagen en blanco y negro
+        const response = await getSketchs(latestSketchId);
+
+        // Verificar si la URL está definida antes de actualizar el estado
+        if (response.config.url) {
+          // Actualizar el estado con la URL de la imagen
+          setImageURL(response.config.url);
+        } else {
+          console.error("La URL de la imagen es indefinida.");
+        }
+      } else {
+        console.error("No se encontraron imágenes para obtener el ID.");
+      }
+    } catch (error) {
+      console.error("Error al obtener la imagen:", error);
+    }
   };
 
   return (
@@ -374,15 +393,26 @@ export const Sketch: React.FC<ImageUploadProps> = ({ onImageUpload }) => {
                         justifyContent: "center",
                       }}
                     >
-                      <Button variant="outlined">CONVERTIR</Button>
+                      <Button variant="outlined" onClick={handleButtonClick}>
+                        CONVERTIR
+                      </Button>
                     </div>
                     <img
-                      src={convertImage}
+                      src={!imageURL ? convertImage : imageURL}
                       alt="Seleccionada"
-                      style={{
-                        width: 308,
-                        height: 308,
-                      }}
+                      style={
+                        !imageURL
+                          ? {
+                              width: 308,
+                              height: 308,
+                            }
+                          : {
+                              maxWidth: 512,
+                              maxHeight: 512,
+                              minWidth: 308,
+                              minHeight: 308,
+                            }
+                      }
                     />
                   </div>
                   <div
@@ -390,7 +420,7 @@ export const Sketch: React.FC<ImageUploadProps> = ({ onImageUpload }) => {
                   >
                     <Button
                       variant="contained"
-                      onClick={handleBack2}
+                      onClick={handleReload}
                       sx={{
                         mr: 1,
                         backgroundColor: "#FF5733",

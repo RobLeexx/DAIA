@@ -5,26 +5,65 @@ from rest_framework import viewsets
 from .serializer import SketchSerializer
 from rest_framework.parsers import MultiPartParser
 from .models import sketches
+from IA_tools.uploadGAN import process_image
 
-# Create your views here.""" 
-""" class SketchView(viewsets.ModelViewSet):
-    serializer_class = SketchSerializer
-    queryset = sketches.objects.all() """
+from PIL import Image, ImageOps
+from rest_framework.decorators import action
+from django.http import HttpResponse
+import os
+from django.http import FileResponse
+from django.http import HttpResponseServerError
 
 class SketchView(viewsets.ModelViewSet):
     serializer_class = SketchSerializer 
     queryset = sketches.objects.all()
-    """ parser_classes = (MultiPartParser,)
 
-    def post(self, request, *args, **kwargs):
-        uploaded_file = request.FILES.get('image')
+    @action(detail=True, methods=['get'])
+    def get_generated_image(self, request, pk=None):
+        sketch = self.get_object()
 
-        # You can save the image to the database or perform any other processing here
-        # For example, saving the image to the database:
-        uploaded_image = sketches.objects.create(image=uploaded_file)
-        uploaded_image.save()
+        # Ruta de la imagen original
+        original_image_path = sketch.image.path
+        print('xD'+original_image_path)
+        output_gan_path = 'media/sketches/generated/new.jpeg'
 
-        # Puedes acceder a la URL de la imagen generada
-        image_url = uploaded_image.image.url
+        # Aplicar la función de procesamiento de imagen GAN
+        generated_image = process_image(original_image_path, output_gan_path, model='Simple')
 
-        return Response({'image_url': image_url}) """
+        if generated_image:
+            try:
+                # Devolver la imagen generada como respuesta usando FileResponse
+                response = FileResponse(open(output_gan_path, 'rb'), content_type='image/jpeg')
+                response['Content-Disposition'] = f'attachment; filename="{os.path.basename(output_gan_path)}"'
+                return response
+            except Exception as e:
+                # Manejar cualquier error que pueda ocurrir al abrir el archivo
+                return HttpResponseServerError(f"Error al abrir el archivo generado: {e}")
+        else:
+            return HttpResponse("Error al generar la imagen", status=500)
+
+
+"""   @action(detail=True, methods=['get'])
+        def get_black_and_white_image(self, request, pk=None):
+        sketch = self.get_object()
+
+        # Ruta de la imagen original
+        original_image_path = sketch.image.path
+
+        # Aplicar filtro de blanco y negro
+        black_and_white_image = self.apply_black_and_white(original_image_path)
+
+        # Crear una respuesta de la imagen procesada
+        response = HttpResponse(content_type="image/jpeg")
+        black_and_white_image.save(response, "JPEG")
+
+        return response
+
+    def apply_black_and_white(self, image_path):
+        # Abrir la imagen original
+        original_image = Image.open(image_path)
+
+        # Convertir la imagen a escala de grises
+        black_and_white_image = ImageOps.grayscale(original_image)
+
+        return black_and_white_image """
