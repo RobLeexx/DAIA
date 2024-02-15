@@ -1,6 +1,7 @@
 import React from "react";
 import maleImage from "../assets/male.jpg";
 import womanImage from "../assets/woman.jpg";
+import CanvasDraw from "react-canvas-draw";
 
 import { Box, Button, CircularProgress } from "@mui/material";
 
@@ -67,7 +68,18 @@ const Generator: React.FC<GeneratorProps> = ({
               height: 512,
             }}
           />
-        ) : (
+        ) : null}
+        {loading && selectedValue === "Dibujar Identikit" ? (
+          <CanvasDraw
+            canvasHeight={512}
+            canvasWidth={512}
+            hideGrid={true}
+            backgroundColor="#ffffff"
+            disabled
+            saveData={localStorage.getItem("savedCanvas") as string}
+          />
+        ) : null}
+        {loading && selectedValue === "Subir Foto" ? (
           <div
             style={{
               width: 512,
@@ -85,7 +97,7 @@ const Generator: React.FC<GeneratorProps> = ({
             />
             <CircularProgress size={512} />
           </div>
-        )}
+        ) : null}
       </div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         {selectedValue === "Subir Foto" ? (
