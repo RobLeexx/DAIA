@@ -21,6 +21,23 @@ export const uploadSketch = (
   return sketchApi.post("/", sketch);
 };
 
+export const updateSketch = (
+  sketchId: number,
+  description: string,
+  input: File
+): Promise<AxiosResponse<Sketch>> => {
+  const patchConfig: AxiosRequestConfig = {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  };
+  const updatedData = {
+    description: description,
+    input: input,
+  };
+  return sketchApi.patch(`/${sketchId}/`, updatedData, patchConfig);
+};
+
 export const getLatestSketch = () => {
   return sketchApi.get("/", {
     params: {

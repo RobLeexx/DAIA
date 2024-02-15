@@ -14,7 +14,7 @@ import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
 import TableRowsIcon from "@mui/icons-material/TableRows";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 
-import { uploadSketch } from "../api/sketch.api";
+import { uploadSketch, updateSketch, getLatestSketch } from "../api/sketch.api";
 
 interface CanvasProps {
   handleReload: () => void;
@@ -58,9 +58,18 @@ const Canvas: React.FC<CanvasProps> = ({
       formData.append("input", file);
       formData.append("description", data.description);
       formData.append("canvas", data.canvas);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-expect-error
-      await uploadSketch(formData);
+      if (!reloadCanvas) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-expect-error
+        await uploadSketch(formData);
+      } else {
+        const latestSketchResponse = await getLatestSketch();
+        const latestSketchId =
+          latestSketchResponse.data.length > 0
+            ? latestSketchResponse.data[latestSketchResponse.data.length - 1].id
+            : null;
+        await updateSketch(latestSketchId, data.description, file);
+      }
       handleComplete();
     }
   });
@@ -131,17 +140,18 @@ const Canvas: React.FC<CanvasProps> = ({
             justifyContent: "space-evenly",
           }}
         >
-          <div style={{ maxWidth: "512", maxHeight: "512", display: "flex" }}>
+          <div
+            style={{ width: "512", height: "512", border: "5px solid #1769aa" }}
+          >
             <CanvasDraw
-              canvasHeight={522}
-              canvasWidth={522}
+              canvasHeight={512}
+              canvasWidth={512}
               brushColor={brushColor}
               brushRadius={brushRadius}
               lazyRadius={lazyRadius}
               catenaryColor={catenaryColor}
               hideGrid={true}
               backgroundColor="#ffffff"
-              style={{ border: "5px solid #1769aa" }}
               ref={firstCanvas}
               saveData={
                 reloadCanvas
@@ -150,80 +160,72 @@ const Canvas: React.FC<CanvasProps> = ({
               }
               immediateLoading
             ></CanvasDraw>
-            <div
-              style={{
-                padding: 30,
-                minWidth: 232,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-around",
-              }}
+          </div>
+          <div
+            style={{
+              padding: 30,
+              minWidth: 232,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-around",
+            }}
+          >
+            <Button
+              onClick={clear}
+              variant="contained"
+              color="error"
+              startIcon={<DeleteIcon />}
             >
-              <Button
-                onClick={clear}
-                variant="contained"
-                color="error"
-                startIcon={<DeleteIcon />}
-              >
-                Limpiar
-              </Button>
-              <Button
-                onClick={undo}
-                variant="contained"
-                startIcon={<UndoIcon />}
-              >
-                Deshacer
-              </Button>
-              <Button
-                onClick={eraser}
-                variant={brushed ? "outlined" : "contained"}
-                startIcon={
-                  brushed ? <DriveFileRenameOutlineIcon /> : <BorderColorIcon />
-                }
-              >
-                {brushed ? "Borrar" : "Dibujar"}
-              </Button>
-              <Divider>
-                {brushColor == "black"
-                  ? "Tipo de Borde"
-                  : "Tamaño del Borrador"}
-              </Divider>
-              <Button
-                onClick={brushed ? face : small}
-                variant={brushed ? "contained" : "outlined"}
-                startIcon={
-                  brushed ? (
-                    <SentimentSatisfiedIcon />
-                  ) : (
-                    <PanoramaFishEyeIcon style={{ fontSize: 15 }} />
-                  )
-                }
-              >
-                {brushed ? "Cara" : "Pequeño"}
-              </Button>
-              <Button
-                onClick={brushed ? eyes : medium}
-                variant={brushed ? "contained" : "outlined"}
-                startIcon={
-                  brushed ? <VisibilityIcon /> : <PanoramaFishEyeIcon />
-                }
-              >
-                {brushed ? "Ojos" : "Mediano"}
-              </Button>
-              <Button
-                onClick={brushed ? beard : large}
-                variant={brushed ? "contained" : "outlined"}
-                startIcon={
-                  brushed ? (
-                    <TableRowsIcon />
-                  ) : (
-                    <PanoramaFishEyeIcon style={{ fontSize: 25 }} />
-                  )
-                }
-              >
-                {brushed ? "Barba" : "Grande"}
-              </Button>
-            </div>
+              Limpiar
+            </Button>
+            <Button onClick={undo} variant="contained" startIcon={<UndoIcon />}>
+              Deshacer
+            </Button>
+            <Button
+              onClick={eraser}
+              variant={brushed ? "outlined" : "contained"}
+              startIcon={
+                brushed ? <DriveFileRenameOutlineIcon /> : <BorderColorIcon />
+              }
+            >
+              {brushed ? "Borrar" : "Dibujar"}
+            </Button>
+            <Divider>
+              {brushColor == "black" ? "Tipo de Borde" : "Tamaño del Borrador"}
+            </Divider>
+            <Button
+              onClick={brushed ? face : small}
+              variant={brushed ? "contained" : "outlined"}
+              startIcon={
+                brushed ? (
+                  <SentimentSatisfiedIcon />
+                ) : (
+                  <PanoramaFishEyeIcon style={{ fontSize: 15 }} />
+                )
+              }
+            >
+              {brushed ? "Cara" : "Pequeño"}
+            </Button>
+            <Button
+              onClick={brushed ? eyes : medium}
+              variant={brushed ? "contained" : "outlined"}
+              startIcon={brushed ? <VisibilityIcon /> : <PanoramaFishEyeIcon />}
+            >
+              {brushed ? "Ojos" : "Mediano"}
+            </Button>
+            <Button
+              onClick={brushed ? beard : large}
+              variant={brushed ? "contained" : "outlined"}
+              startIcon={
+                brushed ? (
+                  <TableRowsIcon />
+                ) : (
+                  <PanoramaFishEyeIcon style={{ fontSize: 25 }} />
+                )
+              }
+            >
+              {brushed ? "Barba" : "Grande"}
+            </Button>
           </div>
           <Textarea
             disabled={false}
@@ -240,7 +242,6 @@ const Canvas: React.FC<CanvasProps> = ({
             {...register("description", { required: true })}
           />
         </div>
-
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <Button
             variant="contained"
