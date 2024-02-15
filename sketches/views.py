@@ -23,15 +23,18 @@ class SketchView(viewsets.ModelViewSet):
         sketch = self.get_object()
 
         # Ruta de la imagen original
-        original_image_path = sketch.image.path
-        img_name = os.path.basename(sketch.image.path)
-        output_gan_path = 'media/sketches/generated/'+img_name
+        original_image_path = sketch.input.path
+        img_name = os.path.basename(sketch.input.path)
+        output_gan_path = 'sketches/media/output/'+img_name
 
         # Aplicar la función de procesamiento de imagen GAN
         generated_image = process_image(original_image_path, output_gan_path, model='Simple')
 
         if generated_image:
             try:
+                # Guardar el output_gan_path en el campo output del sketch
+                sketch.output = 'sketches/media/output/'+img_name
+                sketch.save()
                 # Devolver la imagen generada como respuesta usando FileResponse
                 response = FileResponse(open(output_gan_path, 'rb'), content_type='image/jpeg')
                 response['Content-Disposition'] = f'attachment; filename="{os.path.basename(output_gan_path)}"'

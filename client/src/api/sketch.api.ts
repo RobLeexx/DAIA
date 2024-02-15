@@ -1,9 +1,11 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosResponse, AxiosRequestConfig } from "axios";
+import { Sketch } from "../pages/Sketch";
 
 // Define una interfaz que represente la estructura esperada del objeto sketch
 interface Sketch {
   description: string;
-  image: File;
+  input: File;
+  output?: File;
   canvas: boolean;
 }
 
@@ -29,6 +31,9 @@ export const getLatestSketch = () => {
   });
 };
 
-export const getSketchs = (id: number) => {
-  return axios.get(`http://localhost:8000/sketches/api/v1/sketches/${id}/get_generated_image/`);
+export const getGAN = (id: number, config?: AxiosRequestConfig) => {
+  return axios.get(
+    `http://localhost:8000/sketches/api/v1/sketches/${id}/get_generated_image/`,
+    config
+  );
 };

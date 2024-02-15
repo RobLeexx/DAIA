@@ -3,19 +3,15 @@ import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import Avatar from "@mui/material/Avatar";
-import SketchDialog from "../components/SketchDialog";
-import PhotoDialog from "../components/PhotoDialog";
-import UploadDialog from "../components/UploadDialog";
+import Generator from "../components/Generator";
+import ImageSelection from "../components/ImageSelection";
+import Canvas from "../components/Canvas";
 
 import canvaImage from "../assets/canva.jpg";
 import photoImage from "../assets/photo.jpeg";
-import convertImage from "../assets/convert2.png";
 import { Navigation } from "../components/Navigation";
-import { getLatestSketch, getSketchs } from "../api/sketch.api";
-import CircularProgress from "@mui/material/CircularProgress";
+import { getLatestSketch, getGAN } from "../api/sketch.api";
 
 const steps = ["Tipo de Imagen", "Canva", "Generar Identikit"];
 const sketchType = ["Dibujar Identikit", "Subir Foto"];
@@ -27,7 +23,8 @@ interface ImageUploadProps {
 interface Sketch {
   id: number;
   canvas: boolean;
-  image: string;
+  input: string;
+  output?: string;
   description: string;
 }
 
@@ -90,9 +87,7 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
   const handleNext = () => {
     const newActiveStep =
       isLastStep() && !allStepsCompleted()
-        ? // It's the last step, but not all steps have been completed,
-          // find the first step that has been completed
-          steps.findIndex((step, i) => !(i in completed))
+        ? steps.findIndex((step, i) => !(i in completed))
         : activeStep + 1;
     setActiveStep(newActiveStep);
   };
@@ -100,9 +95,7 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
   const handleNext2 = () => {
     const newActiveStep =
       isLastStep() && !allStepsCompleted()
-        ? // It's the last step, but not all steps have been completed,
-          // find the first step that has been completed
-          steps.findIndex((step, i) => !(i in completed))
+        ? steps.findIndex((step, i) => !(i in completed))
         : activeStep + 2;
     setActiveStep(newActiveStep);
   };
@@ -129,11 +122,6 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
     handleNext2();
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-    setCompleted({});
-  };
-
   const handleButtonClick = async () => {
     try {
       setLoading(true);
@@ -143,11 +131,15 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
           ? latestSketchResponse.data[latestSketchResponse.data.length - 1].id
           : null;
       if (latestSketchId !== null) {
-        const response = await getSketchs(latestSketchId);
-        if (response.config.url) {
-          setImageURL(response.config.url);
+        const response = await getGAN(latestSketchId, {
+          responseType: "arraybuffer",
+        });
+        if (response.data) {
+          const blob = new Blob([response.data], { type: "image/jpeg" });
+          const imageURL = URL.createObjectURL(blob);
+          setImageURL(imageURL);
         } else {
-          console.error("La URL de la imagen es indefinida.");
+          console.error("No se encontraron datos binarios en la respuesta.");
         }
       } else {
         console.error("No se encontraron imágenes para obtener el ID.");
@@ -185,296 +177,46 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
           </Step>
         </Stepper>
         <div>
-          {allStepsCompleted() ? (
-            <React.Fragment>
-              <Typography sx={{ mt: 2, mb: 1 }}>
-                Todos los pasos completados - tu&apos;re finished
-              </Typography>
-              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                <Box sx={{ flex: "1 1 auto" }} />
-                <Button onClick={handleReset}>Generar Otra Imagen</Button>
-              </Box>
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              {activeStep === 0 ? (
-                <div>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-evenly",
-                      paddingTop: 50,
-                    }}
-                  >
-                    {selectedValue === "Dibujar Identikit" ? (
-                      <div style={{ display: "flex", flexDirection: "column" }}>
-                        <Avatar
-                          style={{
-                            position: "absolute",
-                            margin: 15,
-                            backgroundColor: "#0a934e",
-                          }}
-                        >
-                          A
-                        </Avatar>
-                        <img
-                          style={{ maxWidth: 500, height: 500 }}
-                          src={canvaImage}
-                          alt=""
-                        />
-                        <Button
-                          variant="contained"
-                          onClick={handleClickOpen}
-                          style={{ backgroundColor: "#0a934e" }}
-                        >
-                          Dibujar Identikit
-                        </Button>
-                      </div>
-                    ) : (
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                        }}
-                      >
-                        <Avatar
-                          style={{
-                            position: "absolute",
-                            margin: 15,
-                            backgroundColor: "#0a934e",
-                          }}
-                        >
-                          A
-                        </Avatar>
-                        <img
-                          style={{ maxWidth: 500, height: 500, opacity: "50%" }}
-                          src={canvaImage}
-                          alt=""
-                        />
-                        <Button
-                          variant="outlined"
-                          onClick={handleClickOpen}
-                          style={{ color: "#0a934e" }}
-                        >
-                          Dibujar Identikit
-                        </Button>
-                      </div>
-                    )}
-
-                    {selectedValue === "Subir Foto" ? (
-                      <div style={{ display: "flex", flexDirection: "column" }}>
-                        <Avatar
-                          style={{
-                            position: "absolute",
-                            margin: 15,
-                            backgroundColor: "#0a934e",
-                          }}
-                        >
-                          B
-                        </Avatar>
-                        <img
-                          style={{ maxWidth: 500, maxHeight: 500 }}
-                          src={photoImage}
-                          alt=""
-                        />
-                        <Button
-                          variant="contained"
-                          onClick={handleClickOpen2}
-                          style={{ backgroundColor: "#0a934e" }}
-                        >
-                          Subir Fotografía
-                        </Button>
-                      </div>
-                    ) : (
-                      <div style={{ display: "flex", flexDirection: "column" }}>
-                        <Avatar
-                          style={{
-                            position: "absolute",
-                            margin: 15,
-                            backgroundColor: "#0a934e",
-                          }}
-                        >
-                          B
-                        </Avatar>
-                        <img
-                          style={{
-                            maxWidth: 500,
-                            maxHeight: 500,
-                            opacity: "50%",
-                          }}
-                          src={photoImage}
-                          alt=""
-                        />
-                        <Button
-                          variant="outlined"
-                          onClick={handleClickOpen2}
-                          style={{ color: "#0a934e" }}
-                        >
-                          Subir Fotografía
-                        </Button>
-                      </div>
-                    )}
-
-                    <SketchDialog
-                      selectedValue={selectedValue}
-                      open={open}
-                      onClose={handleClose}
-                    />
-
-                    <PhotoDialog
-                      selectedValue={selectedValue}
-                      open={open2}
-                      onClose={handleClose2}
-                    />
-
-                    <UploadDialog
-                      selectedValue={selectedValue}
-                      open={open3}
-                      onClose={handleClose3}
-                      handlePhoto={handlePhoto}
-                      setSelectedImage={setSelectedImage}
-                    />
-                  </div>
-                  <Box sx={{ display: "flex", justifyContent: "end", pt: 2 }}>
-                    {selectedValue === sketchType[0] ? (
-                      <Button variant="contained" onClick={handleComplete}>
-                        Siguiente
-                      </Button>
-                    ) : (
-                      <Button variant="contained" onClick={handleClickOpen3}>
-                        Siguiente
-                      </Button>
-                    )}
-                  </Box>
-                </div>
-              ) : /* Step 2 */
-              activeStep === 1 ? (
-                <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                  <Button color="inherit" onClick={handleBack} sx={{ mr: 1 }}>
-                    Atrás
-                  </Button>
-                  <Box sx={{ flex: "1 1 auto" }} />
-                  <Button
-                    color="inherit"
-                    onClick={handleComplete}
-                    sx={{ mr: 1 }}
-                  >
-                    Siguiente
-                  </Button>
-                </Box>
-              ) : (
-                /* Step 3 */
-                <Box>
-                  <div
-                    style={{
-                      display: "flex",
-                      padding: 30,
-                      justifyContent: "space-evenly",
-                    }}
-                  >
-                    <img
-                      src={
-                        selectedImage ? URL.createObjectURL(selectedImage) : ""
-                      }
-                      alt="Seleccionada"
-                      style={{
-                        maxWidth: 512,
-                        maxHeight: 512,
-                        minWidth: 308,
-                        minHeight: 308,
-                      }}
-                    />
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {!loading ? (
-                        <Button variant="contained" onClick={handleButtonClick}>
-                          CONVERTIR
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="outlined"
-                          disabled
-                          onClick={handleButtonClick}
-                        >
-                          CARGANDO
-                        </Button>
-                      )}
-                    </div>
-                    {!loading ? (
-                      <img
-                        src={!imageURL ? convertImage : imageURL}
-                        alt="Seleccionada"
-                        style={
-                          !imageURL
-                            ? {
-                                width: 308,
-                                height: 308,
-                              }
-                            : {
-                                maxWidth: 512,
-                                maxHeight: 512,
-                                minWidth: 308,
-                                minHeight: 308,
-                              }
-                        }
-                      />
-                    ) : (
-                      <div
-                        style={{
-                          maxWidth: 512,
-                          maxHeight: 512,
-                          minWidth: 308,
-                          minHeight: 308,
-                        }}
-                      >
-                        <img
-                          src={convertImage}
-                          style={{
-                            width: 308,
-                            height: 308,
-                            position: "absolute",
-                            opacity: "35%",
-                          }}
-                        />
-                        <CircularProgress
-                          size={140}
-                          style={{
-                            marginTop: 28,
-                            marginLeft: 88,
-                          }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <div
-                    style={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <Button
-                      variant="contained"
-                      onClick={handleReload}
-                      sx={{
-                        mr: 1,
-                        backgroundColor: "#FF5733",
-                        "&:hover": {
-                          backgroundColor: "#A7331B",
-                        },
-                      }}
-                    >
-                      Volver a Seleccionar Imagen
-                    </Button>
-                    <Button variant="contained">Guardar Identikit</Button>
-                  </div>
-
-                  <Box sx={{ flex: "1 1 auto" }} />
-                </Box>
-              )}
-            </React.Fragment>
-          )}
+          <React.Fragment>
+            {activeStep === 0 ? (
+              /* Step 1 */
+              <ImageSelection
+                selectedValue={selectedValue}
+                canvaImage={canvaImage}
+                photoImage={photoImage}
+                open={open}
+                open2={open2}
+                open3={open3}
+                handleClose={handleClose}
+                handleClose2={handleClose2}
+                handleClose3={handleClose3}
+                handleClickOpen={handleClickOpen}
+                handleClickOpen2={handleClickOpen2}
+                handleClickOpen3={handleClickOpen3}
+                handleComplete={handleComplete}
+                handlePhoto={handlePhoto}
+                setSelectedImage={setSelectedImage}
+              />
+            ) : /* Step 2 */
+            activeStep === 1 ? (
+              <Canvas
+                handleReload={handleReload}
+                handleComplete={handleComplete}
+                setSelectedImage={setSelectedImage}
+              />
+            ) : (
+              /* Step 3 */
+              <Generator
+                selectedValue={selectedValue}
+                handleBack={handleBack}
+                selectedImage={selectedImage}
+                loading={loading}
+                handleButtonClick={handleButtonClick}
+                imageURL={imageURL}
+                handleReload={handleReload}
+              />
+            )}
+          </React.Fragment>
         </div>
       </Box>
     </Navigation>

@@ -20,7 +20,7 @@ interface SimpleDialogProps {
 
 interface UploadDialogProps extends SimpleDialogProps {
   handlePhoto: () => void;
-  setSelectedImage: React.Dispatch<React.SetStateAction<File | null>>; // Nueva prop
+  setSelectedImage: React.Dispatch<React.SetStateAction<File | null>>;
 }
 
 const UploadDialog: React.FC<UploadDialogProps> = (props) => {
@@ -32,7 +32,7 @@ const UploadDialog: React.FC<UploadDialogProps> = (props) => {
   const onSubmit = handleSubmit(async (data) => {
     const formData = new FormData();
     if (selectedImage) {
-      formData.append("image", selectedImage);
+      formData.append("input", selectedImage);
     }
     formData.append("description", data.description);
     formData.append("canvas", data.canvas);
@@ -91,7 +91,7 @@ const UploadDialog: React.FC<UploadDialogProps> = (props) => {
             type="file"
             style={{ display: "none" }}
             id="image-upload-input"
-            {...register("image", { required: true })}
+            {...register("input", { required: true })}
             onChange={handleFileChange}
           />
           <label
@@ -153,9 +153,9 @@ const UploadDialog: React.FC<UploadDialogProps> = (props) => {
                 disabled={!description?.trim()}
                 style={{ width: "100%", padding: 20, marginTop: 20 }}
                 onClick={(e) => {
-                  e.preventDefault(); // Evitar el envío automático del formulario
-                  handlePhoto(); // Manejar el evento click
-                  onSubmit(); // Enviar el formulario manualmente
+                  e.preventDefault();
+                  handlePhoto();
+                  onSubmit();
                 }}
               >
                 Generar Identikit
