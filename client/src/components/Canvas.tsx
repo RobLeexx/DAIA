@@ -20,12 +20,14 @@ interface CanvasProps {
   handleReload: () => void;
   handleComplete: () => void;
   setSelectedImage: React.Dispatch<React.SetStateAction<File | null>>;
+  reloadCanvas: boolean;
 }
 
 const Canvas: React.FC<CanvasProps> = ({
   handleReload,
   handleComplete,
   setSelectedImage,
+  reloadCanvas,
 }) => {
   const { register, handleSubmit, watch } = useForm();
   const description = watch("description");
@@ -40,6 +42,11 @@ const Canvas: React.FC<CanvasProps> = ({
     const formData = new FormData();
 
     if (firstCanvas.current) {
+      const canvasData = firstCanvas.current.getSaveData();
+      localStorage.setItem("savedCanvas", canvasData);
+      localStorage.setItem("savedDescription", data.description);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-expect-error
       const canvasDataUrl = firstCanvas.current.getDataURL(
         "image/jpg",
         false,
@@ -51,6 +58,8 @@ const Canvas: React.FC<CanvasProps> = ({
       formData.append("input", file);
       formData.append("description", data.description);
       formData.append("canvas", data.canvas);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-expect-error
       await uploadSketch(formData);
       handleComplete();
     }
@@ -134,6 +143,12 @@ const Canvas: React.FC<CanvasProps> = ({
               backgroundColor="#ffffff"
               style={{ border: "5px solid #1769aa" }}
               ref={firstCanvas}
+              saveData={
+                reloadCanvas
+                  ? (localStorage.getItem("savedCanvas") as string)
+                  : undefined
+              }
+              immediateLoading
             ></CanvasDraw>
             <div
               style={{
@@ -216,6 +231,11 @@ const Canvas: React.FC<CanvasProps> = ({
             placeholder="Descripción"
             size="lg"
             variant="soft"
+            defaultValue={
+              reloadCanvas
+                ? (localStorage.getItem("savedDescription") as string)
+                : undefined
+            }
             sx={{ marginInline: 10, width: 512, height: 512, margin: "0" }}
             {...register("description", { required: true })}
           />
@@ -237,7 +257,7 @@ const Canvas: React.FC<CanvasProps> = ({
           </Button>
           <Button
             type="submit"
-            disabled={!description?.trim()}
+            disabled={!description?.trim() && !reloadCanvas}
             variant="contained"
             onClick={onSubmit}
           >

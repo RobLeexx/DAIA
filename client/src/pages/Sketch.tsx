@@ -37,6 +37,7 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
   const [open, setOpen] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
   const [open3, setOpen3] = React.useState(false);
+  const [reloadCanvas, setReloadCanvas] = React.useState(false);
 
   const [selectedValue, setSelectedValue] = React.useState(sketchType[0]);
   const [imageURL, setImageURL] = useState("");
@@ -102,6 +103,7 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setReloadCanvas(true);
   };
 
   const handleReload = () => {
@@ -203,6 +205,7 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
                 handleReload={handleReload}
                 handleComplete={handleComplete}
                 setSelectedImage={setSelectedImage}
+                reloadCanvas={reloadCanvas}
               />
             ) : (
               /* Step 3 */
