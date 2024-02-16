@@ -17,7 +17,7 @@ const steps = ["Tipo de Imagen", "Canva", "Generar Identikit"];
 const sketchType = ["Dibujar Identikit", "Subir Foto"];
 
 interface ImageUploadProps {
-  onImageUpload: (file: File) => void;
+  onImageUpload?: (file: File) => void;
 }
 
 interface Sketch {

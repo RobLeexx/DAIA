@@ -149,7 +149,7 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
                     <ListItemIcon>
                       <PortraitIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Sketch Generativo" />
+                    <ListItemText primary="Imagen Generativa" />
                   </ListItemButton>
                 </Link>
                 <Link
