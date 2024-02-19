@@ -2,7 +2,7 @@ import React from "react";
 import { Avatar, Button, Box, Card } from "@mui/material";
 import UploadDialog from "../UploadDialog";
 
-const sketchType = ["Seleccionar Base de Datos", "Subir Foto"];
+const sketchType = ["Seleccionar Base de Datos", "Subir Foto2"];
 
 interface ImageSelectionProps {
   selectedValue: string;
@@ -129,7 +129,7 @@ const SearchSelection: React.FC<ImageSelectionProps> = ({
           </div>
         )}
 
-        {selectedValue === "Subir Foto" ? (
+        {selectedValue === "Subir Foto2" ? (
           <div style={{ display: "flex", flexDirection: "column" }}>
             <Avatar
               style={{

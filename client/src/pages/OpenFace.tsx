@@ -14,7 +14,7 @@ import uploadImage from "../assets/uploadImage.png";
 import { Navigation } from "../components/Navigation";
 
 const steps = ["Tipo de Búsqueda", "Base de Datos", "Rueda de Reconocimiento"];
-const sketchType = ["Seleccionar Base de Datos", "Subir Foto"];
+const sketchType = ["Seleccionar Base de Datos", "Subir Foto2"];
 
 export const OpenFace: React.FC = () => {
   const [activeStep, setActiveStep] = React.useState(0);
@@ -31,6 +31,7 @@ export const OpenFace: React.FC = () => {
 
   const handleClickOpen = () => {
     setOpen(true);
+    setSelectedValue(selectedValue);
   };
 
   const handleSelection = (value: string) => {
@@ -108,7 +109,7 @@ export const OpenFace: React.FC = () => {
           <Step key={1}>
             <StepButton sx={{ pointerEvents: "none", color: "primary" }}>
               Base de Datos <br />
-              {activeStep === 2 && selectedValue === "Subir Foto" ? (
+              {activeStep === 2 && selectedValue === "Subir Foto2" ? (
                 <Typography variant="caption">Omitido</Typography>
               ) : (
                 <div></div>
@@ -125,17 +126,17 @@ export const OpenFace: React.FC = () => {
           <React.Fragment>
             {activeStep === 0 ? (
               /* Step 1 */
-              <SearchSelection 
-              selectedValue={selectedValue}
-              selection={handleSelection}
-              dbImage={dbImage}
-              uploadImage={uploadImage}
-              open={open}
-              handleClose={handleClose}
-              handleClickOpen={handleClickOpen}
-              handleComplete={handleComplete}
-              handlePhoto={handlePhoto}
-              setSelectedImage={setSelectedImage}
+              <SearchSelection
+                selectedValue={selectedValue}
+                selection={handleSelection}
+                dbImage={dbImage}
+                uploadImage={uploadImage}
+                open={open}
+                handleClose={handleClose}
+                handleClickOpen={handleClickOpen}
+                handleComplete={handleComplete}
+                handlePhoto={handlePhoto}
+                setSelectedImage={setSelectedImage}
               />
             ) : /* Step 2 */
             activeStep === 1 ? (

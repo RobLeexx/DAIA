@@ -9,9 +9,20 @@ interface Sketch {
   canvas: boolean;
 }
 
+interface Image {
+  input: File;
+  database?: string;
+  results?: JSON;
+  description: string;
+}
+
 // Crea una instancia de axios
 const sketchApi = axios.create({
   baseURL: "http://localhost:8000/sketches/api/v1/sketches/",
+});
+
+const imageApi = axios.create({
+  baseURL: "http://localhost:8000/images/api/v1/images/",
 });
 
 // Define el tipo de la respuesta que se espera (AxiosResponse<Sketch>)
@@ -19,6 +30,12 @@ export const uploadSketch = (
   sketch: Sketch
 ): Promise<AxiosResponse<Sketch>> => {
   return sketchApi.post("/", sketch);
+};
+
+export const uploadImage = (
+  image: Image
+): Promise<AxiosResponse<Image>> => {
+  return imageApi.post("/", image);
 };
 
 export const updateSketch = (

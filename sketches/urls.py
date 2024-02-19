@@ -8,6 +8,6 @@ router.register(r'sketches', views.SketchView, 'sketches')
 
 urlpatterns = [
     path('api/v1/', include(router.urls)),
-    path('docs/', include_docs_urls(title='Sketches API')),
-    path('api/v1/sketches/<int:pk>/get_generated_image/', views.SketchView.as_view({'get': 'get_generated_image'}), name='get_generated_image'),]
-"""     path('api/v1/sketches/<int:pk>/get_black_and_white_image/', views.SketchView.as_view({'get': 'get_black_and_white_image'}), name='get_black_and_white_image'),] """
+    path('docs/', include_docs_urls(title='Sketches API')),    
+    path('api/v1/sketches/<int:pk>/get_generated_image/', views.SketchView.as_view({'get': 'get_generated_image'}), name='get_generated_image'),
+]

@@ -10,7 +10,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { useForm } from "react-hook-form";
 
-import { uploadSketch } from "../api/sketch.api";
+import { uploadSketch, uploadImage } from "../api/sketch.api";
 
 interface SimpleDialogProps {
   open: boolean;
@@ -35,10 +35,16 @@ const UploadDialog: React.FC<UploadDialogProps> = (props) => {
       formData.append("input", selectedImage);
     }
     formData.append("description", data.description);
-    formData.append("canvas", data.canvas);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    if (selectedValue != "Subir Foto2") {
+      formData.append("canvas", data.canvas);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-expect-error
-    await uploadSketch(formData);
+      await uploadSketch(formData);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-expect-error
+      await uploadImage(formData);
+    }
   });
 
   const handleClose = () => {
@@ -127,6 +133,7 @@ const UploadDialog: React.FC<UploadDialogProps> = (props) => {
                   }}
                 />
               </div>
+              <div>{selectedValue}</div>
               <Textarea
                 disabled={false}
                 minRows={2}
@@ -160,7 +167,11 @@ const UploadDialog: React.FC<UploadDialogProps> = (props) => {
                   onSubmit();
                 }}
               >
-                Generar Identikit
+                {selectedValue !== "Subir Foto2" ? (
+                  <div>Generar Identikit</div>
+                ) : (
+                  <div>Buscar</div>
+                )}
               </Button>
             </div>
           )}
