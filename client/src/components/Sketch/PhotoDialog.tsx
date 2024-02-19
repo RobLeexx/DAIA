@@ -7,8 +7,8 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DangerousIcon from "@mui/icons-material/Dangerous";
-import foto1 from "../assets/foto1.jpeg";
-import foto2 from "../assets/foto2.jpg";
+import foto1 from "../../assets/foto1.jpeg";
+import foto2 from "../../assets/foto2.jpg";
 
 interface SimpleDialogProps {
   open: boolean;

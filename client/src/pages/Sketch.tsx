@@ -4,9 +4,9 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
 import Typography from "@mui/material/Typography";
-import Generator from "../components/Generator";
-import ImageSelection from "../components/ImageSelection";
-import Canvas from "../components/Canvas";
+import Generator from "../components/Sketch/Generator";
+import ImageSelection from "../components/Sketch/ImageSelection";
+import Canvas from "../components/Sketch/Canvas";
 
 import canvaImage from "../assets/canva.jpg";
 import photoImage from "../assets/photo.jpeg";

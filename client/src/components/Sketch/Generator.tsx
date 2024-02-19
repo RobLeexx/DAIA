@@ -1,9 +1,9 @@
 import React from "react";
-import maleImage from "../assets/male.jpg";
-import womanImage from "../assets/woman.jpg";
+import maleImage from "../../assets/male.jpg";
+import womanImage from "../../assets/woman.jpg";
 import CanvasDraw from "react-canvas-draw";
 
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
 interface GeneratorProps {

@@ -14,7 +14,7 @@ import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
 import TableRowsIcon from "@mui/icons-material/TableRows";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 
-import { uploadSketch, updateSketch, getLatestSketch } from "../api/sketch.api";
+import { uploadSketch, updateSketch, getLatestSketch } from "../../api/sketch.api";
 
 interface CanvasProps {
   handleReload: () => void;

@@ -1,8 +1,8 @@
-import React from 'react';
-import { Avatar, Button, Box } from '@mui/material';
-import SketchDialog from './SketchDialog';
-import PhotoDialog from './PhotoDialog';
-import UploadDialog from './UploadDialog';
+import React from "react";
+import { Avatar, Button, Box, Card } from "@mui/material";
+import SketchDialog from "./SketchDialog";
+import PhotoDialog from "./PhotoDialog";
+import UploadDialog from "../UploadDialog";
 
 const sketchType = ["Dibujar Identikit", "Subir Foto"];
 
@@ -62,7 +62,12 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
               A
             </Avatar>
             <img
-              style={{ maxWidth: 500, height: 500 }}
+              style={{
+                maxWidth: 500,
+                height: 500,
+                border: "5px solid #0a934e",
+                boxSizing: "border-box",
+              }}
               src={canvaImage}
               alt=""
             />
@@ -90,11 +95,29 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
             >
               A
             </Avatar>
-            <img
-              style={{ maxWidth: 500, height: 500, opacity: "50%" }}
-              src={canvaImage}
-              alt=""
-            />
+            <Card
+              sx={{
+                width: 500,
+                height: 500,
+                opacity: "40%",
+                cursor: "pointer",
+                "&:hover": {
+                  opacity: "80%",
+                  backgroundColor: "#0a934e",
+                },
+              }}
+            >
+              <img
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  opacity: "60%",
+                  objectFit: "cover",
+                }}
+                src={canvaImage}
+                onClick={handleClickOpen}
+              />
+            </Card>
             <Button
               variant="outlined"
               onClick={handleClickOpen}
@@ -117,7 +140,13 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
               B
             </Avatar>
             <img
-              style={{ maxWidth: 500, maxHeight: 500 }}
+              style={{
+                width: 500,
+                height: 500,
+                objectFit: "cover",
+                border: "5px solid #0a934e",
+                boxSizing: "border-box",
+              }}
               src={photoImage}
               alt=""
             />
@@ -140,15 +169,29 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
             >
               B
             </Avatar>
-            <img
-              style={{
-                maxWidth: 500,
-                maxHeight: 500,
-                opacity: "50%",
+            <Card
+              sx={{
+                width: 500,
+                height: 500,
+                opacity: "40%",
+                cursor: "pointer",
+                "&:hover": {
+                  opacity: "80%",
+                  backgroundColor: "#0a934e",
+                },
               }}
-              src={photoImage}
-              alt=""
-            />
+            >
+              <img
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  opacity: "80%",
+                  objectFit: "cover",
+                }}
+                src={photoImage}
+                onClick={handleClickOpen2}
+              />
+            </Card>
             <Button
               variant="outlined"
               onClick={handleClickOpen2}

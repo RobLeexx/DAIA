@@ -36,6 +36,8 @@ const UploadDialog: React.FC<UploadDialogProps> = (props) => {
     }
     formData.append("description", data.description);
     formData.append("canvas", data.canvas);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-expect-error
     await uploadSketch(formData);
   });
 
