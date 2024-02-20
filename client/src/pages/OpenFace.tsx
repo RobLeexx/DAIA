@@ -6,7 +6,7 @@ import StepButton from "@mui/material/StepButton";
 import Typography from "@mui/material/Typography";
 
 import { ChooseDatabase } from "../components/OpenFace/ChooseDatabase";
-import { RecognitionWheel } from "../components/OpenFace/RecognitionWheel";
+import RecognitionWheel from "../components/OpenFace/RecognitionWheel";
 import SearchSelection from "../components/OpenFace/SearchSelection";
 
 import dbImage from "../assets/database1.png";
@@ -143,7 +143,14 @@ export const OpenFace: React.FC = () => {
               <ChooseDatabase />
             ) : (
               /* Step 3 */
-              <RecognitionWheel />
+              <RecognitionWheel
+                selectedValue={selectedValue}
+                handleBack={handleBack}
+                selectedImage={selectedImage}
+                loading={loading}
+                imageURL={imageURL}
+                handleReload={handleReload}
+              />
             )}
           </React.Fragment>
         </div>
