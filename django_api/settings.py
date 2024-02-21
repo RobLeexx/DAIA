@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'coreapi',
     'sketches',
-    'images'
+    'images',
+    'criminal'
 ]
 
 MIDDLEWARE = [
