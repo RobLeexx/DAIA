@@ -27,10 +27,10 @@ class ImageView(viewsets.ModelViewSet):
         number = os.path.splitext(filename)[0]
 
         # Carpeta de la base de datos para la comparación
-        database_path = 'criminal/media/photos/'  # Reemplaza con la ruta correcta a tu base de datos
+        database_path = 'media/criminal/photos/'  # Reemplaza con la ruta correcta a tu base de datos
 
         # Ruta para almacenar el JSON de resultados
-        json_results_path = 'images/media/output/'+number+'.json'
+        json_results_path = 'media/images/results/'+number+'.json'
         
         # Llamar a la función search_face
         search_face(original_image_path, database_path, json_results_path)

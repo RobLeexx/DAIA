@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import { ChooseDatabase } from "../components/OpenFace/ChooseDatabase";
 import RecognitionWheel from "../components/OpenFace/RecognitionWheel";
 import SearchSelection from "../components/OpenFace/SearchSelection";
+import { getLatestImage, getOF, getAllCriminals } from "../api/sketch.api";
 
 import dbImage from "../assets/database1.png";
 import uploadImage from "../assets/uploadImage.png";
@@ -16,7 +17,23 @@ import { Navigation } from "../components/Navigation";
 const steps = ["Tipo de Búsqueda", "Base de Datos", "Rueda de Reconocimiento"];
 const sketchType = ["Seleccionar Base de Datos", "Subir Foto2"];
 
+interface Result {
+  criminal_id: number;
+  per: string;
+}
+
+interface Criminal {
+  id: number;
+  mainPhoto: string;
+}
+
+interface Match {
+  mainPhoto: string;
+  per: string;
+}
+
 export const OpenFace: React.FC = () => {
+  const [tenMatches, setTenMatches] = React.useState<Match[]>([]);
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState<{
     [k: number]: boolean;
@@ -97,6 +114,60 @@ export const OpenFace: React.FC = () => {
     handleNext2();
   };
 
+  const mergeResultsWithCriminals = (
+    results: Result[],
+    criminals: Criminal[]
+  ) => {
+    const mergedResults: any[] = [];
+
+    // Obtener los primeros 10 resultados
+    const topResults = results.slice(0, 10);
+
+    // Iterar sobre los resultados y buscar el criminal correspondiente
+    for (const result of topResults) {
+      const matchingCriminal = criminals.find(
+        (criminal) => criminal.id === result.criminal_id
+      );
+
+      if (matchingCriminal) {
+        // Agregar los datos combinados al resultado final
+        mergedResults.push({
+          result_id: result.criminal_id,
+          per: result.per,
+          mainPhoto: matchingCriminal.mainPhoto,
+        });
+      }
+    }
+
+    return mergedResults;
+  };
+
+  const handleButtonClick = async () => {
+    try {
+      setLoading(true);
+      const latestImageResponse = await getLatestImage();
+      const latestImageId =
+        latestImageResponse.data.length > 0
+          ? latestImageResponse.data[latestImageResponse.data.length - 1].id
+          : null;
+      if (latestImageId !== null) {
+        const latestImage = await getOF(latestImageId);
+        const allCriminals = await getAllCriminals();
+        const mergedResults = mergeResultsWithCriminals(
+          latestImage.data,
+          allCriminals.data
+        );
+        setTenMatches(mergedResults);
+      } else {
+        console.error("No se encontraron imágenes para obtener el ID.");
+      }
+    } catch (error) {
+      console.error("Error al obtener los resultados:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Navigation>
       <Box sx={{ width: "100%", padding: 5 }}>
@@ -150,6 +221,8 @@ export const OpenFace: React.FC = () => {
                 loading={loading}
                 imageURL={imageURL}
                 handleReload={handleReload}
+                handleButtonClick={handleButtonClick}
+                tenMatches={tenMatches}
               />
             )}
           </React.Fragment>

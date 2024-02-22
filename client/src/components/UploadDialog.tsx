@@ -133,7 +133,6 @@ const UploadDialog: React.FC<UploadDialogProps> = (props) => {
                   }}
                 />
               </div>
-              <div>{selectedValue}</div>
               <Textarea
                 disabled={false}
                 minRows={2}

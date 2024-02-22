@@ -67,6 +67,16 @@ export const getLatestSketch = () => {
   });
 };
 
+export const getLatestImage = () => {
+  return imageApi.get("/", {
+    params: {
+      _sort: "id",
+      _order: "desc",
+      _limit: 1,
+    },
+  });
+};
+
 export const getAllCriminals = () => {
   return criminalApi.get("/");
 };
@@ -83,5 +93,11 @@ export const getGAN = (id: number, config?: AxiosRequestConfig) => {
   return axios.get(
     `http://localhost:8000/sketches/api/v1/sketches/${id}/get_generated_image/`,
     config
+  );
+};
+
+export const getOF = (id: number) => {
+  return axios.get(
+    `http://localhost:8000/images/api/v1/images/${id}/get_recognition_wheel/`
   );
 };
