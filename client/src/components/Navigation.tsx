@@ -21,6 +21,8 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import PortraitIcon from "@mui/icons-material/Portrait";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import FolderSharedIcon from "@mui/icons-material/FolderShared";
+import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
 
 const drawerWidth = 300;
 
@@ -30,8 +32,14 @@ interface NavigationProps {
 
 export const Navigation: React.FC<NavigationProps> = ({ children }) => {
   const [open, setOpen] = React.useState(true);
+  const [open2, setOpen2] = React.useState(true);
+
   const handleClick = () => {
     setOpen(!open);
+  };
+
+  const handleClick2 = () => {
+    setOpen2(!open2);
   };
 
   return (
@@ -39,7 +47,10 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
       <CssBaseline />
       <AppBar
         position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 , backgroundColor: "#0a934e"}}
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          backgroundColor: "#0a934e",
+        }}
       >
         <Toolbar>
           <div
@@ -95,27 +106,59 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
                 <ListItemText primary={"Inicio"} />
               </ListItemButton>
             </Link>
-            <Link
-              to="/registros"
-              style={{
-                textDecoration: "none",
-                cursor: "default",
-                color: "black",
+            <ListItemButton
+              onClick={handleClick2}
+              sx={{
+                minHeight: 48,
+                justifyContent: open2 ? "initial" : "center",
+                px: 2.5,
               }}
             >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon>
-                  <SourceIcon></SourceIcon>
-                </ListItemIcon>
-                <ListItemText primary={"Registros"} />
-              </ListItemButton>
-            </Link>
+              <ListItemIcon>
+                <SourceIcon></SourceIcon>
+              </ListItemIcon>
+              <ListItemText primary={"Registros"} />
+              {open2 ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse
+              in={open2}
+              timeout="auto"
+              unmountOnExit
+              sx={{ opacity: open2 ? 1 : 0, display: open2 ? 1 : "none" }}
+            >
+              <List component="div" disablePadding>
+                <Link
+                  to={"/casos"}
+                  style={{
+                    textDecoration: "none",
+                    cursor: "default",
+                    color: "black",
+                  }}
+                >
+                  <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemIcon>
+                      <FolderSharedIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Casos" />
+                  </ListItemButton>
+                </Link>
+                <Link
+                  to={"/criminales"}
+                  style={{
+                    textDecoration: "none",
+                    cursor: "default",
+                    color: "black",
+                  }}
+                >
+                  <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemIcon>
+                      <SwitchAccountIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Criminales" />
+                  </ListItemButton>
+                </Link>
+              </List>
+            </Collapse>
             <ListItemButton
               onClick={handleClick}
               sx={{

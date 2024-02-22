@@ -33,7 +33,7 @@ class SketchView(viewsets.ModelViewSet):
         if generated_image:
             try:
                 # Guardar el output_gan_path en el campo output del sketch
-                sketch.output = 'sketches/media/output/'+img_name
+                sketch.output = 'sketches/output/'+img_name
                 sketch.save()
                 # Devolver la imagen generada como respuesta usando FileResponse
                 response = FileResponse(open(output_gan_path, 'rb'), content_type='image/jpeg')

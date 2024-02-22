@@ -25,6 +25,10 @@ const imageApi = axios.create({
   baseURL: "http://localhost:8000/images/api/v1/images/",
 });
 
+const criminalApi = axios.create({
+  baseURL: "http://localhost:8000/criminal/api/v1/criminal/",
+});
+
 // Define el tipo de la respuesta que se espera (AxiosResponse<Sketch>)
 export const uploadSketch = (
   sketch: Sketch
@@ -32,9 +36,7 @@ export const uploadSketch = (
   return sketchApi.post("/", sketch);
 };
 
-export const uploadImage = (
-  image: Image
-): Promise<AxiosResponse<Image>> => {
+export const uploadImage = (image: Image): Promise<AxiosResponse<Image>> => {
   return imageApi.post("/", image);
 };
 
@@ -63,6 +65,18 @@ export const getLatestSketch = () => {
       _limit: 1,
     },
   });
+};
+
+export const getAllCriminals = () => {
+  return criminalApi.get("/");
+};
+
+export const getCriminal = (id: string) => {
+  return criminalApi.get(`/${id}`);
+};
+
+export const uploadCriminal = (criminal: FormData) => {
+  return criminalApi.post("/", criminal);
 };
 
 export const getGAN = (id: number, config?: AxiosRequestConfig) => {
