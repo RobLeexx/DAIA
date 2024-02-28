@@ -21,9 +21,9 @@ interface Criminal {
   alias: string;
   ci: string;
   birthday: Date;
-  case: string;
+  nationality: string;
   description: string;
-  criminal_record: string;
+  criminalRecord: string;
   createdAt: Date;
 }
 
@@ -56,12 +56,13 @@ const calculateAge = (birthday: Date) => {
 };
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "lastname", headerName: "Apellidos", width: 200 },
-  { field: "name", headerName: "Nombre", width: 200 },
-  { field: "alias", headerName: "Alias", width: 130 },
-  { field: "case", headerName: "Casos", width: 130 },
-  { field: "ci", headerName: "CI", width: 100 },
+  { field: "id", headerName: "ID", width: 22 },
+  { field: "lastname", headerName: "Apellidos", width: 180 },
+  { field: "name", headerName: "Nombre", width: 150 },
+  { field: "alias", headerName: "Alias", width: 150 },
+  { field: "nationality", headerName: "Nacionalidad", width: 130 },
+  { field: "ci", headerName: "CI", width: 120 },
+  { field: "criminalRecord", headerName: "Antecedentes", width: 130 },
   {
     field: "birthday",
     headerName: "Edad",
@@ -71,8 +72,7 @@ const columns: GridColDef[] = [
       return age;
     },
   },
-  { field: "description", headerName: "Descripción", width: 200 },
-  { field: "criminal_record", headerName: "Antecedentes", width: 130 },
+  { field: "description", headerName: "Descripción", width: 300 },
   { field: "createdAt", headerName: "Creado en", width: 160 },
   {
     field: "actions",

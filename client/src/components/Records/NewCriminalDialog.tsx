@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import {
   Dialog,
   IconButton,
@@ -9,16 +9,44 @@ import {
   Input,
   Slide,
   TextField,
+  MenuItem,
+  Rating,
+  Box,
+  Checkbox,
+  OutlinedInput,
+  ListItemText,
+  Avatar,
+  Tooltip,
 } from "@mui/material";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import CloseIcon from "@mui/icons-material/Close";
+import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
+import DrawIcon from "@mui/icons-material/Draw";
 import { TransitionProps } from "@mui/material/transitions";
-import { useForm } from "react-hook-form";
-import "react-datepicker/dist/react-datepicker.css";
-import DatePicker, { registerLocale } from "react-datepicker";
-import es from "date-fns/locale/es";
-import { format } from "date-fns";
+import { useForm, Controller } from "react-hook-form";
+import StarIcon from "@mui/icons-material/Star";
+import HelpIcon from "@mui/icons-material/Help";
 import maleImage from "../../assets/male.jpg";
+import womanImage from "../../assets/woman.jpg";
+import maleErrorImage from "../../assets/maleError.jpg";
 import { uploadCriminal } from "../../api/sketch.api";
+
+const labels: { [index: string]: string } = {
+  0.5: "Iniciante",
+  1: "Novato",
+  1.5: "Aficionado",
+  2: "Regular",
+  2.5: "Recurrente",
+  3: "Peligroso",
+  3.5: "Amenazante",
+  4: "Dominante",
+  4.5: "Muy Peligroso",
+  5: "Extremadamente Peligroso",
+};
+
+const getLabelText = (value: number) => {
+  return `${value} Star${value !== 1 ? "s" : ""}, ${labels[value]}`;
+};
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -29,54 +57,97 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const names = ["Lancero", "Monrrero", "Jalador", "Plumero", "Autoridad"];
+
 interface NewCriminalDialogProps {
   open: boolean;
   onClose: () => void;
 }
 
 const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
+  const [value, setValue] = React.useState<number | null>(2);
+  const [hover, setHover] = React.useState(-1);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [errorImage, setErrorImage] = useState(false);
+  const [gender, setGender] = useState("Masculino");
+  const [status, setStatus] = useState("Libre con Cargos");
+  const [personName, setPersonName] = React.useState<string[]>(["Lancero"]);
+
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
-    setValue,
   } = useForm();
   const { onClose, open } = props;
   const handleClose = () => {
     onClose();
   };
-  const onSubmit = handleSubmit(async (data) => {
-    const formData = new FormData();
-    if (selectedImage) {
-      formData.append("mainPhoto", selectedImage);
+  const verifyImage = () => {
+    if (!selectedImage) {
+      setErrorImage(true);
+    } else {
+      onSubmit;
     }
-    formData.append("lastname", data.lastname);
-    formData.append("name", data.name);
-    if (startDate) {
-      const formattedDate = format(startDate, "yyyy-MM-dd");
-      setValue("birthday", formattedDate);
-    }
-    formData.append("alias", data.alias);
-    formData.append("ci", data.ci);
-    formData.append("description", data.description);
-    formData.append("criminal_record", data.criminal_record);
-    formData.append("case", data.case);
-    uploadCriminal(formData);
-    console.log(data);
-  });
+  };
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       setSelectedImage(file);
     }
   };
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //@ts-expect-error
-  registerLocale("es", es);
-  const minDate = new Date(1930, 0, 1);
-  const maxDate = new Date(2015, 11, 31);
+  const handleFileChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const newImages = Array.from(event.target.files); // Convert FileList to array
+      setSelectedImages([...selectedImages, ...newImages]); // Append new images
+    }
+  };
+  const onSubmit = handleSubmit(async (data) => {
+    const formData = new FormData();
+    // 18
+    if (selectedImage) {
+      formData.append("mainPhoto", selectedImage);
+    }
+    formData.append("lastname", data.lastname);
+    formData.append("name", data.name);
+    formData.append("birthday", data.birthday);
+    formData.append("alias", data.alias);
+    formData.append("ci", data.ci);
+    formData.append("description", data.description);
+    formData.append("criminalRecord", data.criminalRecord);
+    formData.append("phone", data.phone);
+    formData.append("address", data.address);
+    formData.append("gender", data.gender);
+    formData.append("nationality", data.nationality);
+    formData.append("criminalOrganization", data.criminalOrganization);
+    formData.append("dangerousness", data.dangerousness);
+    formData.append("relapse", data.relapse);
+    formData.append("particularSigns", data.particularSigns);
+    formData.append("specialty", data.specialty);
+    formData.append("status", data.status);
+    /* if (selectedImages) {
+      formData.append("photos", selectedImages);
+    } */
+    //console.log(data);
+    uploadCriminal(formData);
+    window.location.reload();
+  });
+  const handleChangeGender = (event: SelectChangeEvent) => {
+    setGender(event.target.value as string);
+  };
+  const handleChangeStatus = (event: SelectChangeEvent) => {
+    setStatus(event.target.value as string);
+  };
+  const campos = [
+    "lastname",
+    "name",
+    "ci",
+    "address",
+    "description",
+    "birthday",
+    "nationality",
+  ];
   return (
     <React.Fragment>
       <Dialog
@@ -86,17 +157,17 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
         TransitionComponent={Transition}
       >
         <AppBar sx={{ position: "relative" }}>
-          <Toolbar>
+          <Toolbar sx={{ backgroundColor: "#064887" }}>
             <IconButton
               aria-label="close"
               edge="start"
               onClick={handleClose}
               sx={{
-                color: "red",
-                backgroundColor: "white",
+                backgroundColor: "red",
+                color: "white",
                 "&:hover": {
-                  backgroundColor: "red",
-                  color: "white",
+                  color: "red",
+                  backgroundColor: "white",
                 },
               }}
             >
@@ -111,7 +182,10 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
             </Typography>
           </Toolbar>
         </AppBar>
-        <form onSubmit={onSubmit} style={{ padding: 50, display: "flex" }}>
+        <form
+          onSubmit={onSubmit}
+          style={{ padding: 50, display: "flex", height: "100%" }}
+        >
           <div
             style={{ flex: "0 0 calc(40% - 10px)", padding: 20, height: 500 }}
           >
@@ -130,16 +204,83 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
                 height: "100%",
               }}
             >
-              <img
-                src={
-                  selectedImage ? URL.createObjectURL(selectedImage) : maleImage
-                }
-                alt="Seleccionada"
-                style={{
-                  maxWidth: 650,
-                }}
-              />
+              {!errorImage && gender === "Masculino" ? (
+                <img
+                  src={
+                    selectedImage
+                      ? URL.createObjectURL(selectedImage)
+                      : maleImage
+                  }
+                  alt="Seleccionada"
+                  style={{
+                    maxWidth: 650,
+                  }}
+                />
+              ) : !errorImage && gender === "Femenino" ? (
+                <img
+                  src={
+                    selectedImage
+                      ? URL.createObjectURL(selectedImage)
+                      : womanImage
+                  }
+                  alt="Seleccionada"
+                  style={{
+                    maxWidth: 650,
+                  }}
+                />
+              ) : (
+                <img
+                  src={
+                    selectedImage
+                      ? URL.createObjectURL(selectedImage)
+                      : maleErrorImage
+                  }
+                  alt="Seleccionada"
+                  style={{
+                    maxWidth: 650,
+                  }}
+                />
+              )}
             </label>
+            <div
+              style={{
+                margin: 25,
+                display: "flex",
+                justifyContent: "space-around",
+                backgroundColor: "#D9E0F1",
+                borderRadius: 50,
+                padding: 5,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  padding: 15,
+                }}
+              >
+                <Tooltip title="Campo relacionados a Inteligencia Artificial">
+                  <Avatar
+                    sx={{
+                      outline: "5px solid #064887",
+                      bgcolor: "white",
+                      color: "#064887",
+                      fontWeight: "bolder",
+                    }}
+                  >
+                    IA
+                  </Avatar>
+                </Tooltip>
+              </div>
+              <Typography
+                sx={{ padding: 2, fontWeight: "bold", textAlign: "center" }}
+              >
+                La foto principal seleccionada será implementada en el
+                entrenamiento de Generación de Identikits y en la búsqueda por
+                Reconocimiento Facial.
+              </Typography>
+            </div>
             <div
               style={{
                 display: "flex",
@@ -147,7 +288,6 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
               }}
             ></div>
           </div>
-          {errors.description && <span>es requerido</span>}
           <div
             style={{
               display: "flex",
@@ -155,99 +295,540 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
               flex: "0 0 calc(60% - 10px)",
             }}
           >
-            <TextField
-              style={{ flex: "0 0 calc(33.33% - 10px)", margin: 5 }}
-              type="text"
-              variant="filled"
-              label="Apellidos"
-              {...register("lastname", { required: true })}
+            <Controller
+              name="lastname"
+              control={control}
+              rules={{ required: "Este campo es obligatorio" }}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  style={{ flex: "0 0 calc(33.33% - 10px)", margin: 5 }}
+                  type="text"
+                  variant="filled"
+                  id="lastname"
+                  {...field}
+                  label="Apellidos"
+                  error={Boolean(errors.lastname)}
+                />
+              )}
             />
-            {errors.lastname && <span>es requerido</span>}
-            <TextField
-              style={{ flex: "0 0 calc(33.33% - 10px)", margin: 5 }}
-              type="text"
-              label="Nombres"
-              variant="filled"
-              {...register("name", { required: true })}
+            <Controller
+              name="name"
+              control={control}
+              rules={{ required: "Este campo es obligatorio" }}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  style={{ flex: "0 0 calc(33.33% - 10px)", margin: 5 }}
+                  type="text"
+                  variant="filled"
+                  id="name"
+                  {...field}
+                  label="Nombre"
+                  error={Boolean(errors.name)}
+                />
+              )}
             />
-            {errors.name && <span>es requerido</span>}
+            <Controller
+              name="address"
+              control={control}
+              rules={{ required: "Este campo es obligatorio" }}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  style={{ flex: "0 0 calc(33.33% - 10px)", margin: 5 }}
+                  type="text"
+                  variant="filled"
+                  id="address"
+                  {...field}
+                  label="Domicilio"
+                  error={Boolean(errors.address)}
+                />
+              )}
+            />
+            <div style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}>
+              <h5
+                style={{
+                  position: "absolute",
+                  margin: 0,
+                  padding: 5,
+                  paddingLeft: 110,
+                }}
+              >
+                Estado
+              </h5>
+              <Select
+                style={{ width: "100%" }}
+                id="status"
+                variant="filled"
+                value={status}
+                label="Estado"
+                {...register("status", { required: false })}
+                onChange={handleChangeStatus}
+              >
+                <MenuItem value="Arrestado">Arrestado</MenuItem>
+                <MenuItem value="Aprehendido">Aprehendido</MenuItem>
+                <MenuItem value="Libertad Condicional">
+                  Libertad Condicional
+                </MenuItem>
+                <MenuItem value="En Busca Y Captura">
+                  En Busca Y Captura
+                </MenuItem>
+                <MenuItem value="Libre con Cargos">Libre con Cargos</MenuItem>
+              </Select>
+            </div>
             <TextField
-              style={{ flex: "0 0 calc(33.33% - 10px)", margin: 5 }}
+              style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
               type="text"
               label="Alias"
               variant="filled"
               {...register("alias", { required: false })}
             />
-            <TextField
-              style={{ flex: "0 0 calc(33.33% - 10px)", margin: 5 }}
-              type="text"
-              label="Casos"
-              variant="filled"
-              {...register("case", { required: false })}
+            <Controller
+              name="ci"
+              control={control}
+              rules={{ required: "Este campo es obligatorio" }}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                  type="text"
+                  variant="filled"
+                  id="ci"
+                  {...field}
+                  label="Carnet de Identidad"
+                  error={Boolean(errors.ci)}
+                />
+              )}
             />
             <TextField
-              style={{ flex: "0 0 calc(33.33% - 10px)", margin: 5 }}
-              type="text"
-              variant="filled"
-              label="Carnet de Identidad"
-              {...register("ci", { required: true })}
-            />
-            {errors.ci && <span>es requerido</span>}
-            <TextField
-              style={{ flex: "0 0 calc(33.33% - 10px)", margin: 5 }}
+              style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
               type="text"
               variant="filled"
               label="Antecedentes"
-              {...register("criminal_record", { required: false })}
+              {...register("criminalRecord", { required: false })}
             />
-            <div
+            <Controller
+              name="description"
+              control={control}
+              rules={{ required: "Este campo es obligatorio" }}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  style={{ flex: "0 0 calc(75% - 10px)", margin: 5 }}
+                  type="text"
+                  variant="filled"
+                  id="description"
+                  {...field}
+                  label="Descripción"
+                  error={Boolean(errors.description)}
+                />
+              )}
+            />
+
+            <input
+              type="file"
+              style={{ display: "none" }}
+              multiple
+              accept="image/*"
+              id="photos-upload-input"
+              {...register("photos", { required: false })}
+              onChange={handleFileChange2}
+            />
+            <label
+              htmlFor="photos-upload-input"
               style={{
                 display: "flex",
-                justifyContent: "space-between",
-                width: "100%",
+                flex: "0 0 calc(25% - 10px)",
+                margin: 5,
+                flexDirection: "column",
               }}
             >
-              <div>
-                <DatePicker
-                  showIcon
-                  minDate={minDate}
-                  maxDate={maxDate}
-                  showYearDropdown
-                  scrollableYearDropdown
-                  selected={startDate}
-                  locale="es"
-                  placeholderText="Fecha de nacimiento"
-                  onChange={(date) => {
-                    setStartDate(date);
-                    setValue("birthday", date); // Actualizar el valor del campo birthday en el estado del formulario
+              <Button
+                style={{ height: "75%" }}
+                component="span"
+                variant="contained"
+                startIcon={<SwitchAccountIcon />}
+              >
+                Subir Fotos
+              </Button>
+            </label>
+            <Controller
+              name="particularSigns"
+              control={control}
+              rules={{ required: "Este campo es obligatorio" }}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  style={{ flex: "0 0 calc(75% - 10px)", margin: 5 }}
+                  type="text"
+                  variant="filled"
+                  id="particularSigns"
+                  {...field}
+                  label="Señales Particulares"
+                  error={Boolean(errors.particular_signs)}
+                />
+              )}
+            />
+
+            <Button
+              style={{ flex: "0 0 calc(25% - 10px)", margin: 5, height: "10%" }}
+              component="label"
+              variant="outlined"
+              startIcon={<DrawIcon />}
+            >
+              Subir Dibujos
+            </Button>
+            <div style={{ flex: "0 0 calc(20% - 10px)", margin: 5 }}>
+              <h5
+                style={{
+                  position: "absolute",
+                  margin: 0,
+                  padding: 5,
+                  paddingLeft: 85,
+                }}
+              >
+                Género
+              </h5>
+              <Select
+                style={{ width: "100%" }}
+                id="gender"
+                variant="filled"
+                value={gender}
+                label="Género"
+                {...register("gender", { required: false })}
+                onChange={handleChangeGender}
+              >
+                <MenuItem value="Masculino">Masculino</MenuItem>
+                <MenuItem value="Femenino">Femenino</MenuItem>
+              </Select>
+            </div>
+            <div style={{ flex: "0 0 calc(20% - 10px)", margin: 5 }}>
+              <h5
+                style={{
+                  position: "absolute",
+                  margin: 0,
+                  padding: 5,
+                  paddingLeft: 40,
+                }}
+              >
+                Fecha de nacimiento
+              </h5>
+              <Controller
+                name="birthday"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ width: "100%" }}
+                    type="date"
+                    variant="filled"
+                    id="birthday"
+                    {...field}
+                    error={Boolean(errors.birthday)}
+                  />
+                )}
+              />
+            </div>
+            <Controller
+              name="nationality"
+              control={control}
+              rules={{ required: "Este campo es obligatorio" }}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  style={{ flex: "0 0 calc(20% - 10px)", margin: 5 }}
+                  type="text"
+                  variant="filled"
+                  id="nationality"
+                  {...field}
+                  label="Nacionalidad"
+                  error={Boolean(errors.nationality)}
+                />
+              )}
+            />
+            <TextField
+              style={{ flex: "0 0 calc(20% - 10px)", margin: 5 }}
+              type="number"
+              id="phone"
+              variant="filled"
+              label="Celular/Teléfono"
+              {...register("phone", { required: false })}
+            />
+
+            <TextField
+              style={{ flex: "0 0 calc(20% - 10px)", margin: 5 }}
+              type="text"
+              variant="filled"
+              id="criminalOrganization"
+              label="Organización Criminal"
+              {...register("criminalOrganization", { required: false })}
+            />
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                flex: "0 0 calc(33.33% - 10px)",
+              }}
+            >
+              <h5
+                style={{
+                  position: "absolute",
+                  paddingBottom: 80,
+                  paddingLeft: 140,
+                }}
+              >
+                Peligrosidad
+              </h5>
+              <Controller
+                name="dangerousness"
+                control={control}
+                defaultValue={2}
+                render={({ field }) => (
+                  <div>
+                    <Rating
+                      style={{ color: "#064887", fontSize: 40 }}
+                      value={value}
+                      precision={0.5}
+                      getLabelText={getLabelText}
+                      onChange={(event, newValue) => {
+                        setValue(newValue);
+                        field.onChange(newValue);
+                      }}
+                      onChangeActive={(event, newHover) => {
+                        setHover(newHover);
+                      }}
+                      emptyIcon={
+                        <StarIcon
+                          style={{ opacity: 0.55 }}
+                          fontSize="inherit"
+                        />
+                      }
+                    />
+                    {value !== null && (
+                      <Box sx={{ ml: 2 }}>
+                        {labels[hover !== -1 ? hover : value]}
+                      </Box>
+                    )}
+                  </div>
+                )}
+              />
+            </Box>
+            {/* IA */}
+            <div
+              style={{
+                flex: "0 0 calc(65% - 10px)",
+                margin: 15,
+                display: "flex",
+                justifyContent: "space-around",
+                backgroundColor: "#D9E0F1",
+                borderRadius: 50,
+                padding: 15,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  padding: 10,
+                }}
+              >
+                <Tooltip title="Campos relacionados a Inteligencia Artificial">
+                  <Avatar
+                    sx={{
+                      outline: "5px solid #064887",
+                      bgcolor: "white",
+                      color: "#064887",
+                      fontWeight: "bolder",
+                    }}
+                  >
+                    IA
+                  </Avatar>
+                </Tooltip>
+              </div>
+              <div
+                style={{
+                  width: 400,
+                  margin: 5,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <h5
+                  style={{
+                    position: "absolute",
+                    paddingLeft: 150,
+                    margin: 0,
+                    paddingBottom: 90,
                   }}
+                >
+                  Especialidad
+                </h5>
+                <Controller
+                  name="specialty" // Nombre del campo en el formulario
+                  control={control}
+                  defaultValue={["Lancero"]} // Valor inicial
+                  render={({ field }) => (
+                    <div>
+                      <Select
+                        style={{ width: "100%" }}
+                        multiple
+                        value={personName}
+                        onChange={(event) => {
+                          setPersonName(event.target.value as string[]);
+                          field.onChange(event.target.value); // Actualiza el valor del controlador
+                        }}
+                        input={<OutlinedInput label="Tag" />}
+                        renderValue={(selected) =>
+                          (selected as string[]).join(", ")
+                        }
+                      >
+                        {names.map((name) => (
+                          <MenuItem key={name} value={name}>
+                            <Checkbox checked={personName.indexOf(name) > -1} />
+                            <ListItemText primary={name} />
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </div>
+                  )}
                 />
               </div>
-              <TextField
-                sx={{ width: "100%", marginLeft: 3 }}
-                type="text"
-                variant="filled"
-                label="Descripción"
-                {...register("description", { required: true })}
-              ></TextField>
+              <Tooltip title="La Especialidad o Especialidades seleccionadas serán filtros de búsqueda para la Inteligencia Artificial por Reconocimiento Facial">
+                <IconButton
+                  sx={{
+                    "&:hover": {
+                      color: "#064887",
+                      backgroundColor: "inherit",
+                      outline: "none",
+                    },
+                  }}
+                >
+                  <HelpIcon></HelpIcon>
+                </IconButton>
+              </Tooltip>
+              <div
+                style={{
+                  margin: 5,
+                  width: 100,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <h5
+                  style={{
+                    position: "absolute",
+                    paddingLeft: 10,
+                    margin: 0,
+                    paddingBottom: 90,
+                  }}
+                >
+                  Reincidencia
+                </h5>
+                <TextField
+                  type="number"
+                  id="relapse"
+                  defaultValue={1}
+                  inputProps={{ min: 1, max: 10 }}
+                  {...register("relapse", { required: false })}
+                />
+              </div>
+              <Tooltip title="El valor de la reincidencia afectará al entrenamiento de los Identikits Generativos generados por IA, cuanto mayor se el valor, más probabilidades hay de que el Identikit generado sea más parecido al Criminal">
+                <IconButton
+                  sx={{
+                    "&:hover": {
+                      color: "#064887",
+                      backgroundColor: "inherit",
+                      outline: "none",
+                    },
+                  }}
+                >
+                  <HelpIcon></HelpIcon>
+                </IconButton>
+              </Tooltip>
+            </div>
+            {/* Footer */}
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-between",
+                margin: 5,
+              }}
+            >
+              <Typography
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignContent: "center",
+                  color: "red",
+                }}
+              >
+                <span
+                  style={{
+                    display: campos.some((campo) => errors[campo])
+                      ? "flex"
+                      : "none",
+                  }}
+                >
+                  Campos obligatorios:
+                </span>
+                {errors.lastname && (
+                  <span style={{ marginLeft: "5px" }}>APELLIDOS</span>
+                )}
+                {errors.name && (
+                  <span style={{ marginLeft: "5px" }}>NOMBRE</span>
+                )}
+                {errors.ci && (
+                  <span style={{ marginLeft: "5px" }}>CARNET DE IDENTIDAD</span>
+                )}
+                {errors.address && (
+                  <span style={{ marginLeft: "5px" }}>DOMICILIO</span>
+                )}
+                {errors.description && (
+                  <span style={{ marginLeft: "5px" }}>DESCRIPCIÓN</span>
+                )}
+                {errors.birthday && (
+                  <span style={{ marginLeft: "5px" }}>FECHA DE NACIMIENTO</span>
+                )}
+                {errors.nationality && (
+                  <span style={{ marginLeft: "5px" }}>NACIONALIDAD</span>
+                )}
+              </Typography>
+              <div
+                style={{
+                  flex: "0 0 calc(25% - 10px)",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <Button
+                  autoFocus
+                  type="submit"
+                  onClick={verifyImage}
+                  size="large"
+                  sx={{
+                    backgroundColor: "#0a934e",
+                    color: "white",
+                    width: "100%",
+                    height: "100%",
+                    "&:hover": {
+                      color: "#0a934e",
+                      backgroundColor: "white",
+                      outline: "2px solid #0a934e",
+                    },
+                  }}
+                >
+                  Guardar
+                </Button>
+              </div>
             </div>
           </div>
-          <Button
-            autoFocus
-            type="submit"
-            onClick={onSubmit}
-            size="large"
-            sx={{
-              color: "#0a934e",
-              backgroundColor: "white",
-              "&:hover": {
-                backgroundColor: "#0a934e",
-                color: "white",
-              },
-            }}
-          >
-            Guardar
-          </Button>
         </form>
       </Dialog>
     </React.Fragment>

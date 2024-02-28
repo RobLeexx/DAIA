@@ -5,6 +5,8 @@ import CanvasDraw from "react-canvas-draw";
 
 import { Box, Button, CircularProgress } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import CameraFrontIcon from "@mui/icons-material/CameraFront";
+import DownloadButton from "../DownloadButton";
 
 interface GeneratorProps {
   selectedValue: string;
@@ -25,6 +27,7 @@ const Generator: React.FC<GeneratorProps> = ({
   imageURL,
   handleReload,
 }) => {
+  const drawed = selectedImage ? URL.createObjectURL(selectedImage) : null;
   return (
     <Box>
       <div
@@ -35,15 +38,28 @@ const Generator: React.FC<GeneratorProps> = ({
         }}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <img
-            src={selectedImage ? URL.createObjectURL(selectedImage) : ""}
-            alt="Imagen"
-            style={{
-              width: 512,
-              height: 512,
-              border: "5px solid #1769aa",
-            }}
-          />
+          {selectedValue === "Dibujar Identikit" && (
+            <img
+              src={selectedImage ? URL.createObjectURL(selectedImage) : ""}
+              alt="Imagen"
+              style={{
+                width: 512,
+                height: 512,
+                border: "5px solid #1769aa",
+              }}
+            />
+          )}
+          {selectedValue === "Subir Foto" && (
+            <img
+              src={selectedImage ? URL.createObjectURL(selectedImage) : ""}
+              alt="Imagen"
+              style={{
+                width: "100%",
+                height: 512,
+                border: "5px solid #1769aa",
+              }}
+            />
+          )}
           {selectedValue === "Subir Foto" ? (
             <Button
               variant="contained"
@@ -60,12 +76,15 @@ const Generator: React.FC<GeneratorProps> = ({
             </Button>
           ) : (
             <Button
-              style={{ marginTop: 20 }}
+              style={{ marginBlock: 20 }}
               variant="contained"
               onClick={handleBack}
             >
               Editar Dibujo
             </Button>
+          )}
+          {selectedValue === "Dibujar Identikit" && (
+            <DownloadButton imageUrl={drawed} fileName="dibujo.jpg" />
           )}
         </div>
 
@@ -77,7 +96,11 @@ const Generator: React.FC<GeneratorProps> = ({
           }}
         >
           {!loading ? (
-            <Button variant="contained" onClick={handleButtonClick}>
+            <Button
+              variant="contained"
+              onClick={handleButtonClick}
+              startIcon={<CameraFrontIcon fontSize="large" />}
+            >
               CONVERTIR
             </Button>
           ) : (
@@ -131,11 +154,14 @@ const Generator: React.FC<GeneratorProps> = ({
             disabled={!imageURL}
             color="success"
             variant="contained"
-            style={{ marginTop: 20 }}
+            style={{ marginBlock: 20 }}
             startIcon={<SearchIcon />}
           >
             Buscar en Bases de Datos
           </Button>
+          {imageURL && (
+            <DownloadButton imageUrl={imageURL} fileName="resultado.jpg" />
+          )}
         </div>
       </div>
     </Box>

@@ -156,7 +156,7 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
           {loading && selectedValue === "Subir Foto2" ? (
             <div
               style={{
-                width: 512,
+                width: 400,
                 height: 400,
               }}
             >
@@ -191,132 +191,23 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
             padding: 20,
           }}
         >
-          <div style={{ padding: 20 }}>
-            <a
-              href={`http://localhost:5173/criminales/${tenMatches[1].result_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={tenMatches[1].mainPhoto} />
-            </a>
-            <ColoredDiv
-              style={{ backgroundColor: matchColors[1], color: "white" }}
-            >
-              {tenMatches[1].per}
-            </ColoredDiv>
-          </div>
-          <div style={{ padding: 20 }}>
-            <a
-              href={`http://localhost:5173/criminales/${tenMatches[2].result_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={tenMatches[2].mainPhoto} />
-            </a>
-            <ColoredDiv
-              style={{ backgroundColor: matchColors[2], color: "white" }}
-            >
-              {tenMatches[2].per}
-            </ColoredDiv>
-          </div>
-          <div style={{ padding: 20 }}>
-            <a
-              href={`http://localhost:5173/criminales/${tenMatches[3].result_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={tenMatches[3].mainPhoto} />
-            </a>
-            <ColoredDiv
-              style={{ backgroundColor: matchColors[3], color: "white" }}
-            >
-              {tenMatches[3].per}
-            </ColoredDiv>
-          </div>
-          <div style={{ padding: 20 }}>
-            <a
-              href={`http://localhost:5173/criminales/${tenMatches[4].result_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={tenMatches[4].mainPhoto} />
-            </a>
-            <ColoredDiv
-              style={{ backgroundColor: matchColors[4], color: "white" }}
-            >
-              {tenMatches[4].per}
-            </ColoredDiv>
-          </div>
-          <div style={{ padding: 20 }}>
-            <a
-              href={`http://localhost:5173/criminales/${tenMatches[5].result_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={tenMatches[5].mainPhoto} />
-            </a>
-            <ColoredDiv
-              style={{ backgroundColor: matchColors[5], color: "white" }}
-            >
-              {tenMatches[5].per}
-            </ColoredDiv>
-          </div>
-          <div style={{ padding: 20 }}>
-            <a
-              href={`http://localhost:5173/criminales/${tenMatches[6].result_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={tenMatches[6].mainPhoto} />
-            </a>
-            <ColoredDiv
-              style={{ backgroundColor: matchColors[6], color: "white" }}
-            >
-              {tenMatches[6].per}
-            </ColoredDiv>
-          </div>
-          <div style={{ padding: 20 }}>
-            <a
-              href={`http://localhost:5173/criminales/${tenMatches[7].result_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={tenMatches[7].mainPhoto} />
-            </a>
-            <ColoredDiv
-              style={{ backgroundColor: matchColors[7], color: "white" }}
-            >
-              {tenMatches[7].per}
-            </ColoredDiv>
-          </div>
-          <div style={{ padding: 20 }}>
-            <a
-              href={`http://localhost:5173/criminales/${tenMatches[8].result_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={tenMatches[8].mainPhoto} />
-            </a>
-            <ColoredDiv
-              style={{ backgroundColor: matchColors[8], color: "white" }}
-            >
-              {tenMatches[8].per}
-            </ColoredDiv>
-          </div>
-          <div style={{ padding: 20 }}>
-            <a
-              href={`http://localhost:5173/criminales/${tenMatches[9].result_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={tenMatches[9].mainPhoto} />
-            </a>
-            <ColoredDiv
-              style={{ backgroundColor: matchColors[9], color: "white" }}
-            >
-              {tenMatches[9].per}
-            </ColoredDiv>
-          </div>
+          {tenMatches.map((match, index) => (
+            <div key={index} style={{ padding: 20 }}>
+              <a
+                href={`http://localhost:5173/criminales/${match.result_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src={match.mainPhoto} alt={`Criminal ${index + 1}`} />
+              </a>
+              <ColoredDiv
+                style={{ backgroundColor: matchColors[index], color: "white" }}
+              >
+                {match.per}
+              </ColoredDiv>
+            </div>
+          ))}
+
           <div
             style={{
               padding: 20,

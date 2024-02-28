@@ -48,7 +48,7 @@ const SearchSelection: React.FC<ImageSelectionProps> = ({
               style={{
                 position: "absolute",
                 margin: 15,
-                backgroundColor: "#0a934e",
+                backgroundColor: "#064887",
               }}
             >
               A
@@ -59,7 +59,7 @@ const SearchSelection: React.FC<ImageSelectionProps> = ({
                 height: 500,
                 margin: "auto",
                 padding: 50,
-                border: "5px solid #0a934e",
+                border: "5px solid #064887",
                 boxSizing: "border-box",
               }}
             >
@@ -75,7 +75,7 @@ const SearchSelection: React.FC<ImageSelectionProps> = ({
             <Button
               variant="contained"
               onClick={() => selectAorB(sketchType[0])}
-              style={{ backgroundColor: "#0a934e" }}
+              style={{ backgroundColor: "#064887" }}
             >
               Buscar Imagen de una Base de Datos
             </Button>
@@ -91,7 +91,7 @@ const SearchSelection: React.FC<ImageSelectionProps> = ({
               style={{
                 position: "absolute",
                 margin: 15,
-                backgroundColor: "#0a934e",
+                backgroundColor: "#064887",
               }}
             >
               A
@@ -104,7 +104,7 @@ const SearchSelection: React.FC<ImageSelectionProps> = ({
                 cursor: "pointer",
                 padding: 2,
                 "&:hover": {
-                  backgroundColor: "#0a934e",
+                  backgroundColor: "#064887",
                 },
               }}
             >
@@ -122,7 +122,7 @@ const SearchSelection: React.FC<ImageSelectionProps> = ({
             <Button
               variant="outlined"
               onClick={() => selectAorB(sketchType[0])}
-              style={{ color: "#0a934e" }}
+              style={{ color: "#064887" }}
             >
               Buscar Imagen de una Base de Datos
             </Button>
@@ -135,7 +135,7 @@ const SearchSelection: React.FC<ImageSelectionProps> = ({
               style={{
                 position: "absolute",
                 margin: 15,
-                backgroundColor: "#0a934e",
+                backgroundColor: "#064887",
               }}
             >
               B
@@ -146,7 +146,7 @@ const SearchSelection: React.FC<ImageSelectionProps> = ({
                 height: 500,
                 margin: "auto",
                 padding: 50,
-                border: "5px solid #0a934e",
+                border: "5px solid #064887",
                 boxSizing: "border-box",
               }}
             >
@@ -162,7 +162,7 @@ const SearchSelection: React.FC<ImageSelectionProps> = ({
             <Button
               variant="contained"
               onClick={() => selectAorB(sketchType[1])}
-              style={{ backgroundColor: "#0a934e" }}
+              style={{ backgroundColor: "#064887" }}
             >
               Subir Fotografía
             </Button>
@@ -173,7 +173,7 @@ const SearchSelection: React.FC<ImageSelectionProps> = ({
               style={{
                 position: "absolute",
                 margin: 15,
-                backgroundColor: "#0a934e",
+                backgroundColor: "#064887",
               }}
             >
               B
@@ -185,7 +185,7 @@ const SearchSelection: React.FC<ImageSelectionProps> = ({
                 opacity: "40%",
                 cursor: "pointer",
                 "&:hover": {
-                  backgroundColor: "#0a934e",
+                  backgroundColor: "#064887",
                 },
               }}
             >
@@ -203,7 +203,7 @@ const SearchSelection: React.FC<ImageSelectionProps> = ({
             <Button
               variant="outlined"
               onClick={() => selectAorB(sketchType[1])}
-              style={{ color: "#0a934e" }}
+              style={{ color: "#064887" }}
             >
               Subir Fotografía
             </Button>

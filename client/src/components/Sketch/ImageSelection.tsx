@@ -56,7 +56,7 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
               style={{
                 position: "absolute",
                 margin: 15,
-                backgroundColor: "#0a934e",
+                backgroundColor: "#064887",
               }}
             >
               A
@@ -65,7 +65,7 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
               style={{
                 maxWidth: 500,
                 height: 500,
-                border: "5px solid #0a934e",
+                border: "5px solid #064887",
                 boxSizing: "border-box",
               }}
               src={canvaImage}
@@ -74,7 +74,7 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
             <Button
               variant="contained"
               onClick={handleClickOpen}
-              style={{ backgroundColor: "#0a934e" }}
+              style={{ backgroundColor: "#064887" }}
             >
               Dibujar Identikit
             </Button>
@@ -90,7 +90,7 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
               style={{
                 position: "absolute",
                 margin: 15,
-                backgroundColor: "#0a934e",
+                backgroundColor: "#064887",
               }}
             >
               A
@@ -103,7 +103,7 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
                 cursor: "pointer",
                 "&:hover": {
                   opacity: "80%",
-                  backgroundColor: "#0a934e",
+                  backgroundColor: "#064887",
                 },
               }}
             >
@@ -121,7 +121,7 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
             <Button
               variant="outlined"
               onClick={handleClickOpen}
-              style={{ color: "#0a934e" }}
+              style={{ color: "#064887" }}
             >
               Dibujar Identikit
             </Button>
@@ -134,7 +134,7 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
               style={{
                 position: "absolute",
                 margin: 15,
-                backgroundColor: "#0a934e",
+                backgroundColor: "#064887",
               }}
             >
               B
@@ -144,7 +144,7 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
                 width: 500,
                 height: 500,
                 objectFit: "cover",
-                border: "5px solid #0a934e",
+                border: "5px solid #064887",
                 boxSizing: "border-box",
               }}
               src={photoImage}
@@ -153,7 +153,7 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
             <Button
               variant="contained"
               onClick={handleClickOpen2}
-              style={{ backgroundColor: "#0a934e" }}
+              style={{ backgroundColor: "#064887" }}
             >
               Subir Fotografía
             </Button>
@@ -164,7 +164,7 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
               style={{
                 position: "absolute",
                 margin: 15,
-                backgroundColor: "#0a934e",
+                backgroundColor: "#064887",
               }}
             >
               B
@@ -177,7 +177,7 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
                 cursor: "pointer",
                 "&:hover": {
                   opacity: "80%",
-                  backgroundColor: "#0a934e",
+                  backgroundColor: "#064887",
                 },
               }}
             >
@@ -195,7 +195,7 @@ const ImageSelection: React.FC<ImageSelectionProps> = ({
             <Button
               variant="outlined"
               onClick={handleClickOpen2}
-              style={{ color: "#0a934e" }}
+              style={{ color: "#064887" }}
             >
               Subir Fotografía
             </Button>

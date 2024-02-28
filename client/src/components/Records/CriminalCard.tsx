@@ -2,8 +2,6 @@ import React, { useState, ChangeEvent, useEffect } from "react";
 import { Navigation } from "../Navigation";
 import { Button, Input, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
-import "react-datepicker/dist/react-datepicker.css";
-import DatePicker, { registerLocale } from "react-datepicker";
 import es from "date-fns/locale/es";
 import { format } from "date-fns";
 import maleImage from "../../assets/male.jpg";
@@ -176,22 +174,6 @@ export const CriminalCard: React.FC = () => {
               width: "100%",
             }}
           >
-            <div>
-              <DatePicker
-                showIcon
-                minDate={minDate}
-                maxDate={maxDate}
-                showYearDropdown
-                scrollableYearDropdown
-                selected={startDate}
-                locale="es"
-                placeholderText="Fecha de nacimiento"
-                onChange={(date) => {
-                  setStartDate(date);
-                  setValue("birthday", date); // Actualizar el valor del campo birthday en el estado del formulario
-                }}
-              />
-            </div>
             <TextField
               sx={{ width: "100%", marginLeft: 3 }}
               type="text"

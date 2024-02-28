@@ -1,3 +1,4 @@
+# serializers.py
 from rest_framework import serializers
 from .models import photosModel, identikitsModel, criminal
 
@@ -12,8 +13,8 @@ class IdentikitsModelSerializer(serializers.ModelSerializer):
         fields = ['identikit']
 
 class CriminalSerializer(serializers.ModelSerializer):
-    photos = PhotosModelSerializer(many=True, required=False)
-    identikits = IdentikitsModelSerializer(many=True, required=False)
+    photos = serializers.ListField(child=serializers.ImageField(), write_only=True, required=False)
+    identikits = serializers.ListField(child=serializers.ImageField(), write_only=True, required=False)
 
     class Meta:
         model = criminal

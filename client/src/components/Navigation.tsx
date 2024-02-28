@@ -43,13 +43,13 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", backgroundColor:"#F1F0E1" }}>
       <CssBaseline />
       <AppBar
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          backgroundColor: "#0a934e",
+          backgroundColor: "#064887",
         }}
       >
         <Toolbar>
@@ -192,7 +192,7 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
                     <ListItemIcon>
                       <PortraitIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Imagen Generativa" />
+                    <ListItemText primary="Identikit Generativo" />
                   </ListItemButton>
                 </Link>
                 <Link
