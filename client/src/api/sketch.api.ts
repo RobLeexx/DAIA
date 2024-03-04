@@ -82,11 +82,15 @@ export const getAllCriminals = () => {
 };
 
 export const getCriminal = (id: string) => {
-  return criminalApi.get(`/${id}`);
+  return criminalApi.get(`/${id}/`);
 };
 
 export const uploadCriminal = (criminal: FormData) => {
   return criminalApi.post("/", criminal);
+};
+
+export const updateCriminal = (id: string, criminal: FormData) => {
+  return criminalApi.put(`/${id}/`, criminal);
 };
 
 export const getGAN = (id: number, config?: AxiosRequestConfig) => {

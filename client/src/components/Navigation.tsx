@@ -21,7 +21,7 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import PortraitIcon from "@mui/icons-material/Portrait";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
-import FolderSharedIcon from "@mui/icons-material/FolderShared";
+import ContactsIcon from "@mui/icons-material/Contacts";
 import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
 
 const drawerWidth = 300;
@@ -43,7 +43,7 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
   };
 
   return (
-    <Box sx={{ display: "flex", backgroundColor:"#F1F0E1" }}>
+    <Box sx={{ display: "flex", backgroundColor: "#F0F1F4" }}>
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -110,7 +110,7 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
               onClick={handleClick2}
               sx={{
                 minHeight: 48,
-                justifyContent: open2 ? "initial" : "center",
+                justifyContent: open ? "initial" : "center",
                 px: 2.5,
               }}
             >
@@ -128,7 +128,7 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
             >
               <List component="div" disablePadding>
                 <Link
-                  to={"/casos"}
+                  to={"/Identikits"}
                   style={{
                     textDecoration: "none",
                     cursor: "default",
@@ -137,9 +137,9 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
                 >
                   <ListItemButton sx={{ pl: 4 }}>
                     <ListItemIcon>
-                      <FolderSharedIcon />
+                      <ContactsIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Casos" />
+                    <ListItemText primary="Identikits" />
                   </ListItemButton>
                 </Link>
                 <Link

@@ -29,7 +29,12 @@ import HelpIcon from "@mui/icons-material/Help";
 import maleImage from "../../assets/male.jpg";
 import womanImage from "../../assets/woman.jpg";
 import maleErrorImage from "../../assets/maleError.jpg";
-import { uploadCriminal } from "../../api/sketch.api";
+import {
+  uploadCriminal,
+  updateCriminal,
+  getCriminal,
+} from "../../api/sketch.api";
+import { useParams } from "react-router-dom";
 
 const labels: { [index: string]: string } = {
   0.5: "Iniciante",
@@ -65,44 +70,26 @@ interface NewCriminalDialogProps {
 }
 
 const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
-  const [value, setValue] = React.useState<number | null>(2);
-  const [hover, setHover] = React.useState(-1);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
-  const [errorImage, setErrorImage] = useState(false);
-  const [gender, setGender] = useState("Masculino");
-  const [status, setStatus] = useState("Libre con Cargos");
-  const [personName, setPersonName] = React.useState<string[]>(["Lancero"]);
-
   const {
     register,
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm();
   const { onClose, open } = props;
-  const handleClose = () => {
-    onClose();
-  };
-  const verifyImage = () => {
-    if (!selectedImage) {
-      setErrorImage(true);
-    } else {
-      onSubmit;
-    }
-  };
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0];
-      setSelectedImage(file);
-    }
-  };
-  const handleFileChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const newImages = Array.from(event.target.files); // Convert FileList to array
-      setSelectedImages([...selectedImages, ...newImages]); // Append new images
-    }
-  };
+  const [value1, setValue1] = React.useState<number | null>(2);
+  const [dataCriminal, setDataCriminal] = useState();
+  const [img, setImg] = useState("");
+  const [hover, setHover] = React.useState(-1);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [errorImage, setErrorImage] = useState(false);
+  const params = useParams();
+  const [gender, setGender] = useState("Masculino");
+  const [status, setStatus] = useState("Arrestado");
+  const [personName, setPersonName] = React.useState<string[]>([]);
+
   const onSubmit = handleSubmit(async (data) => {
     const formData = new FormData();
     // 18
@@ -129,10 +116,130 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
     /* if (selectedImages) {
       formData.append("photos", selectedImages);
     } */
-    //console.log(data);
-    uploadCriminal(formData);
+    if (!params.id) {
+      uploadCriminal(formData);
+    } else {
+      updateCriminal(params.id, formData);
+    }
     window.location.reload();
   });
+
+  const localPersonName = async () => {
+    if (params.id) {
+      const { data } = await getCriminal(params.id as string);
+      return data.specialty;
+    } else return ["Lancero"];
+  };
+
+  const fetchImage = async () => {
+    try {
+      const { data } = await getCriminal(params.id as string);
+      const imageUrl = data.mainPhoto;
+      const res = await fetch(imageUrl);
+      if (!res.ok) {
+        throw new Error(`Image fetch failed: ${res.statusText}`);
+      }
+      const imageBlob = await res.blob();
+      const imageObjectURL = URL.createObjectURL(imageBlob);
+      setImg(imageObjectURL);
+    } catch (error) {
+      console.error("Image fetch error:", error);
+      setImg("path/to/fallback/image.jpg"); // Set a fallback image
+    }
+  };
+
+  useEffect(() => {
+    async function loadCriminal() {
+      if (params.id) {
+        const { data } = await getCriminal(params.id as string);
+        setDataCriminal(data);
+        setValue("lastname", data.lastname);
+        setValue("name", data.name);
+        setValue("birthday", data.birthday);
+        if (!data.alias) {
+          setValue("alias", "ninguno");
+        } else {
+          setValue("alias", data.alias);
+        }
+        setValue("description", data.description);
+        if (!data.criminalRecord) {
+          setValue("criminalRecord", "ninguno");
+        } else {
+          setValue("criminalRecord", data.criminalRecord);
+        }
+        setValue("ci", data.ci);
+        if (!data.phone) {
+          setValue("phone", "ninguno");
+        } else {
+          setValue("phone", data.phone);
+        }
+        setValue("address", data.address);
+        setValue("gender", data.gender);
+        setValue("nationality", data.nationality);
+        if (!data.criminalOrganization) {
+          setValue("criminalOrganization", "ninguna");
+        } else {
+          setValue("criminalOrganization", data.criminalOrganization);
+        }
+        setValue1(() => {
+          return data.dangerousness;
+        });
+        setValue("relapse", data.relapse);
+        if (!data.particularSigns) {
+          setValue("particularSigns", "ninguna");
+        } else {
+          setValue("particularSigns", data.particularSigns);
+        }
+        setValue("status", data.status);
+        fetchImage();
+      }
+    }
+    loadCriminal();
+  }, []);
+
+  useEffect(() => {
+    const localPersonName = async () => {
+      try {
+        if (params.id) {
+          const { data } = await getCriminal(params.id as string);
+          const resultArray = data.specialty.flatMap((item: string) => item.split(","));
+          return resultArray;
+        } else {
+          return ["Lancero"];
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        return ["Lancero"];
+      }
+    };
+
+    localPersonName().then((result) => setPersonName(result));
+  }, [params.id]);
+
+  const handleClose = () => {
+    onClose();
+  };
+  const verifyImage = () => {
+    if (!selectedImage) {
+      setErrorImage(true);
+    } else {
+      onSubmit;
+    }
+  };
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      setSelectedImage(file);
+      if (params.id) setImg(URL.createObjectURL(file));
+    }
+  };
+  const handleFileChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const newImages = Array.from(event.target.files); // Convert FileList to array
+      setSelectedImages([...selectedImages, ...newImages]); // Append new images
+    }
+  };
+
   const handleChangeGender = (event: SelectChangeEvent) => {
     setGender(event.target.value as string);
   };
@@ -178,7 +285,11 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
               variant="h6"
               component="div"
             >
-              Crear nuevo registro
+              {!params.id ? (
+                <p>Crear nuevo registro</p>
+              ) : (
+                <p>Editar registro</p>
+              )}
             </Typography>
           </Toolbar>
         </AppBar>
@@ -193,7 +304,7 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
               type="file"
               style={{ display: "none" }}
               id="image-upload-input"
-              {...register("mainPhoto", { required: true })}
+              {...register("mainPhoto", { required: false })}
               onChange={handleFileChange}
             />
             <label
@@ -204,7 +315,15 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
                 height: "100%",
               }}
             >
-              {!errorImage && gender === "Masculino" ? (
+              {params.id ? (
+                <img
+                  src={img}
+                  alt="Seleccionada"
+                  style={{
+                    maxWidth: 650,
+                  }}
+                />
+              ) : !errorImage && gender === "Masculino" ? (
                 <img
                   src={
                     selectedImage
@@ -368,13 +487,10 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
               >
                 <MenuItem value="Arrestado">Arrestado</MenuItem>
                 <MenuItem value="Aprehendido">Aprehendido</MenuItem>
-                <MenuItem value="Libertad Condicional">
-                  Libertad Condicional
+                <MenuItem value="Prófugo">Prófugo</MenuItem>
+                <MenuItem value="Con Captura Internacional">
+                  Con Captura Internacional
                 </MenuItem>
-                <MenuItem value="En Busca Y Captura">
-                  En Busca Y Captura
-                </MenuItem>
-                <MenuItem value="Libre con Cargos">Libre con Cargos</MenuItem>
               </Select>
             </div>
             <TextField
@@ -456,7 +572,6 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
             <Controller
               name="particularSigns"
               control={control}
-              rules={{ required: "Este campo es obligatorio" }}
               defaultValue=""
               render={({ field }) => (
                 <TextField
@@ -466,7 +581,6 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
                   id="particularSigns"
                   {...field}
                   label="Señales Particulares"
-                  error={Boolean(errors.particular_signs)}
                 />
               )}
             />
@@ -474,7 +588,7 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
             <Button
               style={{ flex: "0 0 calc(25% - 10px)", margin: 5, height: "10%" }}
               component="label"
-              variant="outlined"
+              variant="contained"
               startIcon={<DrawIcon />}
             >
               Subir Dibujos
@@ -575,7 +689,7 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
               <h5
                 style={{
                   position: "absolute",
-                  paddingBottom: 80,
+                  paddingBottom: 100,
                   paddingLeft: 140,
                 }}
               >
@@ -586,14 +700,14 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
                 control={control}
                 defaultValue={2}
                 render={({ field }) => (
-                  <div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
                     <Rating
                       style={{ color: "#064887", fontSize: 40 }}
-                      value={value}
+                      value={value1}
                       precision={0.5}
                       getLabelText={getLabelText}
                       onChange={(event, newValue) => {
-                        setValue(newValue);
+                        setValue1(newValue);
                         field.onChange(newValue);
                       }}
                       onChangeActive={(event, newHover) => {
@@ -606,9 +720,9 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
                         />
                       }
                     />
-                    {value !== null && (
+                    {value1 !== null && (
                       <Box sx={{ ml: 2 }}>
-                        {labels[hover !== -1 ? hover : value]}
+                        {labels[hover !== -1 ? hover : value1]}
                       </Box>
                     )}
                   </div>
@@ -670,7 +784,7 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
                 <Controller
                   name="specialty" // Nombre del campo en el formulario
                   control={control}
-                  defaultValue={["Lancero"]} // Valor inicial
+                  defaultValue={personName}
                   render={({ field }) => (
                     <div>
                       <Select
@@ -810,7 +924,7 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
                 <Button
                   autoFocus
                   type="submit"
-                  onClick={verifyImage}
+                  onClick={!params.id ? verifyImage : onSubmit}
                   size="large"
                   sx={{
                     backgroundColor: "#0a934e",

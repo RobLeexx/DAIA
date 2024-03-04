@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
 class photosModel(models.Model):
@@ -7,9 +8,6 @@ class photosModel(models.Model):
 
 class identikitsModel(models.Model):
     identikit = models.ImageField(upload_to='criminal/identikits/')
-
-def upload_to_criminal_photos(instance, filename):
-    return f'criminal/photos/{instance.id}/{filename}'
 
 class criminal(models.Model):
     lastname = models.CharField(max_length=100, default='')
@@ -21,7 +19,7 @@ class criminal(models.Model):
     #case = models.CharField(max_length=100, null=True, blank=True, default='')
     gender = models.CharField(max_length=10, default='Masculino')
     ci = models.CharField(max_length=20, default='')
-    mainPhoto = models.ImageField(upload_to=upload_to_criminal_photos, default='')
+    mainPhoto = models.ImageField(upload_to='criminal/photos/', default='')
     photos = models.ManyToManyField(photosModel, null=True, blank=True)
     identikits = models.ManyToManyField(identikitsModel, null=True, blank=True)    
     description = models.CharField(max_length=200, default='')
@@ -32,6 +30,7 @@ class criminal(models.Model):
     relapse = models.IntegerField(max_length=10, default='')
     particularSigns = models.CharField(max_length=200, default='ninguna', null=True, blank=True)
     status = models.CharField(max_length=100, default='')
+    specialty = ArrayField(models.CharField(max_length=50), blank=True, null=True)
     createdAt = models.DateTimeField(default=timezone.now)
     lastModified = models.DateTimeField(default=timezone.now)
 

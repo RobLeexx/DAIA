@@ -106,7 +106,10 @@ export const Criminales: React.FC = () => {
   useEffect(() => {
     async function loadCriminals() {
       const res = await getAllCriminals();
-      setCriminals(res.data);
+      const sortedCriminals = res.data.sort(
+        (a: { id: number }, b: { id: number }) => a.id - b.id
+      );
+      setCriminals(sortedCriminals);
     }
     loadCriminals();
   }, []);
