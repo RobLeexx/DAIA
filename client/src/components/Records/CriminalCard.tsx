@@ -26,7 +26,9 @@ const calculateAge = (birthday: Date) => {
 };
 
 export const CriminalCard: React.FC = () => {
-  const [open, setOpen] = React.useState(false);
+  const edit = localStorage.getItem("edit");
+  const isEdit = edit ? JSON.parse(edit) : false;
+  const [open, setOpen] = React.useState(isEdit);
   const { register, control, setValue } = useForm();
   const [dataCriminal, setDataCriminal] = useState();
   const [age, setAge] = useState(0);

@@ -13,7 +13,7 @@ class criminal(models.Model):
     lastname = models.CharField(max_length=100, default='')
     name = models.CharField(max_length=100, default='')
     birthday = models.DateField(default=timezone.now)
-    phone = models.IntegerField(max_length=15, default=0, null=True)
+    phone = models.IntegerField(max_length=15, default=0, null=True, blank=True)
     address = models.CharField(max_length=100, default='')
     alias = models.CharField(max_length=50, default='ninguno', null=True, blank=True)
     #case = models.CharField(max_length=100, null=True, blank=True, default='')

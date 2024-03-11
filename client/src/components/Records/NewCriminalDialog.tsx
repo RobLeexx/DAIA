@@ -78,16 +78,15 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
     formState: { errors },
   } = useForm();
   const { onClose, open } = props;
-  const [value1, setValue1] = React.useState<number | null>(2);
-  const [dataCriminal, setDataCriminal] = useState();
   const [img, setImg] = useState("");
   const [hover, setHover] = React.useState(-1);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [errorImage, setErrorImage] = useState(false);
   const params = useParams();
-  const [gender, setGender] = useState("Masculino");
+  const [gender, setGender] = useState("Femenino");
   const [status, setStatus] = useState("Arrestado");
+  const [dng, setDng] = React.useState<number | null>(2);
   const [personName, setPersonName] = React.useState<string[]>([]);
 
   const onSubmit = handleSubmit(async (data) => {
@@ -103,33 +102,30 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
     formData.append("ci", data.ci);
     formData.append("description", data.description);
     formData.append("criminalRecord", data.criminalRecord);
-    formData.append("phone", data.phone);
+    if (data.phone) {
+      formData.append("phone", data.phone);
+    } else {
+      formData.append("phone", 0);
+    }
     formData.append("address", data.address);
     formData.append("gender", data.gender);
     formData.append("nationality", data.nationality);
     formData.append("criminalOrganization", data.criminalOrganization);
-    formData.append("dangerousness", data.dangerousness);
+    formData.append("dangerousness", dng);
     formData.append("relapse", data.relapse);
     formData.append("particularSigns", data.particularSigns);
-    formData.append("specialty", data.specialty);
+    formData.append("specialty", personName);
     formData.append("status", data.status);
     /* if (selectedImages) {
       formData.append("photos", selectedImages);
     } */
-    if (!params.id) {
+    if (!params.id && selectedImage) {
       uploadCriminal(formData);
-    } else {
+    } else if (params.id) {
       updateCriminal(params.id, formData);
     }
     window.location.reload();
   });
-
-  const localPersonName = async () => {
-    if (params.id) {
-      const { data } = await getCriminal(params.id as string);
-      return data.specialty;
-    } else return ["Lancero"];
-  };
 
   const fetchImage = async () => {
     try {
@@ -152,45 +148,23 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
     async function loadCriminal() {
       if (params.id) {
         const { data } = await getCriminal(params.id as string);
-        setDataCriminal(data);
         setValue("lastname", data.lastname);
         setValue("name", data.name);
         setValue("birthday", data.birthday);
-        if (!data.alias) {
-          setValue("alias", "ninguno");
-        } else {
-          setValue("alias", data.alias);
-        }
+        setValue("alias", data.alias);
         setValue("description", data.description);
-        if (!data.criminalRecord) {
-          setValue("criminalRecord", "ninguno");
-        } else {
-          setValue("criminalRecord", data.criminalRecord);
-        }
+        setValue("criminalRecord", data.criminalRecord);
         setValue("ci", data.ci);
-        if (!data.phone) {
-          setValue("phone", "ninguno");
-        } else {
-          setValue("phone", data.phone);
-        }
+        setValue("phone", data.phone);
         setValue("address", data.address);
         setValue("gender", data.gender);
+        setGender(data.gender);
         setValue("nationality", data.nationality);
-        if (!data.criminalOrganization) {
-          setValue("criminalOrganization", "ninguna");
-        } else {
-          setValue("criminalOrganization", data.criminalOrganization);
-        }
-        setValue1(() => {
-          return data.dangerousness;
-        });
+        setValue("criminalOrganization", data.criminalOrganization);
         setValue("relapse", data.relapse);
-        if (!data.particularSigns) {
-          setValue("particularSigns", "ninguna");
-        } else {
-          setValue("particularSigns", data.particularSigns);
-        }
+        setValue("particularSigns", data.particularSigns);
         setValue("status", data.status);
+        setStatus(data.status);
         fetchImage();
       }
     }
@@ -202,7 +176,9 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
       try {
         if (params.id) {
           const { data } = await getCriminal(params.id as string);
-          const resultArray = data.specialty.flatMap((item: string) => item.split(","));
+          const resultArray = data.specialty.flatMap((item: string) =>
+            item.split(",")
+          );
           return resultArray;
         } else {
           return ["Lancero"];
@@ -214,6 +190,19 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
     };
 
     localPersonName().then((result) => setPersonName(result));
+  }, [params.id]);
+
+  useEffect(() => {
+    const localDng = async () => {
+      if (params.id) {
+        const { data } = await getCriminal(params.id as string);
+        return data.dangerousness;
+      } else {
+        return 2;
+      }
+    };
+
+    localDng().then((result) => setDng(result));
   }, [params.id]);
 
   const handleClose = () => {
@@ -698,16 +687,16 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
               <Controller
                 name="dangerousness"
                 control={control}
-                defaultValue={2}
+                defaultValue={dng}
                 render={({ field }) => (
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <Rating
                       style={{ color: "#064887", fontSize: 40 }}
-                      value={value1}
+                      value={dng}
                       precision={0.5}
                       getLabelText={getLabelText}
                       onChange={(event, newValue) => {
-                        setValue1(newValue);
+                        setDng(newValue);
                         field.onChange(newValue);
                       }}
                       onChangeActive={(event, newHover) => {
@@ -720,9 +709,9 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
                         />
                       }
                     />
-                    {value1 !== null && (
+                    {dng !== null && (
                       <Box sx={{ ml: 2 }}>
-                        {labels[hover !== -1 ? hover : value1]}
+                        {labels[hover !== -1 ? hover : dng]}
                       </Box>
                     )}
                   </div>
@@ -924,7 +913,7 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
                 <Button
                   autoFocus
                   type="submit"
-                  onClick={!params.id ? verifyImage : onSubmit}
+                  onClick={verifyImage}
                   size="large"
                   sx={{
                     backgroundColor: "#0a934e",
