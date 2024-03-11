@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useImperativeHandle,
+  ChangeEvent,
+} from "react";
 import { Navigation } from "../components/Navigation";
 import {
   DataGrid,
@@ -75,6 +81,49 @@ function RatingInputValue(props: GridFilterInputValueProps) {
   );
 }
 
+type NumericInputValueProps = {
+  item: { value: string };
+  applyValue: (value: { value: string }) => void;
+  focusElementRef: React.RefObject<{ focus: () => void }>;
+};
+
+const NumericInputValue: React.FC<NumericInputValueProps> = (props) => {
+  const { item, applyValue, focusElementRef } = props;
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(focusElementRef, () => ({
+    focus: () => {
+      inputRef.current?.focus();
+    },
+  }));
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    applyValue({ ...item, value: newValue });
+  };
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        height: 48,
+        pl: "50px",
+      }}
+    >
+      <input
+        ref={inputRef}
+        type="number"
+        value={item.value}
+        onChange={handleInputChange}
+        max={10}
+        min={1}
+      />
+    </Box>
+  );
+};
+
 const ratingOnlyOperators: GridFilterOperator[] = [
   {
     label: "Sobre",
@@ -91,6 +140,29 @@ const ratingOnlyOperators: GridFilterOperator[] = [
     InputComponent: RatingInputValue,
     InputComponentProps: { type: "number" },
     getValueAsString: (value: number) => `${value} Stars`,
+  },
+];
+
+const numericOnlyOperators = [
+  {
+    label: "Sobre",
+    value: "relapse",
+    getApplyFilterFn: (filterItem: {
+      field: string;
+      value: number;
+      operator: string;
+    }) => {
+      if (!filterItem.field || !filterItem.value || !filterItem.operator) {
+        return null;
+      }
+
+      return (params: { value: number }) => {
+        return Number(params.value) >= Number(filterItem.value);
+      };
+    },
+    InputComponent: NumericInputValue,
+    InputComponentProps: { type: "number" },
+    getValueAsString: (value: { toString: () => string }) => value.toString(),
   },
 ];
 
@@ -173,14 +245,14 @@ const columns: GridColDef[] = [
     headerClassName: "header",
     headerAlign: "center",
     headerName: "Alias",
-    width: 150,
+    width: 130,
   },
   {
     field: "nationality",
     headerClassName: "header",
     headerAlign: "center",
     headerName: "Nacionalidad",
-    width: 130,
+    width: 100,
   },
   {
     field: "birthday",
@@ -205,7 +277,7 @@ const columns: GridColDef[] = [
     headerClassName: "header",
     headerAlign: "center",
     headerName: "Contacto",
-    width: 150,
+    width: 90,
   },
   {
     field: "relapse",
@@ -356,6 +428,8 @@ const columns: GridColDef[] = [
 columns.forEach((col) => {
   if (col.field === "dangerousness") {
     col.filterOperators = ratingOnlyOperators;
+  } else if (col.field === "relapse") {
+    col.filterOperators = numericOnlyOperators;
   }
 });
 

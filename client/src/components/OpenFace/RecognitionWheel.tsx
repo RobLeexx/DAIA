@@ -75,6 +75,7 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
             style={{
               width: "100%",
               height: "100%",
+              objectFit: "cover",
               border: "5px solid #1769aa",
             }}
           />
@@ -135,8 +136,9 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
                 src={tenMatches[0].mainPhoto}
                 alt="Imagen"
                 style={{
-                  width: "100%",
-                  height: "100%",
+                  width: 400,
+                  height: 400,
+                  objectFit: "cover",
                   border: "5px solid #0a934e",
                 }}
               />
@@ -198,7 +200,16 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <img src={match.mainPhoto} alt={`Criminal ${index + 1}`} />
+                <img
+                  src={match.mainPhoto}
+                  style={{
+                    width: 230,
+                    height: 230,
+                    objectFit: "cover",
+                    border: "5px solid #0a934e",
+                  }}
+                  alt={`Criminal ${index + 1}`}
+                />
               </a>
               <ColoredDiv
                 style={{ backgroundColor: matchColors[index], color: "white" }}

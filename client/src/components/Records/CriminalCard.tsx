@@ -145,6 +145,8 @@ export const CriminalCard: React.FC = () => {
                 alt="Seleccionada"
                 style={{
                   height: 500,
+                  maxWidth: 500,
+                  objectFit: "cover",
                 }}
               />
             </label>

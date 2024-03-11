@@ -8,10 +8,10 @@ import {
   Typography,
   CardContent,
   CardActions,
-  Button,
   Divider,
   Rating,
 } from "@mui/material";
+import { Link } from "react-router-dom";
 
 interface Criminal {
   id: number;
@@ -83,19 +83,25 @@ const CriminalCard: React.FC<Criminal> = ({
       </Typography>
     </CardContent>
     <CardActions style={{ display: "flex", justifyContent: "center" }}>
-      <Button
-        variant="outlined"
-        size="large"
-        sx={{ color: "white", borderColor: "white" }}
+      <Link
+        to={`/criminales/${id}`}
+        style={{
+          textDecoration: "none",
+          color: "white",
+          padding: 10,
+          borderRadius: 8,
+          border: "2px solid white",
+        }}
       >
-        Leer Más
-      </Button>
+        LEER MÁS
+      </Link>
     </CardActions>
   </Card>
 );
 
 export const Inicio: React.FC = () => {
-  const [criminals, setCriminals] = useState<Criminal[] | undefined>(undefined);
+  const [criminalsIn, setCriminalsIn] = useState<Criminal[] | undefined>(undefined);
+  const [criminalsNa, setCriminalsNa] = useState<Criminal[] | undefined>(undefined);
   useEffect(() => {
     async function loadCriminals() {
       const res = await getAllCriminals();
@@ -103,14 +109,23 @@ export const Inicio: React.FC = () => {
         (criminal: { status: string }) =>
           criminal.status === "Con Captura Internacional"
       );
-      const sortedCriminals = withInternationalCapture.sort(
+      const withNationalCapture = res.data.filter(
+        (criminal: { status: string }) =>
+          criminal.status === "Prófugo"
+      );
+      const sortedInCriminals = withInternationalCapture.sort(
         (a: { dangerousness: number }, b: { dangerousness: number }) =>
           b.dangerousness - a.dangerousness
       );
-      const topThreeCriminals = sortedCriminals.slice(0, 3);
+      const sortedNaCriminals = withNationalCapture.sort(
+        (a: { dangerousness: number }, b: { dangerousness: number }) =>
+          b.dangerousness - a.dangerousness
+      );
+      const topThreeInCriminals = sortedInCriminals.slice(0, 3);
+      const topThreeNaCriminals = sortedNaCriminals.slice(0, 3);
 
-      setCriminals(topThreeCriminals);
-      console.log(criminals);
+      setCriminalsIn(topThreeInCriminals);
+      setCriminalsNa(topThreeNaCriminals);
     }
     loadCriminals();
   }, []);
@@ -144,9 +159,9 @@ export const Inicio: React.FC = () => {
           A NIVEL INTERNACIONAL
         </div>
         <div style={{ display: "flex", justifyContent: "space-around" }}>
-          {criminals &&
-            criminals.map((criminal) => (
-              <CriminalCard key={criminal.id} {...criminal} />
+          {criminalsIn &&
+            criminalsIn.map((criminalsIn) => (
+              <CriminalCard key={criminalsIn.id} {...criminalsIn} />
             ))}
         </div>
         <div
@@ -162,6 +177,12 @@ export const Inicio: React.FC = () => {
           }}
         >
           A NIVEL NACIONAL
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          {criminalsNa &&
+            criminalsNa.map((criminalsNa) => (
+              <CriminalCard key={criminalsNa.id} {...criminalsNa} />
+            ))}
         </div>
       </Box>
     </Navigation>
