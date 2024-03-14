@@ -67,6 +67,10 @@ export const getLatestSketch = () => {
   });
 };
 
+export const getAllSketches = () => {
+  return sketchApi.get("/");
+};
+
 export const getLatestImage = () => {
   return imageApi.get("/", {
     params: {
@@ -83,6 +87,10 @@ export const getAllCriminals = () => {
 
 export const getCriminal = (id: string) => {
   return criminalApi.get(`/${id}/`);
+};
+
+export const getSketch = (id: string) => {
+  return sketchApi.get(`/${id}/`);
 };
 
 export const uploadCriminal = (criminal: FormData) => {

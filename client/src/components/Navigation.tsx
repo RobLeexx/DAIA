@@ -128,7 +128,7 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
             >
               <List component="div" disablePadding>
                 <Link
-                  to={"/Identikits"}
+                  to={"/identikits"}
                   style={{
                     textDecoration: "none",
                     cursor: "default",

@@ -26,10 +26,10 @@ const calculateAge = (birthday: Date) => {
 };
 
 interface FacialSearchProps {
-  search: boolean;
-  onVerClickFalse: () => void;
-  setSelectedImage: React.Dispatch<React.SetStateAction<File | null>>;
-  handleComplete: () => void;
+  search?: boolean;
+  onVerClickFalse?: () => void;
+  setSelectedImage?: React.Dispatch<React.SetStateAction<File | null>>;
+  handleComplete?: () => void;
 }
 
 export const CriminalCard: React.FC<FacialSearchProps> = ({
@@ -132,8 +132,10 @@ export const CriminalCard: React.FC<FacialSearchProps> = ({
   }, [params.id, setValue]);
 
   const setImage2Search = () => {
-    setSelectedImage(img);
-    handleComplete();
+    if (setSelectedImage && handleComplete) {
+      setSelectedImage(img);
+      handleComplete();
+    }
   };
 
   const handleFileChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {

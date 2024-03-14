@@ -212,9 +212,9 @@ const calculateAge = (birthday: Date) => {
 };
 
 interface FacialSearchProps {
-  search: boolean;
-  onVerClick: () => void;
-  handleReload: () => void;
+  search?: boolean;
+  onVerClick?: () => void;
+  handleReload?: () => void;
 }
 
 export const Criminales: React.FC<FacialSearchProps> = ({
@@ -541,39 +541,29 @@ export const Criminales: React.FC<FacialSearchProps> = ({
           "& .even": {
             backgroundColor: "#DAE2EA",
           },
-          "& .status.blue": {
-            backgroundColor: "#064887",
+          "& .status": {
             display: "flex",
             justifyContent: "center",
             color: "white",
+          },
+          "& .status.blue": {
+            backgroundColor: "#064887",
           },
           "& .status.orange": {
             backgroundColor: "#FF4D00",
             fontWeight: "600",
-            display: "flex",
-            justifyContent: "center",
-            color: "white",
           },
           "& .status.red": {
             backgroundColor: "#B80000",
             fontWeight: "600",
-            display: "flex",
-            justifyContent: "center",
-            color: "white",
           },
           "& .status.yellow": {
             backgroundColor: "#D7AD15",
             fontWeight: "600",
-            display: "flex",
-            justifyContent: "center",
-            color: "white",
           },
           "& .status.green": {
             backgroundColor: "#16A726",
             fontWeight: "600",
-            display: "flex",
-            justifyContent: "center",
-            color: "white",
           },
           "& .gender.male": {
             backgroundColor: "#4882B9",
