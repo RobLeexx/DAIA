@@ -8,7 +8,12 @@ import Typography from "@mui/material/Typography";
 import { ChooseDatabase } from "../components/OpenFace/ChooseDatabase";
 import RecognitionWheel from "../components/OpenFace/RecognitionWheel";
 import SearchSelection from "../components/OpenFace/SearchSelection";
-import { getLatestImage, getOF, getAllCriminals } from "../api/sketch.api";
+import {
+  getLatestImage,
+  getOF,
+  getOF2,
+  getAllCriminals,
+} from "../api/sketch.api";
 
 import dbImage from "../assets/database1.png";
 import uploadImage from "../assets/uploadImage.png";
@@ -41,10 +46,18 @@ export const OpenFace: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [open, setOpen] = React.useState(false);
   const [reloadCanvas, setReloadCanvas] = React.useState(false);
-
+  const [isCriminalSelected, setIsCriminalSelected] = useState(false);
   const [selectedValue, setSelectedValue] = React.useState(sketchType[0]);
   const [imageURL, setImageURL] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const handleVerClick = () => {
+    setIsCriminalSelected(true);
+  };
+
+  const handleVerClickFalse = () => {
+    setIsCriminalSelected(false);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -150,17 +163,17 @@ export const OpenFace: React.FC = () => {
         latestImageResponse.data.length > 0
           ? latestImageResponse.data[latestImageResponse.data.length - 1].id
           : null;
-      if (latestImageId !== null) {
-        const latestImage = await getOF(latestImageId);
-        const allCriminals = await getAllCriminals();
-        const mergedResults = mergeResultsWithCriminals(
-          latestImage.data,
-          allCriminals.data
-        );
-        setTenMatches(mergedResults);
-      } else {
-        console.error("No se encontraron imágenes para obtener el ID.");
-      }
+      const criminalImageId = localStorage.getItem("criminalId");
+      const latestImage =
+        selectedValue == "Seleccionar Base de Datos"
+          ? await getOF2(criminalImageId)
+          : await getOF(latestImageId);
+      const allCriminals = await getAllCriminals();
+      const mergedResults = mergeResultsWithCriminals(
+        latestImage.data,
+        allCriminals.data
+      );
+      setTenMatches(mergedResults);
     } catch (error) {
       console.error("Error al obtener los resultados:", error);
     } finally {
@@ -211,7 +224,14 @@ export const OpenFace: React.FC = () => {
               />
             ) : /* Step 2 */
             activeStep === 1 ? (
-              <ChooseDatabase />
+              <ChooseDatabase
+                isCriminalSelected={isCriminalSelected}
+                handleVerClick={handleVerClick}
+                handleVerClickFalse={handleVerClickFalse}
+                setSelectedImage={setSelectedImage}
+                handleComplete={handleComplete}
+                handleReload={handleReload}
+              />
             ) : (
               /* Step 3 */
               <RecognitionWheel

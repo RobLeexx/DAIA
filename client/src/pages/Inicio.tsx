@@ -50,8 +50,8 @@ const CriminalCard: React.FC<Criminal> = ({
         color={"white"}
         sx={{ textTransform: "uppercase", fontFamily: "Josefin Sans" }}
       >
-        {lastname} <span> </span>
-        {name}
+        {name} <span> </span>
+        {lastname}
       </Typography>
       {alias ? (
         <Typography

@@ -105,3 +105,9 @@ export const getOF = (id: number) => {
     `http://localhost:8000/images/api/v1/images/${id}/get_recognition_wheel/`
   );
 };
+
+export const getOF2 = (id: number) => {
+  return axios.get(
+    `http://localhost:8000/criminal/api/v1/criminal/${id}/get_recognition_wheel2/`
+  );
+};

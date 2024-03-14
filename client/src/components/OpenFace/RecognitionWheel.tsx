@@ -70,7 +70,11 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
       >
         <div style={{ display: "flex", flexDirection: "column", height: 400 }}>
           <img
-            src={selectedImage ? URL.createObjectURL(selectedImage) : ""}
+            src={
+              selectedImage && selectedValue == "Seleccionar Base de Datos"
+                ? selectedImage
+                : URL.createObjectURL(selectedImage)
+            }
             alt="Imagen"
             style={{
               width: "100%",
@@ -99,7 +103,7 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
               variant="contained"
               onClick={handleBack}
             >
-              Editar Dibujo
+              Atrás
             </Button>
           )}
         </div>
@@ -155,7 +159,7 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
               }}
             />
           )}
-          {loading && selectedValue === "Subir Foto2" ? (
+          {loading ? (
             <div
               style={{
                 width: 400,
@@ -197,6 +201,9 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
             <div key={index} style={{ padding: 20 }}>
               <a
                 href={`http://localhost:5173/criminales/${match.result_id}`}
+                onClick={() => {
+                  localStorage.setItem("edit", "false");
+                }}
                 target="_blank"
                 rel="noopener noreferrer"
               >

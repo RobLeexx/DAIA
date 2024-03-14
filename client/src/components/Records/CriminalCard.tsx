@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Navigation } from "../Navigation";
-import { Button, TextField, Rating } from "@mui/material";
+import { Button, TextField, Rating, Box } from "@mui/material";
 import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
 import DrawIcon from "@mui/icons-material/Draw";
 import { useForm, Controller } from "react-hook-form";
 import StarIcon from "@mui/icons-material/Star";
 import { getCriminal } from "../../api/sketch.api";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import NewCriminalDialog from "../Records/NewCriminalDialog";
 
 const calculateAge = (birthday: Date) => {
@@ -25,7 +25,19 @@ const calculateAge = (birthday: Date) => {
   return age;
 };
 
-export const CriminalCard: React.FC = () => {
+interface FacialSearchProps {
+  search: boolean;
+  onVerClickFalse: () => void;
+  setSelectedImage: React.Dispatch<React.SetStateAction<File | null>>;
+  handleComplete: () => void;
+}
+
+export const CriminalCard: React.FC<FacialSearchProps> = ({
+  search = false,
+  onVerClickFalse,
+  setSelectedImage,
+  handleComplete,
+}) => {
   const edit = localStorage.getItem("edit");
   const isEdit = edit ? JSON.parse(edit) : false;
   const [open, setOpen] = React.useState(isEdit);
@@ -47,7 +59,9 @@ export const CriminalCard: React.FC = () => {
 
   const fetchImage = async () => {
     try {
-      const { data } = await getCriminal(params.id as string);
+      const { data } = await getCriminal(
+        (search ? localStorage.getItem("criminalId") : params.id) as string
+      );
       const imageUrl = data.mainPhoto;
       const res = await fetch(imageUrl);
       if (!res.ok) {
@@ -58,13 +72,16 @@ export const CriminalCard: React.FC = () => {
       setImg(imageObjectURL);
     } catch (error) {
       console.error("Image fetch error:", error);
-      setImg("path/to/fallback/image.jpg"); // Set a fallback image
+      setImg("path/to/fallback/image.jpg");
     }
   };
 
   useEffect(() => {
     async function loadCriminal() {
-      const { data } = await getCriminal(params.id as string);
+      const { data } = await getCriminal(
+        (search ? localStorage.getItem("criminalId") : params.id) as string
+      );
+      console.log(localStorage.getItem("criminalId"));
       setDataCriminal(data);
       setValue("lastname", data.lastname);
       setValue("name", data.name);
@@ -114,6 +131,11 @@ export const CriminalCard: React.FC = () => {
     loadCriminal();
   }, [params.id, setValue]);
 
+  const setImage2Search = () => {
+    setSelectedImage(img);
+    handleComplete();
+  };
+
   const handleFileChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const newImages = Array.from(event.target.files); // Convert FileList to array
@@ -121,8 +143,54 @@ export const CriminalCard: React.FC = () => {
     }
   };
   return (
-    <Navigation>
-      <form style={{ padding: 50, display: "flex", minHeight: 800 }}>
+    <Box
+      sx={
+        !search
+          ? {
+              paddingLeft: 40,
+              paddingTop: 3,
+              backgroundColor: "#F0F1F4",
+            }
+          : undefined
+      }
+    >
+      <div style={{ marginLeft: search ? -10 : 30, padding: search ? 10 : 20 }}>
+        {search ? (
+          <Button
+            onClick={onVerClickFalse}
+            style={{
+              color: "white",
+              backgroundColor: "#064887",
+              padding: 10,
+              borderRadius: 10,
+            }}
+          >
+            <ArrowBackIcon />
+          </Button>
+        ) : (
+          <Link
+            to={"/criminales"}
+            style={{
+              color: "white",
+              backgroundColor: "#064887",
+              padding: 12,
+              paddingTop: 20,
+              borderRadius: 10,
+            }}
+          >
+            <ArrowBackIcon />
+          </Link>
+        )}
+      </div>
+      <form
+        style={{
+          paddingBottom: search ? 10 : 50,
+          paddingInline: search ? undefined : 50,
+          display: "flex",
+          height: search ? 680 : undefined,
+          width: search ? 1490 : undefined,
+        }}
+      >
         <div
           style={{
             flex: "0 0 calc(40% - 10px)",
@@ -152,7 +220,7 @@ export const CriminalCard: React.FC = () => {
             </label>
             <div
               style={{
-                padding: 40,
+                padding: search ? 30 : 40,
                 display: "flex",
                 justifyContent: "center",
               }}
@@ -160,7 +228,7 @@ export const CriminalCard: React.FC = () => {
               {dataCriminal && (
                 <Rating
                   readOnly
-                  style={{ color: "white", fontSize: 80 }}
+                  style={{ color: "white", fontSize: search ? 70 : 80 }}
                   value={value1}
                   precision={0.5}
                   emptyIcon={
@@ -522,26 +590,26 @@ export const CriminalCard: React.FC = () => {
           >
             <Button
               autoFocus
-              onClick={handleClickOpen}
+              onClick={search ? setImage2Search : handleClickOpen}
               size="large"
               sx={{
-                backgroundColor: "#1565C0",
+                backgroundColor: search ? "#2E7D32" : "#1565C0",
                 color: "white",
-                width: "20%",
+                width: search ? "30%" : "20%",
                 height: "100%",
                 "&:hover": {
-                  color: "#1565C0",
+                  color: "#2E7D32",
                   backgroundColor: "white",
-                  outline: "2px solid #1565C0",
+                  outline: "2px solid #2E7D32",
                 },
               }}
             >
-              Editar
+              {search ? <span>Seleccionar Imagen</span> : <span>Editar</span>}
             </Button>
           </div>
         </div>
       </form>
       <NewCriminalDialog open={open} onClose={handleClose}></NewCriminalDialog>
-    </Navigation>
+    </Box>
   );
 };
