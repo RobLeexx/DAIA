@@ -119,3 +119,9 @@ export const getOF2 = (id: number) => {
     `http://localhost:8000/criminal/api/v1/criminal/${id}/get_recognition_wheel2/`
   );
 };
+
+export const getOF3 = (id: number) => {
+  return axios.get(
+    `http://localhost:8000/sketches/api/v1/sketches/${id}/get_recognition_wheel3/`
+  );
+};

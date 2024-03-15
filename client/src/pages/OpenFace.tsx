@@ -48,7 +48,6 @@ export const OpenFace: React.FC = () => {
   const [reloadCanvas, setReloadCanvas] = React.useState(false);
   const [isCriminalSelected, setIsCriminalSelected] = useState(false);
   const [selectedValue, setSelectedValue] = React.useState(sketchType[0]);
-  const [imageURL, setImageURL] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleVerClick = () => {
@@ -239,7 +238,6 @@ export const OpenFace: React.FC = () => {
                 handleBack={handleBack}
                 selectedImage={selectedImage}
                 loading={loading}
-                imageURL={imageURL}
                 handleReload={handleReload}
                 handleButtonClick={handleButtonClick}
                 tenMatches={tenMatches}
