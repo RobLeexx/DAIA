@@ -22,7 +22,7 @@ function App() {
         <Route path="/sketch" element={<Sketch />}></Route>
         <Route path="/busqueda" element={<OpenFace />}></Route>
         <Route path="/criminales/:id" element={<CriminalCard />}></Route>
-        <Route path="/sketches/:id" element={<SketchCard />}></Route>
+        <Route path="/identikits/:id" element={<SketchCard />}></Route>
       </Routes>
     </BrowserRouter>
   );

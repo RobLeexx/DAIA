@@ -37,7 +37,7 @@ const CriminalCard: React.FC<Criminal> = ({
   dangerousness,
   criminalRecord,
 }) => (
-  <Card key={id} sx={{ height: 600, width: 500, backgroundColor: "#064887" }}>
+  <Card key={id} sx={{ height: 630, width: 500, backgroundColor: "#064887" }}>
     <CardMedia sx={{ height: 300 }} image={mainPhoto} />
     {!alias && <br />}
     <CardContent>

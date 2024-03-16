@@ -57,14 +57,12 @@ const renderImageCell = (value: string) => {
 
 interface FacialSearchProps {
   search?: boolean;
-  onVerClick?: () => void;
-  handleReload?: () => void;
+  onVerClick2?: () => void;
 }
 
 export const Identikits: React.FC<FacialSearchProps> = ({
   search = false,
-  onVerClick,
-  handleReload,
+  onVerClick2,
 }) => {
   const [sketches, setSketches] = useState<Sketches[] | undefined>(undefined);
   const rows = sketches
@@ -134,7 +132,7 @@ export const Identikits: React.FC<FacialSearchProps> = ({
                   color: "blue",
                   marginRight: 10,
                 }}
-                to={`/sketches/${params.row.id}`}
+                to={`/identikits/${params.row.id}`}
                 onClick={() => {
                   localStorage.setItem("edit", "false");
                 }}
@@ -143,7 +141,7 @@ export const Identikits: React.FC<FacialSearchProps> = ({
               </Link>
               <Link
                 style={{ textDecoration: "none", color: "blue" }}
-                to={`/sketches/${params.row.id}`}
+                to={`/identikits/${params.row.id}`}
                 onClick={() => {
                   localStorage.setItem("edit", "true");
                 }}
@@ -152,7 +150,7 @@ export const Identikits: React.FC<FacialSearchProps> = ({
               </Link>
               <Link
                 style={{ textDecoration: "none", color: "blue", marginLeft: 5 }}
-                to={`/sketches/`}
+                to={`/identikits/`}
               >
                 <DeleteIcon style={{ color: "#BA1818" }} />
               </Link>
@@ -172,8 +170,9 @@ export const Identikits: React.FC<FacialSearchProps> = ({
                   fontWeight: "bolder",
                 }}
                 onClick={() => {
-                  localStorage.setItem("criminalId", params.row.id);
-                  onVerClick();
+                  localStorage.setItem("identikitId", params.row.id);
+                  localStorage.setItem("edit", "false");
+                  onVerClick2();
                 }}
               >
                 VER
@@ -227,7 +226,7 @@ export const Identikits: React.FC<FacialSearchProps> = ({
       sx={
         search
           ? { paddingTop: 5 }
-          : { paddingLeft: 40, paddingTop: 2, backgroundColor: "#F0F1F4" }
+          : { paddingLeft: 40, paddingTop: 5, backgroundColor: "#F0F1F4" }
       }
     >
       <Box
@@ -251,14 +250,14 @@ export const Identikits: React.FC<FacialSearchProps> = ({
       >
         <DataGrid
           rows={rows}
-          rowHeight={200}
+          rowHeight={search ? 100 : 200}
           columns={columns}
           getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 !== 0 ? "even" : "odd"
           }
           initialState={{
             pagination: {
-              paginationModel: { page: 0, pageSize: 10 },
+              paginationModel: { page: 0, pageSize: 5 },
             },
           }}
           pageSizeOptions={[5, 10]}
@@ -277,21 +276,6 @@ export const Identikits: React.FC<FacialSearchProps> = ({
           sx={{ width: !search ? 1580 : 1490 }}
         />
       </Box>
-      {search && (
-        <Button
-          variant="contained"
-          onClick={handleReload}
-          sx={{
-            marginTop: "20px",
-            backgroundColor: "#FF5733",
-            "&:hover": {
-              backgroundColor: "#A7331B",
-            },
-          }}
-        >
-          Volver a Seleccionar Imagen
-        </Button>
-      )}
     </Box>
   );
 };

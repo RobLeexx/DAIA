@@ -13,6 +13,7 @@ import {
   getOF,
   getOF2,
   getAllCriminals,
+  getOF3,
 } from "../api/sketch.api";
 
 import dbImage from "../assets/database1.png";
@@ -47,6 +48,7 @@ export const OpenFace: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const [reloadCanvas, setReloadCanvas] = React.useState(false);
   const [isCriminalSelected, setIsCriminalSelected] = useState(false);
+  const [isIdentikitSelected, setIsIdentikitSelected] = useState(false);
   const [selectedValue, setSelectedValue] = React.useState(sketchType[0]);
   const [loading, setLoading] = useState(false);
 
@@ -56,6 +58,14 @@ export const OpenFace: React.FC = () => {
 
   const handleVerClickFalse = () => {
     setIsCriminalSelected(false);
+  };
+
+  const handleVerClick2 = () => {
+    setIsIdentikitSelected(true);
+  };
+
+  const handleVerClickFalse2 = () => {
+    setIsIdentikitSelected(false);
   };
 
   const handleClickOpen = () => {
@@ -157,16 +167,27 @@ export const OpenFace: React.FC = () => {
   const handleButtonClick = async () => {
     try {
       setLoading(true);
+      let latestImage;
       const latestImageResponse = await getLatestImage();
       const latestImageId =
         latestImageResponse.data.length > 0
           ? latestImageResponse.data[latestImageResponse.data.length - 1].id
           : null;
       const criminalImageId = localStorage.getItem("criminalId");
-      const latestImage =
-        selectedValue == "Seleccionar Base de Datos"
-          ? await getOF2(criminalImageId)
-          : await getOF(latestImageId);
+      const identikitImageId = localStorage.getItem("identikitId");
+      if (selectedValue == "Seleccionar Base de Datos") {
+        if (criminalImageId === "false") {
+          latestImage = await getOF3(
+            identikitImageId as unknown as number
+          );
+        } else {
+          latestImage = await getOF2(
+            criminalImageId as unknown as number
+          );
+        }
+      } else {
+        latestImage = await getOF(latestImageId);
+      }
       const allCriminals = await getAllCriminals();
       const mergedResults = mergeResultsWithCriminals(
         latestImage.data,
@@ -227,6 +248,9 @@ export const OpenFace: React.FC = () => {
                 isCriminalSelected={isCriminalSelected}
                 handleVerClick={handleVerClick}
                 handleVerClickFalse={handleVerClickFalse}
+                isIdentikitSelected={isIdentikitSelected}
+                handleVerClick2={handleVerClick2}
+                handleVerClickFalse2={handleVerClickFalse2}
                 setSelectedImage={setSelectedImage}
                 handleComplete={handleComplete}
                 handleReload={handleReload}

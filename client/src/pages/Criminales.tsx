@@ -407,6 +407,7 @@ export const Criminales: React.FC<FacialSearchProps> = ({
                 }}
                 onClick={() => {
                   localStorage.setItem("criminalId", params.row.id);
+                  localStorage.setItem("edit", "false");
                   onVerClick();
                 }}
               >
@@ -606,21 +607,6 @@ export const Criminales: React.FC<FacialSearchProps> = ({
         />
       </Box>
       <NewCriminalDialog open={open} onClose={handleClose}></NewCriminalDialog>
-      {search && (
-        <Button
-          variant="contained"
-          onClick={handleReload}
-          sx={{
-            marginTop: "20px",
-            backgroundColor: "#FF5733",
-            "&:hover": {
-              backgroundColor: "#A7331B",
-            },
-          }}
-        >
-          Volver a Seleccionar Imagen
-        </Button>
-      )}
     </Box>
   );
 };

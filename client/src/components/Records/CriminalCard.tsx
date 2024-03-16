@@ -81,7 +81,6 @@ export const CriminalCard: React.FC<FacialSearchProps> = ({
       const { data } = await getCriminal(
         (search ? localStorage.getItem("criminalId") : params.id) as string
       );
-      console.log(localStorage.getItem("criminalId"));
       setDataCriminal(data);
       setValue("lastname", data.lastname);
       setValue("name", data.name);
@@ -135,6 +134,7 @@ export const CriminalCard: React.FC<FacialSearchProps> = ({
     if (setSelectedImage && handleComplete) {
       setSelectedImage(img);
       handleComplete();
+      localStorage.setItem("identikitId", "false");
     }
   };
 

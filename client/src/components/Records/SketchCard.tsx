@@ -40,7 +40,7 @@ export const SketchCard: React.FC<FacialSearchProps> = ({
   const fetchImages = async () => {
     try {
       const { data } = await getSketch(
-        (search ? localStorage.getItem("criminalId") : params.id) as string
+        (search ? localStorage.getItem("identikitId") : params.id) as string
       );
       const imageUrl1 = data.input;
       const imageUrl2 = data.output;
@@ -67,9 +67,8 @@ export const SketchCard: React.FC<FacialSearchProps> = ({
   useEffect(() => {
     async function loadCriminal() {
       const { data } = await getSketch(
-        (search ? localStorage.getItem("criminalId") : params.id) as string
+        (search ? localStorage.getItem("identikitId") : params.id) as string
       );
-      console.log(localStorage.getItem("criminalId"));
       setDataSketch(data);
       setValue("description", data.description);
       fetchImages();
@@ -77,12 +76,14 @@ export const SketchCard: React.FC<FacialSearchProps> = ({
     loadCriminal();
   }, [params.id, setValue]);
 
-  /*   const setImage2Search = () => {
+  const setImage2Search = () => {
     if (setSelectedImage && handleComplete) {
-      setSelectedImage(img);
+      setSelectedImage(img2);
       handleComplete();
+      onVerClickFalse();
+      localStorage.setItem("criminalId", "false");
     }
-  }; */
+  };
 
   return (
     <Box
@@ -203,7 +204,13 @@ export const SketchCard: React.FC<FacialSearchProps> = ({
             variant="soft"
             readOnly
             defaultValue=""
-            sx={{ marginInline: 10, width: "100%", height: 512, margin: 1, border:"2px solid #0B6BCB" }}
+            sx={{
+              marginInline: 10,
+              width: "100%",
+              height: 512,
+              margin: 1,
+              border: "2px solid #0B6BCB",
+            }}
             {...register("description", { required: true })}
           />
           <div
@@ -218,7 +225,7 @@ export const SketchCard: React.FC<FacialSearchProps> = ({
               sx={{
                 backgroundColor: search ? "#2E7D32" : "#1565C0",
                 color: "white",
-                width: search ? "30%" : "100%",
+                width: "100%",
                 height: "100%",
                 margin: 1,
                 "&:hover": {
