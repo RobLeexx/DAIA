@@ -4,14 +4,6 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
 import Typography from "@mui/material/Typography";
-import {
-  getLatestImage,
-  getOF,
-  getOF2,
-  getAllCriminals,
-  getOF3,
-} from "../api/sketch.api";
-
 import dbImage from "../assets/database1.png";
 import searchModel from "../assets/searchModel.png";
 import { Navigation } from "../components/Navigation";
@@ -25,49 +17,17 @@ const sketchType = [
   "Seleccionar Modelo Generativo",
 ];
 
-interface Result {
-  criminal_id: number;
-  per: string;
-}
-
-interface Criminal {
-  id: number;
-  mainPhoto: string;
-}
-
-interface Match {
-  mainPhoto: string;
-  per: string;
-}
-
 export const Modelos: React.FC = () => {
-  const [tenMatches, setTenMatches] = React.useState<Match[]>([]);
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState<{
     [k: number]: boolean;
   }>({});
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [open, setOpen] = React.useState(false);
-  const [isCriminalSelected, setIsCriminalSelected] = useState(false);
-  const [isIdentikitSelected, setIsIdentikitSelected] = useState(false);
   const [selectedValue, setSelectedValue] = React.useState(sketchType[0]);
-  const [loading, setLoading] = useState(false);
+  const [selectedOption, setSelectedOption] = React.useState("criminales");
 
-  const handleVerClick = () => {
-    setIsCriminalSelected(true);
-  };
-
-  const handleVerClickFalse = () => {
-    setIsCriminalSelected(false);
-  };
-
-  const handleVerClick2 = () => {
-    setIsIdentikitSelected(true);
-  };
-
-  const handleVerClickFalse2 = () => {
-    setIsIdentikitSelected(false);
-  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -116,6 +76,7 @@ export const Modelos: React.FC = () => {
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setSelectedOption("criminales")
   };
 
   const handleReload = () => {
@@ -136,65 +97,12 @@ export const Modelos: React.FC = () => {
     handleNext2();
   };
 
-  const mergeResultsWithCriminals = (
-    results: Result[],
-    criminals: Criminal[]
-  ) => {
-    const mergedResults: any[] = [];
-
-    // Obtener los primeros 10 resultados
-    const topResults = results.slice(0, 10);
-
-    // Iterar sobre los resultados y buscar el criminal correspondiente
-    for (const result of topResults) {
-      const matchingCriminal = criminals.find(
-        (criminal) => criminal.id === result.criminal_id
-      );
-
-      if (matchingCriminal) {
-        // Agregar los datos combinados al resultado final
-        mergedResults.push({
-          result_id: result.criminal_id,
-          per: result.per,
-          mainPhoto: matchingCriminal.mainPhoto,
-        });
-      }
-    }
-
-    return mergedResults;
+  const handleSelectChange = (newOption: React.SetStateAction<string>) => {
+    setSelectedOption(newOption);
   };
 
-  const handleButtonClick = async () => {
-    try {
-      setLoading(true);
-      let latestImage;
-      const latestImageResponse = await getLatestImage();
-      const latestImageId =
-        latestImageResponse.data.length > 0
-          ? latestImageResponse.data[latestImageResponse.data.length - 1].id
-          : null;
-      const criminalImageId = localStorage.getItem("criminalId");
-      const identikitImageId = localStorage.getItem("identikitId");
-      if (selectedValue == "Seleccionar Base de Datos") {
-        if (criminalImageId === "false") {
-          latestImage = await getOF3(identikitImageId as unknown as number);
-        } else {
-          latestImage = await getOF2(criminalImageId as unknown as number);
-        }
-      } else {
-        latestImage = await getOF(latestImageId);
-      }
-      const allCriminals = await getAllCriminals();
-      const mergedResults = mergeResultsWithCriminals(
-        latestImage.data,
-        allCriminals.data
-      );
-      setTenMatches(mergedResults);
-    } catch (error) {
-      console.error("Error al obtener los resultados:", error);
-    } finally {
-      setLoading(false);
-    }
+  const handleSelectRows = (newOption: React.SetStateAction<string[]>) => {
+    setSelectedRows(newOption);
   };
 
   return (
@@ -242,10 +150,17 @@ export const Modelos: React.FC = () => {
               <FilterDatabase
                 handleComplete={handleComplete}
                 handleReload={handleReload}
+                rowData={handleSelectRows}
+                selectedOption={selectedOption}
+                option={handleSelectChange}
               />
             ) : (
               /* Step 3 */
-              <SaveModel></SaveModel>
+              <SaveModel
+                handleBack={handleBack}
+                rowData={selectedRows}
+                selectedOption={selectedOption}
+              ></SaveModel>
             )}
           </React.Fragment>
         </div>

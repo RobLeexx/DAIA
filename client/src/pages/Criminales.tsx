@@ -601,9 +601,9 @@ export const Criminales: React.FC<FacialSearchProps> = ({
             model
               ? (selection) => {
                   const selectedIDs = new Set(selection);
-                  const selectedRows = rows
-                    .filter((row) => selectedIDs.has(row.id))
-                    .map(({ id, mainPhoto }) => ({ id, mainPhoto }));
+                  const selectedRows = rows.filter((row) =>
+                    selectedIDs.has(row.id)
+                  );
                   rowData(selectedRows);
                 }
               : undefined

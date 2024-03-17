@@ -16,6 +16,14 @@ interface Image {
   description: string;
 }
 
+interface Model {
+  type: string;
+  name: string;
+  length: number;
+  data: { id: number; img: string }[];
+  description: string;
+}
+
 // Crea una instancia de axios
 const sketchApi = axios.create({
   baseURL: "http://localhost:8000/sketches/api/v1/sketches/",
@@ -29,6 +37,11 @@ const criminalApi = axios.create({
   baseURL: "http://localhost:8000/criminal/api/v1/criminal/",
 });
 
+const modelApi = axios.create({
+  baseURL: "http://localhost:8000/modelos/api/v1/modelos/",
+});
+
+
 // Define el tipo de la respuesta que se espera (AxiosResponse<Sketch>)
 export const uploadSketch = (
   sketch: Sketch
@@ -38,6 +51,10 @@ export const uploadSketch = (
 
 export const uploadImage = (image: Image): Promise<AxiosResponse<Image>> => {
   return imageApi.post("/", image);
+};
+
+export const uploadModel = (model: Model): Promise<AxiosResponse<Model>> => {
+  return modelApi.post("/", model);
 };
 
 export const updateSketch = (
@@ -83,6 +100,10 @@ export const getLatestImage = () => {
 
 export const getAllCriminals = () => {
   return criminalApi.get("/");
+};
+
+export const getAllModels = () => {
+  return modelApi.get("/");
 };
 
 export const getCriminal = (id: string) => {

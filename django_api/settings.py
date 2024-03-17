@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'coreapi',
     'sketches',
     'images',
-    'criminal'
+    'criminal',
+    'modelos'
 ]
 
 MIDDLEWARE = [

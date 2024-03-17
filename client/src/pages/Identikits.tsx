@@ -263,7 +263,6 @@ export const Identikits: React.FC<FacialSearchProps> = ({
                   const selectedIDs = new Set(selection);
                   const selectedRows = rows
                     .filter((row) => selectedIDs.has(row.id))
-                    .map(({ id, output }) => ({ id, output }));
                   rowData(selectedRows);
                 }
               : undefined

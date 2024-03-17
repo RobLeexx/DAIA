@@ -6,28 +6,32 @@ import { Identikits } from "../../pages/Identikits";
 interface FilterDatabase {
   handleComplete: () => void;
   handleReload: () => void;
-  rowData: string[];
+  rowData: (value: string[]) => void;
+  selectedOption: string;
+  option: (value: string) => void;
 }
 
 export const FilterDatabase: React.FC<FilterDatabase> = ({
   handleReload,
   handleComplete,
   rowData,
+  selectedOption,
+  option,
 }) => {
   const [sketch, setSketch] = React.useState(false);
-  const [selectedOption, setSelectedOption] = React.useState("criminales");
+  const [selectedOptionLocal, setSelectedOption] =
+    React.useState(selectedOption);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   const handlePrintSelectedRows = () => {
-    rowData = selectedRows.slice();
-    console.log(rowData);
+    rowData(selectedRows.slice());
     handleComplete();
   };
 
-  const handleSelectChange = (event: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setSelectedOption(event.target.value);
+  const handleSelectChange = (event: { target: { value: string } }) => {
+    const newOption = event.target.value;
+    setSelectedOption(newOption);
+    option(newOption);
     setSelectedRows([]);
     if (event.target.value === "identikits") {
       setSketch(true);
@@ -68,7 +72,7 @@ export const FilterDatabase: React.FC<FilterDatabase> = ({
               <span>Base de Datos:</span>
               <Select
                 sx={{ marginInline: 5 }}
-                value={selectedOption}
+                value={selectedOptionLocal}
                 onChange={handleSelectChange}
               >
                 <MenuItem value="criminales">Criminales</MenuItem>
@@ -123,7 +127,7 @@ export const FilterDatabase: React.FC<FilterDatabase> = ({
               <span>Base de Datos:</span>
               <Select
                 sx={{ marginInline: 5 }}
-                value={selectedOption}
+                value={selectedOptionLocal}
                 onChange={handleSelectChange}
               >
                 <MenuItem value="criminales">Criminales</MenuItem>
