@@ -8,6 +8,7 @@ import { Casos } from "./pages/Casos";
 import { CriminalCard } from "./components/Records/CriminalCard";
 import { Identikits } from "./pages/Identikits";
 import { SketchCard } from "./components/Records/SketchCard";
+import { Modelos } from "./pages/Modelos";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/busqueda" element={<OpenFace />}></Route>
         <Route path="/criminales/:id" element={<CriminalCard />}></Route>
         <Route path="/identikits/:id" element={<SketchCard />}></Route>
+        <Route path="/modelos" element={<Modelos />}></Route>
       </Routes>
     </BrowserRouter>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Criminales } from "../../pages/Criminales";
 import { CriminalCard } from "../Records/CriminalCard";
 import { Button, MenuItem, Select } from "@mui/material";
@@ -31,7 +31,9 @@ export const ChooseDatabase: React.FC<ChooseDatabaseProps> = ({
   const [sketch, setSketch] = React.useState(false);
   const [selectedOption, setSelectedOption] = React.useState("criminales");
 
-  const handleSelectChange = (event) => {
+  const handleSelectChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setSelectedOption(event.target.value);
     if (event.target.value === "identikits") {
       setSketch(true);
@@ -45,8 +47,8 @@ export const ChooseDatabase: React.FC<ChooseDatabaseProps> = ({
         <>
           <Criminales
             search={true}
+            model={false}
             onVerClick={handleVerClick}
-            handleReload={handleReload}
           ></Criminales>
           <div style={{ marginTop: "10px" }}>
             <Button
@@ -75,7 +77,7 @@ export const ChooseDatabase: React.FC<ChooseDatabaseProps> = ({
         </>
       ) : !isIdentikitSelected && sketch ? (
         <>
-          <Identikits search={true} onVerClick2={handleVerClick2}></Identikits>
+          <Identikits search={true} model={false} onVerClick2={handleVerClick2}></Identikits>
           <div style={{ marginTop: "10px" }}>
             <Button
               variant="contained"

@@ -213,14 +213,16 @@ const calculateAge = (birthday: Date) => {
 
 interface FacialSearchProps {
   search?: boolean;
+  model?: boolean;
   onVerClick?: () => void;
-  handleReload?: () => void;
+  rowData?: React.Dispatch<React.SetStateAction<never[]>>;
 }
 
 export const Criminales: React.FC<FacialSearchProps> = ({
   search = false,
+  model = false,
   onVerClick,
-  handleReload,
+  rowData,
 }) => {
   const [open, setOpen] = React.useState(false);
   const [criminals, setCriminals] = useState<Criminal[] | undefined>(undefined);
@@ -245,21 +247,21 @@ export const Criminales: React.FC<FacialSearchProps> = ({
       headerClassName: "header",
       headerAlign: "center",
       headerName: "Apellidos",
-      width: search ? 170 : 175,
+      width: search || model ? 170 : 175,
     },
     {
       field: "name",
       headerClassName: "header",
       headerAlign: "center",
       headerName: "Nombre",
-      width: search ? 140 : 145,
+      width: search || model ? 140 : 145,
     },
     {
       field: "alias",
       headerClassName: "header",
       headerAlign: "center",
       headerName: "Alias",
-      width: search ? 120 : 125,
+      width: search || model ? 120 : 125,
     },
     {
       field: "nationality",
@@ -332,7 +334,7 @@ export const Criminales: React.FC<FacialSearchProps> = ({
       headerClassName: "header",
       headerAlign: "center",
       headerName: "Género",
-      width: search ? 90 : 100,
+      width: search || model ? 90 : 100,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       cellClassName: (params: GridCellParams<any, string>) => {
         return clsx("gender", {
@@ -346,18 +348,18 @@ export const Criminales: React.FC<FacialSearchProps> = ({
       headerClassName: "header",
       headerAlign: "center",
       headerName: "Peligrosidad",
-      width: search ? 135 : 140,
-      renderCell: (params) => <RatingComponent value={params.value} />,
+      width: search || model ? 135 : 140,
+      renderCell: (params: { value: number }) => (
+        <RatingComponent value={params.value} />
+      ),
     },
-    {
+    !model && {
       field: "actions",
       headerClassName: "header",
       headerAlign: "center",
       headerName: "Acciones",
       sortable: false,
       width: 120,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-expect-error
       renderCell: (params: GridValueGetterParams) => (
         <div style={{ width: "100%" }}>
           {!search ? (
@@ -468,7 +470,7 @@ export const Criminales: React.FC<FacialSearchProps> = ({
       headerName: "Creado en",
       width: 160,
     },
-  ];
+  ].filter(Boolean);
 
   columns.forEach((col) => {
     if (col.field === "dangerousness") {
@@ -485,9 +487,9 @@ export const Criminales: React.FC<FacialSearchProps> = ({
       <GridToolbarQuickFilter style={{ width: "40%" }} />
       <div>
         <GridToolbarColumnsButton />
-        <GridToolbarDensitySelector />
+        {!search && !model && <GridToolbarDensitySelector />}
         <GridToolbarFilterButton />
-        {!search && <GridToolbarExport />}
+        {!search && !model && <GridToolbarExport />}
       </div>
     </GridToolbarContainer>
   );
@@ -514,12 +516,12 @@ export const Criminales: React.FC<FacialSearchProps> = ({
   return (
     <Box
       sx={
-        search
+        search || model
           ? { paddingTop: 5 }
           : { paddingLeft: 40, paddingTop: 2, backgroundColor: "#F0F1F4" }
       }
     >
-      {!search && (
+      {!search && !model && (
         <div style={{ padding: 20, textAlign: "end" }}>
           <Button
             variant="contained"
@@ -582,6 +584,7 @@ export const Criminales: React.FC<FacialSearchProps> = ({
         <DataGrid
           rows={rows}
           columns={columns}
+          rowHeight={48}
           getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 !== 0 ? "even" : "odd"
           }
@@ -591,7 +594,11 @@ export const Criminales: React.FC<FacialSearchProps> = ({
             },
           }}
           pageSizeOptions={[5, 10]}
-          hideFooterSelectedRowCount
+          hideFooterSelectedRowCount={!model}
+          checkboxSelection={model}
+          onRowSelectionModelChange={(selection) => {
+            rowData(selection);
+          }}
           showCellVerticalBorder
           components={{
             Toolbar: () => (
@@ -603,7 +610,7 @@ export const Criminales: React.FC<FacialSearchProps> = ({
           localeText={{
             ...esES.components.MuiDataGrid.defaultProps.localeText,
           }}
-          sx={{ width: !search ? 1580 : 1490 }}
+          sx={{ width: !search && !model ? 1580 : 1490 }}
         />
       </Box>
       <NewCriminalDialog open={open} onClose={handleClose}></NewCriminalDialog>

@@ -23,6 +23,7 @@ import PortraitIcon from "@mui/icons-material/Portrait";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import ContactsIcon from "@mui/icons-material/Contacts";
 import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
+import Groups3Icon from '@mui/icons-material/Groups3';
 
 const drawerWidth = 300;
 
@@ -208,6 +209,21 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
                       <PersonSearchIcon />
                     </ListItemIcon>
                     <ListItemText primary="Reconocimiento Facial" />
+                  </ListItemButton>
+                </Link>
+                <Link
+                  to={"/modelos"}
+                  style={{
+                    textDecoration: "none",
+                    cursor: "default",
+                    color: "black",
+                  }}
+                >
+                  <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemIcon>
+                      <Groups3Icon />
+                    </ListItemIcon>
+                    <ListItemText primary="Modelos" />
                   </ListItemButton>
                 </Link>
               </List>

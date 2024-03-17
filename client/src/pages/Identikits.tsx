@@ -57,12 +57,16 @@ const renderImageCell = (value: string) => {
 
 interface FacialSearchProps {
   search?: boolean;
+  model?: boolean;
   onVerClick2?: () => void;
+  rowData?: React.Dispatch<React.SetStateAction<never[]>>;
 }
 
 export const Identikits: React.FC<FacialSearchProps> = ({
   search = false,
+  model = false,
   onVerClick2,
+  rowData,
 }) => {
   const [sketches, setSketches] = useState<Sketches[] | undefined>(undefined);
   const rows = sketches
@@ -113,7 +117,7 @@ export const Identikits: React.FC<FacialSearchProps> = ({
         return dibujo;
       },
     },
-    {
+    !model && {
       field: "actions",
       headerClassName: "header",
       headerAlign: "center",
@@ -196,7 +200,7 @@ export const Identikits: React.FC<FacialSearchProps> = ({
       headerName: "Creado en",
       width: 160,
     },
-  ];
+  ].filter(Boolean);
 
   const CustomToolbar1 = () => (
     <GridToolbarContainer
@@ -205,7 +209,7 @@ export const Identikits: React.FC<FacialSearchProps> = ({
       <GridToolbarQuickFilter style={{ width: "40%" }} />
       <div>
         <GridToolbarFilterButton />
-        {!search && <GridToolbarExport />}
+        {!search && !model && <GridToolbarExport />}
       </div>
     </GridToolbarContainer>
   );
@@ -224,7 +228,7 @@ export const Identikits: React.FC<FacialSearchProps> = ({
   return (
     <Box
       sx={
-        search
+        search || model
           ? { paddingTop: 5 }
           : { paddingLeft: 40, paddingTop: 5, backgroundColor: "#F0F1F4" }
       }
@@ -250,8 +254,12 @@ export const Identikits: React.FC<FacialSearchProps> = ({
       >
         <DataGrid
           rows={rows}
-          rowHeight={search ? 100 : 200}
+          rowHeight={search || model ? 100 : 200}
           columns={columns}
+          checkboxSelection={model}
+          onRowSelectionModelChange={(selection) => {
+            rowData(selection);
+          }}
           getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 !== 0 ? "even" : "odd"
           }
@@ -273,7 +281,7 @@ export const Identikits: React.FC<FacialSearchProps> = ({
           localeText={{
             ...esES.components.MuiDataGrid.defaultProps.localeText,
           }}
-          sx={{ width: !search ? 1580 : 1490 }}
+          sx={{ width: !search && !model ? 1580 : 1490 }}
         />
       </Box>
     </Box>
