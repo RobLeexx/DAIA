@@ -257,9 +257,17 @@ export const Identikits: React.FC<FacialSearchProps> = ({
           rowHeight={search || model ? 100 : 200}
           columns={columns}
           checkboxSelection={model}
-          onRowSelectionModelChange={(selection) => {
-            rowData(selection);
-          }}
+          onRowSelectionModelChange={
+            model
+              ? (selection) => {
+                  const selectedIDs = new Set(selection);
+                  const selectedRows = rows
+                    .filter((row) => selectedIDs.has(row.id))
+                    .map(({ id, output }) => ({ id, output }));
+                  rowData(selectedRows);
+                }
+              : undefined
+          }
           getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 !== 0 ? "even" : "odd"
           }

@@ -38,6 +38,7 @@ interface Criminal {
   name: string;
   alias: string;
   ci: string;
+  mainPhoto: string;
   birthday: Date;
   nationality: string;
   description: string;
@@ -596,9 +597,17 @@ export const Criminales: React.FC<FacialSearchProps> = ({
           pageSizeOptions={[5, 10]}
           hideFooterSelectedRowCount={!model}
           checkboxSelection={model}
-          onRowSelectionModelChange={(selection) => {
-            rowData(selection);
-          }}
+          onRowSelectionModelChange={
+            model
+              ? (selection) => {
+                  const selectedIDs = new Set(selection);
+                  const selectedRows = rows
+                    .filter((row) => selectedIDs.has(row.id))
+                    .map(({ id, mainPhoto }) => ({ id, mainPhoto }));
+                  rowData(selectedRows);
+                }
+              : undefined
+          }
           showCellVerticalBorder
           components={{
             Toolbar: () => (

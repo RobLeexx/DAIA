@@ -4,9 +4,6 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
 import Typography from "@mui/material/Typography";
-
-import { ChooseDatabase } from "../components/OpenFace/ChooseDatabase";
-import RecognitionWheel from "../components/OpenFace/RecognitionWheel";
 import {
   getLatestImage,
   getOF,
@@ -20,6 +17,7 @@ import searchModel from "../assets/searchModel.png";
 import { Navigation } from "../components/Navigation";
 import ModelSelection from "../components/Modelos/ModelSelection";
 import { FilterDatabase } from "../components/Modelos/FilterDatabase";
+import { SaveModel } from "../components/Modelos/SaveModel";
 
 const steps = ["Tipo de Modelo", "Base de Datos", "Guardar Modelos"];
 const sketchType = [
@@ -242,27 +240,12 @@ export const Modelos: React.FC = () => {
             ) : /* Step 2 */
             activeStep === 1 ? (
               <FilterDatabase
-                isCriminalSelected={isCriminalSelected}
-                handleVerClick={handleVerClick}
-                handleVerClickFalse={handleVerClickFalse}
-                isIdentikitSelected={isIdentikitSelected}
-                handleVerClick2={handleVerClick2}
-                handleVerClickFalse2={handleVerClickFalse2}
-                setSelectedImage={setSelectedImage}
                 handleComplete={handleComplete}
                 handleReload={handleReload}
               />
             ) : (
               /* Step 3 */
-              <RecognitionWheel
-                selectedValue={selectedValue}
-                handleBack={handleBack}
-                selectedImage={selectedImage}
-                loading={loading}
-                handleReload={handleReload}
-                handleButtonClick={handleButtonClick}
-                tenMatches={tenMatches}
-              />
+              <SaveModel></SaveModel>
             )}
           </React.Fragment>
         </div>

@@ -4,24 +4,24 @@ import { Button, MenuItem, Select } from "@mui/material";
 import { Identikits } from "../../pages/Identikits";
 
 interface FilterDatabase {
-  isCriminalSelected: boolean;
-  handleVerClick: () => void;
-  handleVerClickFalse: () => void;
-  isIdentikitSelected: boolean;
-  handleVerClick2: () => void;
-  handleVerClickFalse2: () => void;
-  setSelectedImage: React.Dispatch<React.SetStateAction<File | null>>;
   handleComplete: () => void;
   handleReload: () => void;
+  rowData: string[];
 }
 
-export const FilterDatabase: React.FC<FilterDatabase> = ({ handleReload }) => {
+export const FilterDatabase: React.FC<FilterDatabase> = ({
+  handleReload,
+  handleComplete,
+  rowData,
+}) => {
   const [sketch, setSketch] = React.useState(false);
   const [selectedOption, setSelectedOption] = React.useState("criminales");
-  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   const handlePrintSelectedRows = () => {
-    console.log(selectedRows);
+    rowData = selectedRows.slice();
+    console.log(rowData);
+    handleComplete();
   };
 
   const handleSelectChange = (event: {
