@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import maleImage from "../../assets/male.jpg";
 import womanImage from "../../assets/woman.jpg";
 import CanvasDraw from "react-canvas-draw";
@@ -8,7 +8,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import CameraFrontIcon from "@mui/icons-material/CameraFront";
 import DownloadButton from "../DownloadButton";
 import RecognitionWheel from "../OpenFace/RecognitionWheel";
-import { getAllCriminals, getLatestSketch, getOF3 } from "../../api/sketch.api";
+import { getAllCriminals, getAllModels, getLatestSketch, getOF3 } from "../../api/sketch.api";
 
 interface GeneratorProps {
   selectedValue: string;
@@ -48,6 +48,10 @@ const Generator: React.FC<GeneratorProps> = ({
   const [generate, setGenerate] = React.useState(false);
   const [tenMatches, setTenMatches] = React.useState<Match[]>([]);
   const [loading2, setLoading2] = useState(false);
+  const [selectedModel, setSelectedModel] = React.useState(
+    "TODOS LOS CRIMINALES"
+  );
+  const [models, setModels] = useState([]);
 
   const mergeResultsWithCriminals = (
     results: Result[],
@@ -85,7 +89,7 @@ const Generator: React.FC<GeneratorProps> = ({
         latestImageResponse.data.length > 0
           ? latestImageResponse.data[latestImageResponse.data.length - 1].id
           : null;
-      const latestImage = await getOF3(latestImageId);
+      const latestImage = await getOF3(latestImageId as unknown as number, selectedModel);
       const allCriminals = await getAllCriminals();
       const mergedResults = mergeResultsWithCriminals(
         latestImage.data,
@@ -96,6 +100,37 @@ const Generator: React.FC<GeneratorProps> = ({
       console.error("Error al obtener los resultados:", error);
     } finally {
       setLoading2(false);
+    }
+  };
+
+  const handleSelectChange = (newOption: React.SetStateAction<string>) => {
+    setSelectedModel(newOption);
+  };
+
+  useEffect(() => {
+    async function loadAllModels() {
+      try {
+        const res = await getModels();
+        // Verificar si res es un array antes de establecerlo en el estado
+        if (Array.isArray(res)) {
+          setModels(res);
+        } else {
+          console.error("La respuesta no es un array:", res);
+        }
+      } catch (error) {
+        console.error("Error al cargar los modelos:", error);
+      }
+    }
+    loadAllModels();
+  }, []);
+
+  const getModels = async () => {
+    try {
+      const response = await getAllModels();
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener los modelos:", error);
+      return []; // Devolver un array vacío en caso de error
     }
   };
   return (
@@ -249,6 +284,9 @@ const Generator: React.FC<GeneratorProps> = ({
           handleReload={handleReload}
           handleButtonClick={handleButtonClick2}
           tenMatches={tenMatches}
+          selectedModel={selectedModel}
+          option={handleSelectChange}
+          models={models}
         />
       )}
     </>

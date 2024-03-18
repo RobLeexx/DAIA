@@ -222,56 +222,66 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
         </div>
       </div>
       {tenMatches[0] ? (
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            alignItems: "baseline",
-            padding: 20,
-          }}
-        >
-          {tenMatches.map((match, index) => (
-            <div key={index} style={{ padding: 20 }}>
-              <a
-                href={`http://localhost:5173/criminales/${match.result_id}`}
-                onClick={() => {
-                  localStorage.setItem("edit", "false");
-                }}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  src={match.mainPhoto}
-                  style={{
-                    width: 230,
-                    height: 230,
-                    objectFit: "cover",
-                    border: "5px solid #0a934e",
-                  }}
-                  alt={`Criminal ${index + 1}`}
-                />
-              </a>
-              <ColoredDiv
-                style={{ backgroundColor: matchColors[index], color: "white" }}
-              >
-                {match.per}
-              </ColoredDiv>
-            </div>
-          ))}
-
+        <>
+          <div style={{ textAlign: "center", paddingTop: 60 }}>
+            <Typography sx={{ fontSize: 28, fontWeight: "bolder" }}>
+              MEJORES COINCIDENCIAS CON: {selectedOptionLocal}
+            </Typography>
+          </div>
           <div
             style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              alignItems: "baseline",
               padding: 20,
-              margin: 10,
-              backgroundColor: "#909090",
             }}
           >
-            <GroupAddIcon
-              style={{ color: "white", height: 200, fontSize: 180 }}
-            ></GroupAddIcon>
+            {tenMatches.map((match, index) => (
+              <div key={index} style={{ padding: 20 }}>
+                <a
+                  href={`http://localhost:5173/criminales/${match.result_id}`}
+                  onClick={() => {
+                    localStorage.setItem("edit", "false");
+                  }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src={match.mainPhoto}
+                    style={{
+                      width: 230,
+                      height: 230,
+                      objectFit: "cover",
+                      border: "5px solid #0a934e",
+                    }}
+                    alt={`Criminal ${index + 1}`}
+                  />
+                </a>
+                <ColoredDiv
+                  style={{
+                    backgroundColor: matchColors[index],
+                    color: "white",
+                  }}
+                >
+                  {match.per}
+                </ColoredDiv>
+              </div>
+            ))}
+
+            <div
+              style={{
+                padding: 20,
+                margin: 10,
+                backgroundColor: "#909090",
+              }}
+            >
+              <GroupAddIcon
+                style={{ color: "white", height: 200, fontSize: 180 }}
+              ></GroupAddIcon>
+            </div>
           </div>
-        </div>
+        </>
       ) : (
         <img />
       )}
