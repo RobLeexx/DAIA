@@ -11,6 +11,7 @@ from django.http import JsonResponse
 from IA_tools.uploadOF import search_face
 import json
 import os
+import requests
 
 class CriminalView(viewsets.ModelViewSet):
     parser_classes = (MultiPartParser, FormParser)
@@ -58,20 +59,43 @@ class CriminalView(viewsets.ModelViewSet):
         except criminal.DoesNotExist:
             return HttpResponseServerError("Imagen no encontrada", status=404)
 
-        # Ruta de la imagen original
-        original_image_path = image.mainPhoto.path
+        # Obtener el parámetro 'name' enviado desde el cliente
+        name = request.GET.get('name', '')
 
-        filename = os.path.basename(original_image_path)
-        number = os.path.splitext(filename)[0]
+        # Realizar el GET a la URL especificada
+        url = 'http://127.0.0.1:8000/modelos/api/v1/modelos/'
+        response = requests.get(url)
+        
+        # Verificar si la solicitud fue exitosa
+        if response.status_code == 200:
+            models_data = response.json()
+            
+            # Buscar el modelo con el nombre correspondiente
+            matching_model = next((model for model in models_data if model['name'] == name), None)
+            
+            if matching_model:
+                if matching_model['type'] == 'criminales':
+                    # Obtener las rutas de las imágenes de la carpeta 'media/criminal/photos/'
+                    img_filenames = [os.path.join('media/criminal/photos', os.path.basename(data['img'])) for data in matching_model['data']]
+                elif matching_model['type'] == 'identikits':
+                    # Obtener las rutas de las imágenes de la carpeta 'media/sketches/output'
+                    img_filenames = [os.path.join('media/sketches/output', os.path.basename(data['img'])) for data in matching_model['data']]
+                else:
+                    return HttpResponseServerError("Tipo de modelo no reconocido: {}".format(matching_model['type']), status=400)
+            else:
+                return HttpResponseServerError("No se encontraron modelos coincidentes", status=404)
 
-        # Carpeta de la base de datos para la comparación
-        database_path = 'media/criminal/photos/'  # Reemplaza con la ruta correcta a tu base de datos
+
+        else:
+            print("Error al obtener los modelos:", response.status_code)
+            return HttpResponseServerError("Error al obtener los modelos", status=500)
 
         # Ruta para almacenar el JSON de resultados
-        json_results_path = 'media/criminal/results/'+number+'.json'
-        
+        original_image_path = image.mainPhoto.path  # Se asume que 'input' es el campo que contiene la ruta de la imagen de entrada
+        json_results_path = 'media/criminal/results/' + str(image.pk) + '.json'  # Se utiliza el ID de la imagen como parte del nombre del archivo JSON
+
         # Llamar a la función search_face
-        search_face(original_image_path, database_path, json_results_path)
+        search_face(original_image_path, img_filenames, json_results_path)
 
         # Leer el JSON de resultados sin barras invertidas adicionales
         with open(json_results_path, 'r') as json_file:

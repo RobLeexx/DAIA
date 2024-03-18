@@ -65,7 +65,7 @@ export const SaveModel: React.FC<FacialSearchProps> = ({
   rowData,
 }) => {
   const { register, control, setValue, handleSubmit, watch } = useForm();
-  const name = watch("name")
+  const name = watch("name");
   const [isNameEmpty, setIsNameEmpty] = useState(true);
   const [isDescriptionEmpty, setIsDescriptionEmpty] = useState(true);
   const [isName, setIsName] = React.useState(false);
@@ -468,27 +468,26 @@ export const SaveModel: React.FC<FacialSearchProps> = ({
             render={({ field }) => (
               <TextField
                 style={{ width: "97%", margin: 5 }}
-                type="text"
                 variant="outlined"
                 id="name"
                 {...field}
                 label="Nombre del Modelo"
                 error={isName}
+                inputProps={{ maxLength: 30 }}
               />
             )}
           />
-          <Textarea
-            minRows={2}
+          <TextField
+            rows={16}
+            multiline
             placeholder="Descripción"
-            size="lg"
-            variant="soft"
             defaultValue=""
+            inputProps={{ maxLength: 500 }}
             sx={{
               marginInline: 10,
               width: "97%",
               height: 410,
               margin: 1,
-              border: "2px solid #0B6BCB",
             }}
             {...register("description", { required: true })}
             onChange={handleDescriptionChange}

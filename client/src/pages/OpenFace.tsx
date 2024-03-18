@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -14,6 +14,7 @@ import {
   getOF2,
   getAllCriminals,
   getOF3,
+  getAllModels,
 } from "../api/sketch.api";
 
 import dbImage from "../assets/database1.png";
@@ -41,6 +42,7 @@ interface Match {
 export const OpenFace: React.FC = () => {
   const [tenMatches, setTenMatches] = React.useState<Match[]>([]);
   const [activeStep, setActiveStep] = React.useState(0);
+  const [models, setModels] = useState([]);
   const [completed, setCompleted] = React.useState<{
     [k: number]: boolean;
   }>({});
@@ -51,6 +53,9 @@ export const OpenFace: React.FC = () => {
   const [isIdentikitSelected, setIsIdentikitSelected] = useState(false);
   const [selectedValue, setSelectedValue] = React.useState(sketchType[0]);
   const [loading, setLoading] = useState(false);
+  const [selectedModel, setSelectedModel] = React.useState(
+    "TODOS LOS CRIMINALES"
+  );
 
   const handleVerClick = () => {
     setIsCriminalSelected(true);
@@ -177,16 +182,12 @@ export const OpenFace: React.FC = () => {
       const identikitImageId = localStorage.getItem("identikitId");
       if (selectedValue == "Seleccionar Base de Datos") {
         if (criminalImageId === "false") {
-          latestImage = await getOF3(
-            identikitImageId as unknown as number
-          );
+          latestImage = await getOF3(identikitImageId as unknown as number, selectedModel);
         } else {
-          latestImage = await getOF2(
-            criminalImageId as unknown as number
-          );
+          latestImage = await getOF2(criminalImageId as unknown as number, selectedModel);
         }
       } else {
-        latestImage = await getOF(latestImageId);
+        latestImage = await getOF(latestImageId, selectedModel);
       }
       const allCriminals = await getAllCriminals();
       const mergedResults = mergeResultsWithCriminals(
@@ -198,6 +199,37 @@ export const OpenFace: React.FC = () => {
       console.error("Error al obtener los resultados:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSelectChange = (newOption: React.SetStateAction<string>) => {
+    setSelectedModel(newOption);
+  };
+
+  useEffect(() => {
+    async function loadAllModels() {
+      try {
+        const res = await getModels();
+        // Verificar si res es un array antes de establecerlo en el estado
+        if (Array.isArray(res)) {
+          setModels(res);
+        } else {
+          console.error("La respuesta no es un array:", res);
+        }
+      } catch (error) {
+        console.error("Error al cargar los modelos:", error);
+      }
+    }
+    loadAllModels();
+  }, []);
+
+  const getModels = async () => {
+    try {
+      const response = await getAllModels();
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener los modelos:", error);
+      return []; // Devolver un array vacío en caso de error
     }
   };
 
@@ -265,6 +297,9 @@ export const OpenFace: React.FC = () => {
                 handleReload={handleReload}
                 handleButtonClick={handleButtonClick}
                 tenMatches={tenMatches}
+                selectedModel={selectedModel}
+                option={handleSelectChange}
+                models={models}
               />
             )}
           </React.Fragment>

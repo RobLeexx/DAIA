@@ -5,8 +5,8 @@ from django.utils import timezone
 
 class trainModel(models.Model):
     type = models.CharField(max_length=20, default='')
-    name = models.CharField(max_length=20, default='')
+    name = models.CharField(max_length=30, default='')
     data = models.JSONField(null=True, default=dict)
-    description = models.CharField(max_length=200, default='')
+    description = models.CharField(max_length=500, default='')
     length = models.IntegerField(max_length=100, default='')
     createdAt = models.DateTimeField(default=timezone.now)

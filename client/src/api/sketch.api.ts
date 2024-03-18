@@ -129,20 +129,20 @@ export const getGAN = (id: number, config?: AxiosRequestConfig) => {
   );
 };
 
-export const getOF = (id: number) => {
+export const getOF = (id: number, name: string) => {
   return axios.get(
-    `http://localhost:8000/images/api/v1/images/${id}/get_recognition_wheel/`
+    `http://localhost:8000/images/api/v1/images/${id}/get_recognition_wheel/?name=${name}`
   );
 };
 
-export const getOF2 = (id: number) => {
+export const getOF2 = (id: number, name: string) => {
   return axios.get(
-    `http://localhost:8000/criminal/api/v1/criminal/${id}/get_recognition_wheel2/`
+    `http://localhost:8000/criminal/api/v1/criminal/${id}/get_recognition_wheel2/?name=${name}`
   );
 };
 
-export const getOF3 = (id: number) => {
+export const getOF3 = (id: number, name: string) => {
   return axios.get(
-    `http://localhost:8000/sketches/api/v1/sketches/${id}/get_recognition_wheel3/`
+    `http://localhost:8000/sketches/api/v1/sketches/${id}/get_recognition_wheel3/?name=${name}`
   );
 };

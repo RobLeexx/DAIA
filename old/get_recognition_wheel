@@ -16,6 +16,8 @@ class ImageView(viewsets.ModelViewSet):
     serializer_class = ImagesSerializer
     queryset = images.objects.all()
 
+    # Dentro de tu vista ImageView en la función get_recognition_wheel:
+
     def get_recognition_wheel(self, request, pk=None):
         try:
             image = images.objects.get(pk=pk)
@@ -37,14 +39,10 @@ class ImageView(viewsets.ModelViewSet):
             matching_model = next((model for model in models_data if model['name'] == name), None)
             
             if matching_model:
-                if matching_model['type'] == 'criminales':
-                    # Obtener las rutas de las imágenes de la carpeta 'media/criminal/photos/'
-                    img_filenames = [os.path.join('media/criminal/photos', os.path.basename(data['img'])) for data in matching_model['data']]
-                elif matching_model['type'] == 'identikits':
-                    # Obtener las rutas de las imágenes de la carpeta 'media/sketches/output'
-                    img_filenames = [os.path.join('media/sketches/output', os.path.basename(data['img'])) for data in matching_model['data']]
-                else:
-                    return HttpResponseServerError("Tipo de modelo no reconocido: {}".format(matching_model['type']), status=400)
+                # Obtener los nombres de archivo de la carpeta 'media/criminal/photos/' que coincidan con los campos 'img' del modelo
+                img_filenames = [data['img'] for data in matching_model['data']]  # Cambio aquí
+                # Construir la ruta de la carpeta de la base de datos
+                database_path = 'media/criminal/photos/'
             else:
                 return HttpResponseServerError("No se encontraron modelos coincidentes", status=404)
 
@@ -92,3 +90,5 @@ class ImageView(viewsets.ModelViewSet):
 
         # Devolver el JSON de resultados vinculados como respuesta
         return JsonResponse(linked_results, safe=False)
+
+

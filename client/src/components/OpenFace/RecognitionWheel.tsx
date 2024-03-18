@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
 import maleImage from "../../assets/male.jpg";
-import { Box, Button, CircularProgress, styled } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  MenuItem,
+  Select,
+  Typography,
+  styled,
+} from "@mui/material";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 
 interface RecognitionWheelProps {
@@ -11,6 +19,9 @@ interface RecognitionWheelProps {
   handleButtonClick: () => void;
   handleReload: () => void;
   tenMatches: { per: string; mainPhoto: string; result_id: number }[];
+  selectedModel: string;
+  option: (value: string) => void;
+  models: string[];
 }
 
 const ColoredDiv = styled("div")(({ theme }) => ({
@@ -29,8 +40,19 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
   handleButtonClick,
   handleReload,
   tenMatches,
+  selectedModel,
+  option,
+  models,
 }) => {
   const [matchColors, setMatchColors] = useState<string[]>([]);
+  const [selectedOptionLocal, setSelectedOption] =
+    React.useState(selectedModel);
+
+  const handleSelectChange = (event: { target: { value: string } }) => {
+    const newOption = event.target.value;
+    setSelectedOption(newOption);
+    option(newOption);
+  };
 
   useEffect(() => {
     if (tenMatches) {
@@ -116,9 +138,21 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
           }}
         >
           {!loading ? (
-            <Button variant="contained" onClick={handleButtonClick}>
-              BUSCAR
-            </Button>
+            <>
+              <Button variant="contained" onClick={handleButtonClick}>
+                BUSCAR
+              </Button>
+              <Typography sx={{ margin: 2, textAlign: "center" }}>
+                Seleccionar Modelo:
+              </Typography>
+              <Select value={selectedOptionLocal} onChange={handleSelectChange}>
+                {models.map((model) => (
+                  <MenuItem key={model.name} value={model.name}>
+                    <Typography sx={{ width: 300 }}>{model.name}</Typography>
+                  </MenuItem>
+                ))}
+              </Select>
+            </>
           ) : (
             <Button variant="outlined" disabled>
               CARGANDO
