@@ -85,13 +85,12 @@ class CriminalView(viewsets.ModelViewSet):
             else:
                 return HttpResponseServerError("No se encontraron modelos coincidentes", status=404)
 
-
         else:
             print("Error al obtener los modelos:", response.status_code)
             return HttpResponseServerError("Error al obtener los modelos", status=500)
 
         # Ruta para almacenar el JSON de resultados
-        original_image_path = image.mainPhoto.path  # Se asume que 'input' es el campo que contiene la ruta de la imagen de entrada
+        original_image_path = image.mainPhoto.path  # Se asume que 'mainPhoto' es el campo que contiene la ruta de la imagen de entrada
         json_results_path = 'media/criminal/results/' + str(image.pk) + '.json'  # Se utiliza el ID de la imagen como parte del nombre del archivo JSON
 
         # Llamar a la función search_face

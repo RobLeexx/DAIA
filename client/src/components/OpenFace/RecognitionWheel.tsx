@@ -138,7 +138,13 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
           }}
         >
           {!loading ? (
-            <>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                minWidth: 300,
+              }}
+            >
               <Button variant="contained" onClick={handleButtonClick}>
                 BUSCAR
               </Button>
@@ -152,11 +158,19 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
                   </MenuItem>
                 ))}
               </Select>
-            </>
+            </div>
           ) : (
-            <Button variant="outlined" disabled>
-              CARGANDO
-            </Button>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                minWidth: 300,
+              }}
+            >
+              <Button variant="outlined" disabled>
+                CARGANDO
+              </Button>
+            </div>
           )}
         </div>
         <div style={{ display: "flex", flexDirection: "column", height: 400 }}>

@@ -191,7 +191,7 @@ export const Identikits: React.FC<FacialSearchProps> = ({
       headerClassName: "header",
       headerAlign: "center",
       headerName: "Descripción",
-      width: 300,
+      width: 700,
     },
     {
       field: "createdAt",

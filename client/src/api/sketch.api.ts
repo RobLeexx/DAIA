@@ -122,9 +122,9 @@ export const updateCriminal = (id: string, criminal: FormData) => {
   return criminalApi.put(`/${id}/`, criminal);
 };
 
-export const getGAN = (id: number, config?: AxiosRequestConfig) => {
+export const getGAN = (id: number, config?: AxiosRequestConfig, model?: string) => {
   return axios.get(
-    `http://localhost:8000/sketches/api/v1/sketches/${id}/get_generated_image/`,
+    `http://localhost:8000/sketches/api/v1/sketches/${id}/get_generated_image/?model=${model}`,
     config
   );
 };

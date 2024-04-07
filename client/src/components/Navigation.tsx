@@ -23,7 +23,8 @@ import PortraitIcon from "@mui/icons-material/Portrait";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import ContactsIcon from "@mui/icons-material/Contacts";
 import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
-import Groups3Icon from '@mui/icons-material/Groups3';
+import Groups3Icon from "@mui/icons-material/Groups3";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const drawerWidth = 300;
 
@@ -62,14 +63,14 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
               paddingLeft: 80,
             }}
           >
-            <PolicyIcon></PolicyIcon>
-            <Typography variant="h6" style={{ fontWeight: "bold" }}>
-              DAIA
-            </Typography>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <PolicyIcon></PolicyIcon>
+              <Typography variant="h6" style={{ fontWeight: "bold" }}>
+                DACI
+              </Typography>
+            </div>
           </div>
-          <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
-          </Typography>
+          <AccountCircleIcon />
         </Toolbar>
       </AppBar>
       <Drawer

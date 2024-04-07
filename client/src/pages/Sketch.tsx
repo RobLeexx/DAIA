@@ -42,6 +42,7 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
   const [selectedValue, setSelectedValue] = React.useState(sketchType[0]);
   const [imageURL, setImageURL] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedModel, setSelectedModel] = React.useState("EstandarPro");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -133,9 +134,13 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
           ? latestSketchResponse.data[latestSketchResponse.data.length - 1].id
           : null;
       if (latestSketchId !== null) {
-        const response = await getGAN(latestSketchId, {
-          responseType: "arraybuffer",
-        });
+        const response = await getGAN(
+          latestSketchId,
+          {
+            responseType: "arraybuffer",
+          },
+          selectedModel
+        );
         if (response.data) {
           const blob = new Blob([response.data], { type: "image/jpeg" });
           const imageURL = URL.createObjectURL(blob);
@@ -151,6 +156,10 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSelectChange = (newOption: React.SetStateAction<string>) => {
+    setSelectedModel(newOption);
   };
 
   return (
@@ -217,6 +226,8 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
                 handleButtonClick={handleButtonClick}
                 imageURL={imageURL}
                 handleReload={handleReload}
+                selectedGANModel={selectedModel}
+                ganOption={handleSelectChange}
               />
             )}
           </React.Fragment>

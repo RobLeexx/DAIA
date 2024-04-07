@@ -26,13 +26,16 @@ class SketchView(viewsets.ModelViewSet):
     def get_generated_image(self, request, pk=None):
         sketch = self.get_object()
 
+        # Obtener el parámetro 'name' enviado desde el cliente
+        modelRequest = request.GET.get('model', '')
+
         # Ruta de la imagen original
         original_image_path = sketch.input.path
         img_name = os.path.basename(sketch.input.path)
         output_gan_path = 'media/sketches/output/'+img_name
 
         # Aplicar la función de procesamiento de imagen GAN
-        generated_image = process_image(original_image_path, output_gan_path, model='Simple')
+        generated_image = process_image(original_image_path, output_gan_path, model=modelRequest)
 
         if generated_image:
             try:
@@ -81,13 +84,12 @@ class SketchView(viewsets.ModelViewSet):
                 else:
                     return HttpResponseServerError("No se encontraron modelos coincidentes", status=404)
 
-
             else:
                 print("Error al obtener los modelos:", response.status_code)
                 return HttpResponseServerError("Error al obtener los modelos", status=500)
 
             # Ruta para almacenar el JSON de resultados
-            original_image_path = image.input.path  # Se asume que 'input' es el campo que contiene la ruta de la imagen de entrada
+            original_image_path = image.output.path  # Se asume que 'output' es el campo que contiene la ruta de la imagen de entrada
             json_results_path = 'media/sketches/results/' + str(image.pk) + '.json'  # Se utiliza el ID de la imagen como parte del nombre del archivo JSON
 
             # Llamar a la función search_face

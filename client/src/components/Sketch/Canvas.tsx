@@ -34,7 +34,7 @@ const Canvas: React.FC<CanvasProps> = ({
   const firstCanvas = useRef<CanvasDraw | null>(null);
   const [brushed, setBrushed] = useState(true);
   const [brushColor, setBrushColor] = useState("black");
-  const [brushRadius, setBrushRadius] = useState(6);
+  const [brushRadius, setBrushRadius] = useState(3);
   const [catenaryColor, setCatenaryColor] = useState("#1769aa");
   const [lazyRadius, setLazyRadius] = useState(4);
 
@@ -101,7 +101,7 @@ const Canvas: React.FC<CanvasProps> = ({
   };
 
   const face = () => {
-    setBrushRadius(6);
+    setBrushRadius(3);
   };
 
   const eyes = () => {

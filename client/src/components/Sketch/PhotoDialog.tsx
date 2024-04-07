@@ -63,6 +63,7 @@ const PhotoDialog: React.FC<SimpleDialogProps> = (props) => {
         </b>
         <br />
         <b>* Se debe encuadrar lo mejor posible a la cara.</b> <br />
+        <b>* La imagen debe ser 4x4 (Cuadrada)</b> <br />
         <b>* Se recomienda usar flash.</b>
       </div>
       <div style={{ display: "flex", justifyContent: "space-around" }}>

@@ -85,6 +85,9 @@ const CriminalCard: React.FC<Criminal> = ({
     <CardActions style={{ display: "flex", justifyContent: "center" }}>
       <Link
         to={`/criminales/${id}`}
+        onClick={() => {
+          localStorage.setItem("edit", "false");
+        }}
         style={{
           textDecoration: "none",
           color: "white",
@@ -100,8 +103,12 @@ const CriminalCard: React.FC<Criminal> = ({
 );
 
 export const Inicio: React.FC = () => {
-  const [criminalsIn, setCriminalsIn] = useState<Criminal[] | undefined>(undefined);
-  const [criminalsNa, setCriminalsNa] = useState<Criminal[] | undefined>(undefined);
+  const [criminalsIn, setCriminalsIn] = useState<Criminal[] | undefined>(
+    undefined
+  );
+  const [criminalsNa, setCriminalsNa] = useState<Criminal[] | undefined>(
+    undefined
+  );
   useEffect(() => {
     async function loadCriminals() {
       const res = await getAllCriminals();
@@ -110,8 +117,7 @@ export const Inicio: React.FC = () => {
           criminal.status === "Con Captura Internacional"
       );
       const withNationalCapture = res.data.filter(
-        (criminal: { status: string }) =>
-          criminal.status === "Prófugo"
+        (criminal: { status: string }) => criminal.status === "Prófugo"
       );
       const sortedInCriminals = withInternationalCapture.sort(
         (a: { dangerousness: number }, b: { dangerousness: number }) =>

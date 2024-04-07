@@ -84,7 +84,7 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [errorImage, setErrorImage] = useState(false);
   const params = useParams();
-  const [gender, setGender] = useState("Femenino");
+  const [gender, setGender] = useState("Masculino");
   const [status, setStatus] = useState("Arrestado");
   const [dng, setDng] = React.useState<number | null>(2);
   const [personName, setPersonName] = React.useState<string[]>([]);

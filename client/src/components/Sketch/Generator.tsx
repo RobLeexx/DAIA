@@ -3,12 +3,24 @@ import maleImage from "../../assets/male.jpg";
 import womanImage from "../../assets/woman.jpg";
 import CanvasDraw from "react-canvas-draw";
 
-import { Box, Button, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CameraFrontIcon from "@mui/icons-material/CameraFront";
 import DownloadButton from "../DownloadButton";
 import RecognitionWheel from "../OpenFace/RecognitionWheel";
-import { getAllCriminals, getAllModels, getLatestSketch, getOF3 } from "../../api/sketch.api";
+import {
+  getAllCriminals,
+  getAllModels,
+  getLatestSketch,
+  getOF3,
+} from "../../api/sketch.api";
 
 interface GeneratorProps {
   selectedValue: string;
@@ -18,6 +30,8 @@ interface GeneratorProps {
   handleButtonClick: () => void;
   imageURL: string | null;
   handleReload: () => void;
+  selectedGANModel: string;
+  ganOption: (value: string) => void;
 }
 
 interface Result {
@@ -43,6 +57,8 @@ const Generator: React.FC<GeneratorProps> = ({
   handleButtonClick,
   imageURL,
   handleReload,
+  selectedGANModel,
+  ganOption,
 }) => {
   const drawed = selectedImage ? URL.createObjectURL(selectedImage) : null;
   const [generate, setGenerate] = React.useState(false);
@@ -52,6 +68,14 @@ const Generator: React.FC<GeneratorProps> = ({
     "TODOS LOS CRIMINALES"
   );
   const [models, setModels] = useState([]);
+  const [selectedOptionLocal, setSelectedOption] =
+    React.useState(selectedGANModel);
+
+  const handleSelectChange2 = (event: { target: { value: string } }) => {
+    const newOption = event.target.value;
+    setSelectedOption(newOption);
+    ganOption(newOption);
+  };
 
   const mergeResultsWithCriminals = (
     results: Result[],
@@ -89,7 +113,10 @@ const Generator: React.FC<GeneratorProps> = ({
         latestImageResponse.data.length > 0
           ? latestImageResponse.data[latestImageResponse.data.length - 1].id
           : null;
-      const latestImage = await getOF3(latestImageId as unknown as number, selectedModel);
+      const latestImage = await getOF3(
+        latestImageId as unknown as number,
+        selectedModel
+      );
       const allCriminals = await getAllCriminals();
       const mergedResults = mergeResultsWithCriminals(
         latestImage.data,
@@ -202,17 +229,57 @@ const Generator: React.FC<GeneratorProps> = ({
               }}
             >
               {!loading ? (
-                <Button
-                  variant="contained"
-                  onClick={handleButtonClick}
-                  startIcon={<CameraFrontIcon fontSize="large" />}
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    maxWidth: 300,
+                  }}
                 >
-                  CONVERTIR
-                </Button>
+                  <Button
+                    variant="contained"
+                    onClick={handleButtonClick}
+                    startIcon={<CameraFrontIcon fontSize="large" />}
+                  >
+                    CONVERTIR
+                  </Button>
+                  <Typography sx={{ margin: 2, textAlign: "center" }}>
+                    Seleccionar Modelo:
+                  </Typography>
+                  <Select
+                    value={selectedOptionLocal}
+                    onChange={handleSelectChange2}
+                  >
+                    <MenuItem value="EstandarPro">
+                      <Typography sx={{ width: 300 }}>EstandarPro</Typography>
+                    </MenuItem>
+                    <MenuItem value="Avanzado">
+                      <Typography sx={{ width: 300 }}>Avanzado</Typography>
+                    </MenuItem>
+                    <MenuItem value="AvanzadoPro">
+                      <Typography sx={{ width: 300 }}>AvanzadoPro</Typography>
+                    </MenuItem>
+                    <MenuItem value="CUHK">
+                      <Typography sx={{ width: 300 }}>CUHK</Typography>
+                    </MenuItem>
+                  </Select>
+                </div>
               ) : (
-                <Button variant="outlined" disabled onClick={handleButtonClick}>
-                  CARGANDO
-                </Button>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    minWidth: 300,
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    disabled
+                    onClick={handleButtonClick}
+                  >
+                    CARGANDO
+                  </Button>
+                </div>
               )}
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
