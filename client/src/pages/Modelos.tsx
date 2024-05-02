@@ -4,7 +4,7 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
 import Typography from "@mui/material/Typography";
-import dbImage from "../assets/database1.png";
+import dbImage from "../assets/Frame.png";
 import searchModel from "../assets/searchModel.png";
 import { Navigation } from "../components/Navigation";
 import ModelSelection from "../components/Modelos/ModelSelection";

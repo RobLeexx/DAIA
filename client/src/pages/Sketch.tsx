@@ -11,7 +11,7 @@ import Canvas from "../components/Sketch/Canvas";
 import canvaImage from "../assets/canva.jpg";
 import photoImage from "../assets/photo.jpeg";
 import { Navigation } from "../components/Navigation";
-import { getLatestSketch, getGAN } from "../api/sketch.api";
+import { getGAN, getAllSketches } from "../api/sketch.api";
 
 const steps = ["Tipo de Imagen", "Canva", "Generar Identikit"];
 const sketchType = ["Dibujar Identikit", "Subir Foto"];
@@ -128,14 +128,15 @@ export const Sketch: React.FC<ImageUploadProps> = () => {
   const handleButtonClick = async () => {
     try {
       setLoading(true);
-      const latestSketchResponse = await getLatestSketch();
-      const latestSketchId =
-        latestSketchResponse.data.length > 0
-          ? latestSketchResponse.data[latestSketchResponse.data.length - 1].id
-          : null;
-      if (latestSketchId !== null) {
+      const latestSketchResponse = await getAllSketches();
+      latestSketchResponse.data.sort(
+        (a: any, b: any) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      const latestSketch = latestSketchResponse.data[0];
+      if (latestSketch.id !== null) {
         const response = await getGAN(
-          latestSketchId,
+          latestSketch.id,
           {
             responseType: "arraybuffer",
           },

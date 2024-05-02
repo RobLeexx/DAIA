@@ -18,7 +18,7 @@ import RecognitionWheel from "../OpenFace/RecognitionWheel";
 import {
   getAllCriminals,
   getAllModels,
-  getLatestSketch,
+  getAllSketches,
   getOF3,
 } from "../../api/sketch.api";
 
@@ -108,13 +108,14 @@ const Generator: React.FC<GeneratorProps> = ({
   const handleButtonClick2 = async () => {
     try {
       setLoading2(true);
-      const latestImageResponse = await getLatestSketch();
-      const latestImageId =
-        latestImageResponse.data.length > 0
-          ? latestImageResponse.data[latestImageResponse.data.length - 1].id
-          : null;
+      const latestImageResponse = await getAllSketches();
+      latestImageResponse.data.sort(
+        (a: any, b: any) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      const latestSketch = latestImageResponse.data[0];
       const latestImage = await getOF3(
-        latestImageId as unknown as number,
+        latestSketch.id as unknown as number,
         selectedModel
       );
       const allCriminals = await getAllCriminals();
@@ -159,6 +160,10 @@ const Generator: React.FC<GeneratorProps> = ({
       console.error("Error al obtener los modelos:", error);
       return []; // Devolver un array vacío en caso de error
     }
+  };
+
+  const reGenerate = () => {
+    setGenerate(false);
   };
   return (
     <>
@@ -253,9 +258,9 @@ const Generator: React.FC<GeneratorProps> = ({
                     <MenuItem value="EstandarPro">
                       <Typography sx={{ width: 300 }}>EstandarPro</Typography>
                     </MenuItem>
-                    <MenuItem value="Avanzado">
+                    {/* <MenuItem value="Avanzado">
                       <Typography sx={{ width: 300 }}>Avanzado</Typography>
-                    </MenuItem>
+                    </MenuItem> */}
                     <MenuItem value="AvanzadoPro">
                       <Typography sx={{ width: 300 }}>AvanzadoPro</Typography>
                     </MenuItem>
@@ -344,8 +349,8 @@ const Generator: React.FC<GeneratorProps> = ({
         </Box>
       ) : (
         <RecognitionWheel
-          selectedValue={"Seleccionar Base de Datos"}
-          handleBack={handleBack}
+          selectedValue={"Identikit"}
+          handleBack={reGenerate}
           selectedImage={imageURL}
           loading={loading2}
           handleReload={handleReload}

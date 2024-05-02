@@ -13,9 +13,15 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
 import TableRowsIcon from "@mui/icons-material/TableRows";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
+import AddReactionIcon from "@mui/icons-material/AddReaction";
 
-import { uploadSketch, updateSketch, getLatestSketch } from "../../api/sketch.api";
+import {
+  uploadSketch,
+  updateSketch,
+  getAllSketches,
+} from "../../api/sketch.api";
 
+import TemplatesDialog from "./TemplatesDialog";
 interface CanvasProps {
   handleReload: () => void;
   handleComplete: () => void;
@@ -37,6 +43,8 @@ const Canvas: React.FC<CanvasProps> = ({
   const [brushRadius, setBrushRadius] = useState(3);
   const [catenaryColor, setCatenaryColor] = useState("#1769aa");
   const [lazyRadius, setLazyRadius] = useState(4);
+  const [open, setOpen] = React.useState(false);
+  const [selectedValue, setSelectedValue] = React.useState<string>("");
 
   const onSubmit = handleSubmit(async (data) => {
     const formData = new FormData();
@@ -63,12 +71,13 @@ const Canvas: React.FC<CanvasProps> = ({
         //@ts-expect-error
         await uploadSketch(formData);
       } else {
-        const latestSketchResponse = await getLatestSketch();
-        const latestSketchId =
-          latestSketchResponse.data.length > 0
-            ? latestSketchResponse.data[latestSketchResponse.data.length - 1].id
-            : null;
-        await updateSketch(latestSketchId, data.description, file);
+        const latestSketchResponse = await getAllSketches();
+        latestSketchResponse.data.sort(
+          (a: any, b: any) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        const latestSketch = latestSketchResponse.data[0];
+        await updateSketch(latestSketch.id, data.description, file);
       }
       handleComplete();
     }
@@ -124,6 +133,14 @@ const Canvas: React.FC<CanvasProps> = ({
     setBrushRadius(30);
   };
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <Box>
       <form onSubmit={onSubmit}>
@@ -153,6 +170,7 @@ const Canvas: React.FC<CanvasProps> = ({
               hideGrid={true}
               backgroundColor="#ffffff"
               ref={firstCanvas}
+              imgSrc={selectedValue}
               saveData={
                 reloadCanvas
                   ? (localStorage.getItem("savedCanvas") as string)
@@ -170,6 +188,13 @@ const Canvas: React.FC<CanvasProps> = ({
               justifyContent: "space-around",
             }}
           >
+            <Button
+              variant="text"
+              onClick={handleClickOpen}
+              startIcon={<AddReactionIcon />}
+            >
+              Plantillas
+            </Button>
             <Button
               onClick={clear}
               variant="contained"
@@ -266,6 +291,12 @@ const Canvas: React.FC<CanvasProps> = ({
           </Button>
         </div>
       </form>
+      <TemplatesDialog
+        selectedValue={selectedValue}
+        open={open}
+        onClose={handleClose}
+        setSelectedValue={setSelectedValue}
+      />
     </Box>
   );
 };

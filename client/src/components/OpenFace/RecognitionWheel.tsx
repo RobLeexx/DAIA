@@ -95,6 +95,8 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
             src={
               selectedImage && selectedValue == "Seleccionar Base de Datos"
                 ? selectedImage
+                : selectedImage && selectedValue == "Identikit"
+                ? selectedImage
                 : URL.createObjectURL(selectedImage)
             }
             alt="Imagen"
@@ -105,7 +107,7 @@ const RecognitionWheel: React.FC<RecognitionWheelProps> = ({
               border: "5px solid #1769aa",
             }}
           />
-          {selectedValue === "Subir Foto2" ? (
+          {selectedValue == "Subir Foto2" ? (
             <Button
               variant="contained"
               onClick={handleReload}

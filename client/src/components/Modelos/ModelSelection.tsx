@@ -181,8 +181,8 @@ const ModelSelection: React.FC<ImageSelectionProps> = ({
             </Avatar>
             <Card
               sx={{
-                maxWidth: 500,
-                maxHeight: 500,
+                width: 500,
+                height: 500,
                 opacity: "40%",
                 cursor: "pointer",
                 padding: 2,

@@ -1,5 +1,6 @@
 import axios, { AxiosResponse, AxiosRequestConfig } from "axios";
 import { Sketch } from "../pages/Sketch";
+import _ from "lodash";
 
 // Define una interfaz que represente la estructura esperada del objeto sketch
 interface Sketch {
@@ -41,7 +42,6 @@ const modelApi = axios.create({
   baseURL: "http://localhost:8000/modelos/api/v1/modelos/",
 });
 
-
 // Define el tipo de la respuesta que se espera (AxiosResponse<Sketch>)
 export const uploadSketch = (
   sketch: Sketch
@@ -74,28 +74,12 @@ export const updateSketch = (
   return sketchApi.patch(`/${sketchId}/`, updatedData, patchConfig);
 };
 
-export const getLatestSketch = () => {
-  return sketchApi.get("/", {
-    params: {
-      _sort: "id",
-      _order: "desc",
-      _limit: 1,
-    },
-  });
-};
-
 export const getAllSketches = () => {
   return sketchApi.get("/");
 };
 
-export const getLatestImage = () => {
-  return imageApi.get("/", {
-    params: {
-      _sort: "id",
-      _order: "desc",
-      _limit: 1,
-    },
-  });
+export const getAllImages = () => {
+  return imageApi.get("/");
 };
 
 export const getAllCriminals = () => {
@@ -122,7 +106,11 @@ export const updateCriminal = (id: string, criminal: FormData) => {
   return criminalApi.put(`/${id}/`, criminal);
 };
 
-export const getGAN = (id: number, config?: AxiosRequestConfig, model?: string) => {
+export const getGAN = (
+  id: number,
+  config?: AxiosRequestConfig,
+  model?: string
+) => {
   return axios.get(
     `http://localhost:8000/sketches/api/v1/sketches/${id}/get_generated_image/?model=${model}`,
     config

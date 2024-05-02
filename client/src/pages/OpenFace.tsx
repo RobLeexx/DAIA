@@ -9,12 +9,12 @@ import { ChooseDatabase } from "../components/OpenFace/ChooseDatabase";
 import RecognitionWheel from "../components/OpenFace/RecognitionWheel";
 import SearchSelection from "../components/OpenFace/SearchSelection";
 import {
-  getLatestImage,
   getOF,
   getOF2,
   getAllCriminals,
   getOF3,
   getAllModels,
+  getAllImages,
 } from "../api/sketch.api";
 
 import dbImage from "../assets/database1.png";
@@ -173,11 +173,12 @@ export const OpenFace: React.FC = () => {
     try {
       setLoading(true);
       let latestImage;
-      const latestImageResponse = await getLatestImage();
-      const latestImageId =
-        latestImageResponse.data.length > 0
-          ? latestImageResponse.data[latestImageResponse.data.length - 1].id
-          : null;
+      const latestImageResponse = await getAllImages();
+      latestImageResponse.data.sort(
+        (a: any, b: any) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      const latestImage2 = latestImageResponse.data[0];
       const criminalImageId = localStorage.getItem("criminalId");
       const identikitImageId = localStorage.getItem("identikitId");
       if (selectedValue == "Seleccionar Base de Datos") {
@@ -187,7 +188,7 @@ export const OpenFace: React.FC = () => {
           latestImage = await getOF2(criminalImageId as unknown as number, selectedModel);
         }
       } else {
-        latestImage = await getOF(latestImageId, selectedModel);
+        latestImage = await getOF(latestImage2.id, selectedModel);
       }
       const allCriminals = await getAllCriminals();
       const mergedResults = mergeResultsWithCriminals(
