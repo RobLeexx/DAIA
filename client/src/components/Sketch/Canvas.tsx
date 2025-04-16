@@ -14,6 +14,7 @@ import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
 import TableRowsIcon from "@mui/icons-material/TableRows";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
+import sketchPhoto from "../../assets/male25.jpg";
 
 import {
   uploadSketch,
@@ -292,7 +293,6 @@ const Canvas: React.FC<CanvasProps> = ({
         </div>
       </form>
       <TemplatesDialog
-        selectedValue={selectedValue}
         open={open}
         onClose={handleClose}
         setSelectedValue={setSelectedValue}

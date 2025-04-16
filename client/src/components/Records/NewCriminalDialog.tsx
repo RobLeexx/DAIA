@@ -62,7 +62,7 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const names = ["Lancero", "Monrrero", "Jalador", "Plumero", "Autoridad"];
+const names = ["Motochorro", "Autero", "Accesorista", "Hurto de Vehículos"];
 
 interface NewCriminalDialogProps {
   open: boolean;
@@ -95,13 +95,37 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
     if (selectedImage) {
       formData.append("mainPhoto", selectedImage);
     }
-    formData.append("lastname", data.lastname);
+    formData.append("lastnameDad", data.lastnameDad);
+    formData.append("lastnameMom", data.lastnameMom);
+    formData.append("departamento", data.departamento);
+    formData.append("provincia", data.provincia);
+    formData.append("localidad", data.localidad);
+    formData.append("nombrePadre", data.nombrePadre);
+    formData.append("nombreMadre", data.nombreMadre);
+    formData.append("expedido", data.expedido);
+    formData.append("nivelAcademico", data.nivelAcademico);
+    formData.append("ocupacion", data.ocupacion);
+    formData.append("centroTrabajo", data.centroTrabajo);
+    formData.append("direccionPadres", data.direccionPadres);
+    formData.append("estadoCivil", data.estadoCivil);
+    formData.append("nombreConyuge", data.nombreConyuge);
+    formData.append("apellidoMaternoConyuge", data.apellidoMaternoConyuge);
+    formData.append("apellidoPaternoConyuge", data.apellidoPaternoConyuge);
+    formData.append("colorPiel", data.colorPiel);
+    formData.append("colorPelo", data.colorPelo);
+    formData.append("colorOjos", data.colorOjos);
+    formData.append("estatura", data.estatura);
+    formData.append("peso", data.peso);
+    formData.append("delito", data.delito);
+    formData.append("numCaso", data.numCaso);
+    formData.append("autoridad", data.autoridad);
+    formData.append("funcionario", data.funcionario);
+
     formData.append("name", data.name);
     formData.append("birthday", data.birthday);
     formData.append("alias", data.alias);
     formData.append("ci", data.ci);
-    formData.append("description", data.description);
-    formData.append("criminalRecord", data.criminalRecord);
+    //formData.append("criminalRecord", data.criminalRecord);
     if (data.phone) {
       formData.append("phone", data.phone);
     } else {
@@ -110,15 +134,25 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
     formData.append("address", data.address);
     formData.append("gender", data.gender);
     formData.append("nationality", data.nationality);
-    formData.append("criminalOrganization", data.criminalOrganization);
+    //formData.append("criminalOrganization", data.criminalOrganization);
     formData.append("dangerousness", dng);
     formData.append("relapse", data.relapse);
     formData.append("particularSigns", data.particularSigns);
     formData.append("specialty", personName);
     formData.append("status", data.status);
-    /* if (selectedImages) {
-      formData.append("photos", selectedImages);
-    } */
+    // Subida de múltiples fotos
+    if (selectedPhotos.length > 0) {
+      selectedPhotos.forEach((file, index) => {
+        formData.append(`photos[${index}].photo`, file);
+      });
+    }
+
+    // Subida de múltiples identikits
+    if (selectedIdentikits.length > 0) {
+      selectedIdentikits.forEach((file, index) => {
+        formData.append(`identikits[${index}].identikit`, file);
+      });
+    }
     if (!params.id && selectedImage) {
       uploadCriminal(formData);
     } else if (params.id) {
@@ -126,6 +160,24 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
     }
     window.location.reload();
   });
+
+  // Estados para almacenar los archivos seleccionados
+  const [selectedPhotos, setSelectedPhotos] = useState<File[]>([]);
+  const [selectedIdentikits, setSelectedIdentikits] = useState<File[]>([]);
+
+  const handlePhotosChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setSelectedPhotos(Array.from(event.target.files));
+    }
+  };
+
+  const handleIdentikitsChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files) {
+      setSelectedIdentikits(Array.from(event.target.files));
+    }
+  };
 
   const fetchImage = async () => {
     try {
@@ -148,19 +200,43 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
     async function loadCriminal() {
       if (params.id) {
         const { data } = await getCriminal(params.id as string);
-        setValue("lastname", data.lastname);
+        setValue("lastnameDad", data.lastnameDad);
+        setValue("lastnameMom", data.lastnameMom);
+        setValue("departamento", data.departamento);
+        setValue("provincia", data.provincia);
+        setValue("localidad", data.localidad);
+        setValue("nombrePadre", data.nombrePadre);
+        setValue("nombreMadre", data.nombreMadre);
+        setValue("expedido", data.expedido);
+        setValue("nivelAcademico", data.nivelAcademico);
+        setValue("ocupacion", data.ocupacion);
+        setValue("centroTrabajo", data.centroTrabajo);
+        setValue("direccionPadres", data.direccionPadres);
+        setValue("estadoCivil", data.estadoCivil);
+        setValue("nombreConyuge", data.nombreConyuge);
+        setValue("apellidoMaternoConyuge", data.apellidoMaternoConyuge);
+        setValue("apellidoPaternoConyuge", data.apellidoPaternoConyuge);
+        setValue("colorPiel", data.colorPiel);
+        setValue("colorPelo", data.colorPelo);
+        setValue("colorOjos", data.colorOjos);
+        setValue("estatura", data.estatura);
+        setValue("peso", data.peso);
+        setValue("delito", data.delito);
+        setValue("numCaso", data.numCaso);
+        setValue("autoridad", data.autoridad);
+        setValue("funcionario", data.funcionario);
+
         setValue("name", data.name);
         setValue("birthday", data.birthday);
         setValue("alias", data.alias);
-        setValue("description", data.description);
-        setValue("criminalRecord", data.criminalRecord);
+        //setValue("criminalRecord", data.criminalRecord);
         setValue("ci", data.ci);
         setValue("phone", data.phone);
         setValue("address", data.address);
         setValue("gender", data.gender);
         setGender(data.gender);
         setValue("nationality", data.nationality);
-        setValue("criminalOrganization", data.criminalOrganization);
+        //setValue("criminalOrganization", data.criminalOrganization);
         setValue("relapse", data.relapse);
         setValue("particularSigns", data.particularSigns);
         setValue("status", data.status);
@@ -181,11 +257,11 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
           );
           return resultArray;
         } else {
-          return ["Lancero"];
+          return ["Motochorro"];
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        return ["Lancero"];
+        return ["Motochorro"];
       }
     };
 
@@ -222,12 +298,6 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
       if (params.id) setImg(URL.createObjectURL(file));
     }
   };
-  const handleFileChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const newImages = Array.from(event.target.files); // Convert FileList to array
-      setSelectedImages([...selectedImages, ...newImages]); // Append new images
-    }
-  };
 
   const handleChangeGender = (event: SelectChangeEvent) => {
     setGender(event.target.value as string);
@@ -236,7 +306,23 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
     setStatus(event.target.value as string);
   };
   const campos = [
-    "lastname",
+    "lastnameDad",
+    "departamento",
+    "provincia",
+    "localidad",
+    "expedido",
+    "nivelAcademico",
+    "ocupacion",
+    "estadoCivil",
+    "colorPiel",
+    "colorPelo",
+    "colorOjos",
+    "estatura",
+    "peso",
+    "delito",
+    "numCaso",
+    "autoridad",
+    "funcionario",
     "name",
     "ci",
     "address",
@@ -403,145 +489,504 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
               flex: "0 0 calc(60% - 10px)",
             }}
           >
-            <Controller
-              name="lastname"
-              control={control}
-              rules={{ required: "Este campo es obligatorio" }}
-              defaultValue=""
-              render={({ field }) => (
-                <TextField
-                  style={{ flex: "0 0 calc(33.33% - 10px)", margin: 5 }}
-                  type="text"
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                flex: "0 0 calc(100% - 10px)",
+                overflowY: "auto", // Scroll vertical si hay desbordamiento
+                maxHeight: "100vh", // Ajusta esto según el tamaño deseado del contenedor
+              }}
+            >
+              <Controller
+                name="lastnameDad"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="lastnameDad"
+                    {...field}
+                    label="Apellido Paterno"
+                    error={Boolean(errors.lastnameDad)}
+                  />
+                )}
+              />
+              <TextField
+                style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                type="text"
+                variant="filled"
+                id="lastnameMom"
+                label="Apellido Materno"
+                {...register("lastnameMom", { required: false })}
+              />
+              <Controller
+                name="name"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="name"
+                    {...field}
+                    label="Nombre"
+                    error={Boolean(errors.name)}
+                  />
+                )}
+              />
+              <TextField
+                style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                type="text"
+                label="Alias"
+                variant="filled"
+                {...register("alias", { required: false })}
+              />
+              <Controller
+                name="departamento"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="departamento"
+                    {...field}
+                    label="Departamento"
+                    error={Boolean(errors.departamento)}
+                  />
+                )}
+              />
+              <Controller
+                name="provincia"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="provincia"
+                    {...field}
+                    label="Provincia"
+                    error={Boolean(errors.provincia)}
+                  />
+                )}
+              />
+              <Controller
+                name="localidad"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="localidad"
+                    {...field}
+                    label="Localidad"
+                    error={Boolean(errors.localidad)}
+                  />
+                )}
+              />
+              <Controller
+                name="address"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="address"
+                    {...field}
+                    label="Dirección"
+                    error={Boolean(errors.address)}
+                  />
+                )}
+              />
+              <div style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}>
+                <h5
+                  style={{
+                    position: "absolute",
+                    margin: 0,
+                    padding: 5,
+                    paddingLeft: 110,
+                  }}
+                >
+                  Estado
+                </h5>
+                <Select
+                  style={{ width: "100%" }}
+                  id="status"
                   variant="filled"
-                  id="lastname"
-                  {...field}
-                  label="Apellidos"
-                  error={Boolean(errors.lastname)}
-                />
-              )}
-            />
-            <Controller
-              name="name"
-              control={control}
-              rules={{ required: "Este campo es obligatorio" }}
-              defaultValue=""
-              render={({ field }) => (
-                <TextField
-                  style={{ flex: "0 0 calc(33.33% - 10px)", margin: 5 }}
-                  type="text"
-                  variant="filled"
-                  id="name"
-                  {...field}
-                  label="Nombre"
-                  error={Boolean(errors.name)}
-                />
-              )}
-            />
-            <Controller
-              name="address"
-              control={control}
-              rules={{ required: "Este campo es obligatorio" }}
-              defaultValue=""
-              render={({ field }) => (
-                <TextField
-                  style={{ flex: "0 0 calc(33.33% - 10px)", margin: 5 }}
-                  type="text"
-                  variant="filled"
-                  id="address"
-                  {...field}
-                  label="Domicilio"
-                  error={Boolean(errors.address)}
-                />
-              )}
-            />
-            <div style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}>
-              <h5
+                  value={status}
+                  label="Estado"
+                  {...register("status", { required: false })}
+                  onChange={handleChangeStatus}
+                >
+                  <MenuItem value="Arrestado">Arrestado</MenuItem>
+                  <MenuItem value="Aprehendido">Aprehendido</MenuItem>
+                  <MenuItem value="Prófugo">Prófugo</MenuItem>
+                  <MenuItem value="Con Captura Internacional">
+                    Con Captura Internacional
+                  </MenuItem>
+                </Select>
+              </div>
+              <Controller
+                name="ci"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(15% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="ci"
+                    {...field}
+                    label="Carnet de Identidad"
+                    error={Boolean(errors.ci)}
+                  />
+                )}
+              />
+              <Controller
+                name="expedido"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(10% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="expedido"
+                    {...field}
+                    label="Expedido"
+                    error={Boolean(errors.ci)}
+                  />
+                )}
+              />
+              <Controller
+                name="nivelAcademico"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="nivelAcademico"
+                    {...field}
+                    label="Nivel Académico"
+                    error={Boolean(errors.nivelAcademico)}
+                  />
+                )}
+              />
+              <Controller
+                name="ocupacion"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="ocupacion"
+                    {...field}
+                    label="Ocupación"
+                    error={Boolean(errors.ocupacion)}
+                  />
+                )}
+              />
+              <TextField
+                style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                type="text"
+                variant="filled"
+                id="centroTrabajo"
+                label="Centro Trabajo/Estudio"
+                {...register("centroTrabajo", { required: false })}
+              />
+              <TextField
+                style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                type="text"
+                variant="filled"
+                id="nombrePadre"
+                label="Nombre del Padre"
+                {...register("nombrePadre", { required: false })}
+              />
+              <TextField
+                style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                type="text"
+                variant="filled"
+                id="nombreMadre"
+                label="Nombre de la Madre"
+                {...register("nombreMadre", { required: false })}
+              />
+              <TextField
+                style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                type="text"
+                variant="filled"
+                id="direccionPadres"
+                label="Dirección de los Padres"
+                {...register("direccionPadres", { required: false })}
+              />
+              <Controller
+                name="estadoCivil"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="estadoCivil"
+                    {...field}
+                    label="Estado Civil"
+                    error={Boolean(errors.estadoCivil)}
+                  />
+                )}
+              />
+              <TextField
+                style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                type="text"
+                variant="filled"
+                id="nombreConyuge"
+                label="Nombre Cónyuge"
+                {...register("nombreConyuge", { required: false })}
+              />
+              <TextField
+                style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                type="text"
+                variant="filled"
+                id="apellidoPaternoConyuge"
+                label="Apellido Paterno Cónyuge"
+                {...register("apellidoPaternoConyuge", { required: false })}
+              />
+              <TextField
+                style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                type="text"
+                variant="filled"
+                id="apellidoMaternoConyuge"
+                label="Apellido Materno Cónyuge"
+                {...register("apellidoMaternoConyuge", { required: false })}
+              />
+              <>
+                {/*  
+              <input
+                type="file"
+                style={{ display: "none" }}
+                multiple
+                accept="image/*"
+                id="photos-upload-input"
+                {...register("photos", { required: false })}
+                onChange={handlePhotosChange}
+              />
+              <label
+                htmlFor="photos-upload-input"
                 style={{
-                  position: "absolute",
-                  margin: 0,
-                  padding: 5,
-                  paddingLeft: 110,
+                  display: "flex",
+                  flex: "0 0 calc(25% - 10px)",
+                  margin: 5,
+                  flexDirection: "column",
                 }}
               >
-                Estado
-              </h5>
-              <Select
-                style={{ width: "100%" }}
-                id="status"
-                variant="filled"
-                value={status}
-                label="Estado"
-                {...register("status", { required: false })}
-                onChange={handleChangeStatus}
-              >
-                <MenuItem value="Arrestado">Arrestado</MenuItem>
-                <MenuItem value="Aprehendido">Aprehendido</MenuItem>
-                <MenuItem value="Prófugo">Prófugo</MenuItem>
-                <MenuItem value="Con Captura Internacional">
-                  Con Captura Internacional
-                </MenuItem>
-              </Select>
-            </div>
-            <TextField
-              style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
-              type="text"
-              label="Alias"
-              variant="filled"
-              {...register("alias", { required: false })}
-            />
-            <Controller
-              name="ci"
-              control={control}
-              rules={{ required: "Este campo es obligatorio" }}
-              defaultValue=""
-              render={({ field }) => (
-                <TextField
-                  style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
-                  type="text"
+                <Button
+                  style={{ height: "75%" }}
+                  component="span"
+                  variant="contained"
+                  startIcon={<SwitchAccountIcon />}
+                >
+                  {selectedPhotos.length > 0
+                    ? `(${selectedPhotos.length} Fotos seleccionadas)`
+                    : "Subir Fotos"}
+                </Button>
+              </label>*/}
+              </>
+              <Controller
+                name="colorPiel"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(15% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="colorPiel"
+                    {...field}
+                    label="Color de Piel"
+                    error={Boolean(errors.colorPiel)}
+                  />
+                )}
+              />
+              <Controller
+                name="colorPelo"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(15% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="colorPelo"
+                    {...field}
+                    label="Color de Pelo"
+                    error={Boolean(errors.colorPelo)}
+                  />
+                )}
+              />
+              <Controller
+                name="colorOjos"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(15% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="colorOjos"
+                    {...field}
+                    label="Color de Ojos"
+                    error={Boolean(errors.colorOjos)}
+                  />
+                )}
+              />
+              <Controller
+                name="estatura"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(15% - 10px)", margin: 5 }}
+                    type="number"
+                    variant="filled"
+                    id="estatura"
+                    {...field}
+                    label="Estatura (cm)"
+                    error={Boolean(errors.estatura)}
+                  />
+                )}
+              />
+              <Controller
+                name="peso"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(15% - 10px)", margin: 5 }}
+                    type="number"
+                    variant="filled"
+                    id="peso"
+                    {...field}
+                    label="Peso (kg)"
+                    error={Boolean(errors.peso)}
+                  />
+                )}
+              />
+              <div style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}>
+                <h5
+                  style={{
+                    position: "absolute",
+                    margin: 0,
+                    padding: 5,
+                    paddingLeft: 85,
+                  }}
+                >
+                  Género
+                </h5>
+                <Select
+                  style={{ width: "100%" }}
+                  id="gender"
                   variant="filled"
-                  id="ci"
-                  {...field}
-                  label="Carnet de Identidad"
-                  error={Boolean(errors.ci)}
-                />
-              )}
-            />
-            <TextField
-              style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
-              type="text"
-              variant="filled"
-              label="Antecedentes"
-              {...register("criminalRecord", { required: false })}
-            />
-            <Controller
-              name="description"
-              control={control}
-              rules={{ required: "Este campo es obligatorio" }}
-              defaultValue=""
-              render={({ field }) => (
-                <TextField
-                  style={{ flex: "0 0 calc(75% - 10px)", margin: 5 }}
-                  type="text"
-                  variant="filled"
-                  id="description"
-                  {...field}
-                  label="Descripción"
-                  error={Boolean(errors.description)}
-                />
-              )}
-            />
-
+                  value={gender}
+                  label="Género"
+                  {...register("gender", { required: false })}
+                  onChange={handleChangeGender}
+                >
+                  <MenuItem value="Masculino">Masculino</MenuItem>
+                  <MenuItem value="Femenino">Femenino</MenuItem>
+                </Select>
+              </div>
+              <Controller
+                name="numCaso"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(33.33% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="numCaso"
+                    {...field}
+                    label="Número de Caso/División"
+                    error={Boolean(errors.numCaso)}
+                  />
+                )}
+              />
+              <Controller
+                name="delito"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(33.33% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="delito"
+                    {...field}
+                    label="Delito"
+                    error={Boolean(errors.delito)}
+                  />
+                )}
+              />
+              <Controller
+                name="particularSigns"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(33.33% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="particularSigns"
+                    {...field}
+                    label="Señales Particulares/Comportamiento"
+                  />
+                )}
+              />
+              <>
+                {/* 
             <input
               type="file"
               style={{ display: "none" }}
               multiple
               accept="image/*"
-              id="photos-upload-input"
-              {...register("photos", { required: false })}
-              onChange={handleFileChange2}
+              id="identikits-upload-input"
+              {...register("identikits", { required: false })}
+              onChange={handleIdentikitsChange}
             />
             <label
-              htmlFor="photos-upload-input"
+              htmlFor="identikits-upload-input"
               style={{
                 display: "flex",
                 flex: "0 0 calc(25% - 10px)",
@@ -553,121 +998,103 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
                 style={{ height: "75%" }}
                 component="span"
                 variant="contained"
-                startIcon={<SwitchAccountIcon />}
+                startIcon={<DrawIcon />}
               >
-                Subir Fotos
+                {selectedIdentikits.length > 0
+                  ? `(${selectedIdentikits.length} Dibujos seleccionados)`
+                  : "Subir Dibujos"}
               </Button>
             </label>
-            <Controller
-              name="particularSigns"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <TextField
-                  style={{ flex: "0 0 calc(75% - 10px)", margin: 5 }}
-                  type="text"
-                  variant="filled"
-                  id="particularSigns"
-                  {...field}
-                  label="Señales Particulares"
+            */}
+              </>
+              <div style={{ flex: "0 0 calc(20% - 10px)", margin: 5 }}>
+                <h5
+                  style={{
+                    position: "absolute",
+                    margin: 0,
+                    padding: 5,
+                    paddingLeft: 40,
+                  }}
+                >
+                  Fecha de nacimiento
+                </h5>
+                <Controller
+                  name="birthday"
+                  control={control}
+                  rules={{ required: "Este campo es obligatorio" }}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      style={{ width: "100%" }}
+                      type="date"
+                      variant="filled"
+                      id="birthday"
+                      {...field}
+                      error={Boolean(errors.birthday)}
+                    />
+                  )}
                 />
-              )}
-            />
-
-            <Button
-              style={{ flex: "0 0 calc(25% - 10px)", margin: 5, height: "10%" }}
-              component="label"
-              variant="contained"
-              startIcon={<DrawIcon />}
-            >
-              Subir Dibujos
-            </Button>
-            <div style={{ flex: "0 0 calc(20% - 10px)", margin: 5 }}>
-              <h5
-                style={{
-                  position: "absolute",
-                  margin: 0,
-                  padding: 5,
-                  paddingLeft: 85,
-                }}
-              >
-                Género
-              </h5>
-              <Select
-                style={{ width: "100%" }}
-                id="gender"
-                variant="filled"
-                value={gender}
-                label="Género"
-                {...register("gender", { required: false })}
-                onChange={handleChangeGender}
-              >
-                <MenuItem value="Masculino">Masculino</MenuItem>
-                <MenuItem value="Femenino">Femenino</MenuItem>
-              </Select>
-            </div>
-            <div style={{ flex: "0 0 calc(20% - 10px)", margin: 5 }}>
-              <h5
-                style={{
-                  position: "absolute",
-                  margin: 0,
-                  padding: 5,
-                  paddingLeft: 40,
-                }}
-              >
-                Fecha de nacimiento
-              </h5>
+              </div>
               <Controller
-                name="birthday"
+                name="nationality"
                 control={control}
                 rules={{ required: "Este campo es obligatorio" }}
                 defaultValue=""
                 render={({ field }) => (
                   <TextField
-                    style={{ width: "100%" }}
-                    type="date"
+                    style={{ flex: "0 0 calc(15% - 10px)", margin: 5 }}
+                    type="text"
                     variant="filled"
-                    id="birthday"
+                    id="nationality"
                     {...field}
-                    error={Boolean(errors.birthday)}
+                    label="Nacionalidad"
+                    error={Boolean(errors.nationality)}
+                  />
+                )}
+              />
+              <TextField
+                style={{ flex: "0 0 calc(15% - 10px)", margin: 5 }}
+                type="number"
+                id="phone"
+                variant="filled"
+                label="Celular/Teléfono"
+                {...register("phone", { required: false })}
+              />
+              <Controller
+                name="autoridad"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="autoridad"
+                    {...field}
+                    label="Autoridad"
+                    error={Boolean(errors.autoridad)}
+                  />
+                )}
+              />
+              <Controller
+                name="funcionario"
+                control={control}
+                rules={{ required: "Este campo es obligatorio" }}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    style={{ flex: "0 0 calc(25% - 10px)", margin: 5 }}
+                    type="text"
+                    variant="filled"
+                    id="funcionario"
+                    {...field}
+                    label="Funcionario"
+                    error={Boolean(errors.funcionario)}
                   />
                 )}
               />
             </div>
-            <Controller
-              name="nationality"
-              control={control}
-              rules={{ required: "Este campo es obligatorio" }}
-              defaultValue=""
-              render={({ field }) => (
-                <TextField
-                  style={{ flex: "0 0 calc(20% - 10px)", margin: 5 }}
-                  type="text"
-                  variant="filled"
-                  id="nationality"
-                  {...field}
-                  label="Nacionalidad"
-                  error={Boolean(errors.nationality)}
-                />
-              )}
-            />
-            <TextField
-              style={{ flex: "0 0 calc(20% - 10px)", margin: 5 }}
-              type="number"
-              id="phone"
-              variant="filled"
-              label="Celular/Teléfono"
-              {...register("phone", { required: false })}
-            />
-
-            <TextField
-              style={{ flex: "0 0 calc(20% - 10px)", margin: 5 }}
-              type="text"
-              variant="filled"
-              id="criminalOrganization"
-              label="Organización Criminal"
-              {...register("criminalOrganization", { required: false })}
-            />
             <Box
               sx={{
                 display: "flex",
@@ -675,15 +1102,6 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
                 flex: "0 0 calc(33.33% - 10px)",
               }}
             >
-              <h5
-                style={{
-                  position: "absolute",
-                  paddingBottom: 100,
-                  paddingLeft: 140,
-                }}
-              >
-                Peligrosidad
-              </h5>
               <Controller
                 name="dangerousness"
                 control={control}
@@ -760,16 +1178,6 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
                   justifyContent: "center",
                 }}
               >
-                <h5
-                  style={{
-                    position: "absolute",
-                    paddingLeft: 150,
-                    margin: 0,
-                    paddingBottom: 90,
-                  }}
-                >
-                  Especialidad
-                </h5>
                 <Controller
                   name="specialty" // Nombre del campo en el formulario
                   control={control}
@@ -822,16 +1230,6 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
                   justifyContent: "center",
                 }}
               >
-                <h5
-                  style={{
-                    position: "absolute",
-                    paddingLeft: 10,
-                    margin: 0,
-                    paddingBottom: 90,
-                  }}
-                >
-                  Reincidencia
-                </h5>
                 <TextField
                   type="number"
                   id="relapse"
@@ -880,8 +1278,54 @@ const NewCriminalDialog: React.FC<NewCriminalDialogProps> = (props) => {
                 >
                   Campos obligatorios:
                 </span>
-                {errors.lastname && (
-                  <span style={{ marginLeft: "5px" }}>APELLIDOS</span>
+                {errors.lastnameDad && (
+                  <span style={{ marginLeft: "5px" }}>APELLIDO</span>
+                )}
+                {errors.departamento && (
+                  <span style={{ marginLeft: "5px" }}>DEPARTAMENTO</span>
+                )}
+                {errors.provincia && (
+                  <span style={{ marginLeft: "5px" }}>PROVINCIA</span>
+                )}
+                {errors.localidad && (
+                  <span style={{ marginLeft: "5px" }}>LOCALIDAD</span>
+                )}
+                {errors.expedido && (
+                  <span style={{ marginLeft: "5px" }}>EXPEDIDO</span>
+                )}
+                {errors.nivelAcademico && (
+                  <span style={{ marginLeft: "5px" }}>NIVEL ACADÉMICO</span>
+                )}
+                {errors.ocupacion && (
+                  <span style={{ marginLeft: "5px" }}>OCUPACIÓN</span>
+                )}
+                {errors.estadoCivil && (
+                  <span style={{ marginLeft: "5px" }}>ESTADO CIVIL</span>
+                )}
+                {errors.colorPiel && (
+                  <span style={{ marginLeft: "5px" }}>COLOR DE PIEL</span>
+                )}
+                {errors.colorPelo && (
+                  <span style={{ marginLeft: "5px" }}>COLOR DE PELO</span>
+                )}
+                {errors.colorOjos && (
+                  <span style={{ marginLeft: "5px" }}>COLOR DE OJOS</span>
+                )}
+                {errors.estatura && (
+                  <span style={{ marginLeft: "5px" }}>ESTATURA</span>
+                )}
+                {errors.peso && <span style={{ marginLeft: "5px" }}>PESO</span>}
+                {errors.delito && (
+                  <span style={{ marginLeft: "5px" }}>DELITO</span>
+                )}
+                {errors.numCaso && (
+                  <span style={{ marginLeft: "5px" }}>NÚMERO DE CASO</span>
+                )}
+                {errors.autoridad && (
+                  <span style={{ marginLeft: "5px" }}>AUTORIDAD</span>
+                )}
+                {errors.funcionario && (
+                  <span style={{ marginLeft: "5px" }}>FUNCIONARIO</span>
                 )}
                 {errors.name && (
                   <span style={{ marginLeft: "5px" }}>NOMBRE</span>

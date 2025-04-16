@@ -319,7 +319,7 @@ export const Criminales: React.FC<FacialSearchProps> = ({
       field: "status",
       headerClassName: "header",
       headerAlign: "center",
-      headerName: "Estado",
+      headerName: "Calidad",
       width: 200,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       cellClassName: (params: GridCellParams<any, string>) => {

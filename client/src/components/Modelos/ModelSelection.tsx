@@ -54,7 +54,7 @@ const ModelSelection: React.FC<ImageSelectionProps> = ({
                 backgroundColor: "#064887",
               }}
             >
-              B
+              A
             </Avatar>
             <div
               style={{
@@ -92,7 +92,7 @@ const ModelSelection: React.FC<ImageSelectionProps> = ({
                 backgroundColor: "#064887",
               }}
             >
-              B
+              A
             </Avatar>
             <Card
               sx={{
@@ -126,7 +126,8 @@ const ModelSelection: React.FC<ImageSelectionProps> = ({
           </div>
         )}
         {selectedValue === "Seleccionar Modelo Generativo" ? (
-          <div style={{ display: "flex", flexDirection: "column" }}>
+          <>
+          {/*  <div style={{ display: "flex", flexDirection: "column" }}>
             <Avatar
               style={{
                 position: "absolute",
@@ -162,8 +163,12 @@ const ModelSelection: React.FC<ImageSelectionProps> = ({
             >
               Seleccionar modelo Generativo
             </Button>
-          </div>
+          </div>*/}
+          </>
+          
         ) : (
+          <>
+          {/*  
           <div
             style={{
               display: "flex",
@@ -209,7 +214,8 @@ const ModelSelection: React.FC<ImageSelectionProps> = ({
             >
               Seleccionar modelo Generativo
             </Button>
-          </div>
+          </div>*/}
+          </>
         )}
 
         <UploadDialog

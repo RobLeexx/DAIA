@@ -66,11 +66,16 @@ export const Navigation: React.FC<NavigationProps> = ({ children }) => {
             <div style={{ display: "flex", alignItems: "center" }}>
               <PolicyIcon></PolicyIcon>
               <Typography variant="h6" style={{ fontWeight: "bold" }}>
-                DACI
+                Diprove-IA
               </Typography>
             </div>
           </div>
-          <AccountCircleIcon />
+          <div style={{ display: "flex" }}>
+            <Typography variant="h6" style={{ fontWeight: "bold", paddingRight:15 }}>
+              Admin
+            </Typography>
+            <AccountCircleIcon style={{paddingTop:5}}/>
+          </div>
         </Toolbar>
       </AppBar>
       <Drawer
