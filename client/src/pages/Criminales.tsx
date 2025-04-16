@@ -20,6 +20,7 @@ import {
   GridToolbarDensitySelector,
   GridToolbarFilterButton,
   GridToolbarExport,
+  GridRenderCellParams,
 } from "@mui/x-data-grid";
 import { getAllCriminals } from "../api/sketch.api";
 import { Box, Button } from "@mui/material";
@@ -30,6 +31,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import NewCriminalDialog from "../components/Records/NewCriminalDialog";
 import { Link } from "react-router-dom";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import clsx from "clsx";
 
 interface Criminal {
@@ -219,12 +221,47 @@ interface FacialSearchProps {
   rowData?: React.Dispatch<React.SetStateAction<never[]>>;
 }
 
+const renderImageCell = (value: string) => {
+  return (
+    <div style={{ width: "800px", height: "800px", overflow: "hidden" }}>
+      <img
+        src={value}
+        alt="imagen"
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+        }}
+      />
+    </div>
+  );
+};
+
 export const Criminales: React.FC<FacialSearchProps> = ({
   search = false,
   model = false,
   onVerClick,
   rowData,
 }) => {
+  // Toggle view data
+  const [useAltColumns, setUseAltColumns] = useState(false); // Alterna columnas
+  const [pageSize, setPageSize] = useState(10);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
+  const [rowHeight, setRowHeight] = useState(48); // Alterna rowHeight
+
+  const toggleData = () => {
+    setUseAltColumns((prev) => !prev); // Alternamos columnas
+    setPageSize((prev) => (prev === 10 ? 1 : 10)); // Alternamos pageSize
+    setRowHeight((prev) => (prev === 48 ? 800 : 48)); // Alternamos rowHeight
+    setPaginationModel((prev) => ({
+      ...prev,
+      pageSize: prev.pageSize === 10 ? 1 : 10,
+    }));
+  };
+
   const [open, setOpen] = React.useState(false);
   const [criminals, setCriminals] = useState<Criminal[] | undefined>(undefined);
   const rows = criminals
@@ -257,6 +294,261 @@ export const Criminales: React.FC<FacialSearchProps> = ({
       headerName: "Nombre",
       width: search || model ? 140 : 145,
     },
+    {
+      field: "alias",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Alias",
+      width: search || model ? 120 : 125,
+    },
+    {
+      field: "nationality",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Nacionalidad",
+      width: 100,
+    },
+    {
+      field: "birthday",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Edad",
+      width: 50,
+      valueGetter: (params: GridValueGetterParams) => {
+        const age = calculateAge(params.value as Date);
+        return age;
+      },
+    },
+    {
+      field: "ci",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "CI",
+      width: 120,
+    },
+    {
+      field: "phone",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Contacto",
+      width: 90,
+    },
+    {
+      field: "relapse",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Reincidencia",
+      width: 100,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      cellClassName: (params: GridCellParams<any, number>) => {
+        if (params.value == null) {
+          return "";
+        }
+        return clsx("status", {
+          green: params.value <= 3,
+          yellow: params.value <= 5,
+          orange: params.value <= 7,
+          red: params.value >= 8,
+        });
+      },
+    },
+    {
+      field: "status",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Calidad",
+      width: 200,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      cellClassName: (params: GridCellParams<any, string>) => {
+        return clsx("status", {
+          blue: params.value === "Arrestado" || params.value === "Aprehendido",
+          orange: params.value === "Prófugo",
+          red: params.value === "Con Captura Internacional",
+        });
+      },
+    },
+    {
+      field: "gender",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Género",
+      width: search || model ? 90 : 100,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      cellClassName: (params: GridCellParams<any, string>) => {
+        return clsx("gender", {
+          male: params.value === "Masculino",
+          woman: params.value === "Femenino",
+        });
+      },
+    },
+    {
+      field: "dangerousness",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Peligrosidad",
+      width: search || model ? 135 : 140,
+      renderCell: (params: { value: number }) => (
+        <RatingComponent value={params.value} />
+      ),
+    },
+    !model && {
+      field: "actions",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Acciones",
+      sortable: false,
+      width: 120,
+      renderCell: (params: GridValueGetterParams) => (
+        <div style={{ width: "100%" }}>
+          {!search ? (
+            <div>
+              <Link
+                style={{
+                  textDecoration: "none",
+                  color: "blue",
+                  marginRight: 10,
+                }}
+                to={`/criminales/${params.row.id}`}
+                onClick={() => {
+                  localStorage.setItem("edit", "false");
+                }}
+              >
+                <VisibilityIcon />
+              </Link>
+              <Link
+                style={{ textDecoration: "none", color: "blue" }}
+                to={`/criminales/${params.row.id}`}
+                onClick={() => {
+                  localStorage.setItem("edit", "true");
+                }}
+              >
+                <EditIcon style={{ color: "blue" }} />
+              </Link>
+              <Link
+                style={{ textDecoration: "none", color: "blue", marginLeft: 5 }}
+                to={`/criminales/`}
+              >
+                <DeleteIcon style={{ color: "#BA1818" }} />
+              </Link>
+            </div>
+          ) : (
+            <div
+              style={{
+                textAlign: "center",
+                borderRadius: 20,
+                backgroundColor: "#064887",
+              }}
+            >
+              <Button
+                style={{
+                  textDecoration: "none",
+                  color: "white",
+                  fontWeight: "bolder",
+                }}
+                onClick={() => {
+                  localStorage.setItem("criminalId", params.row.id);
+                  localStorage.setItem("edit", "false");
+                  onVerClick();
+                }}
+              >
+                VER
+              </Button>
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
+      field: "criminalOrganization",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Organización",
+      width: 150,
+    },
+    {
+      field: "criminalRecord",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Antecedentes",
+      width: 150,
+    },
+    {
+      field: "specialty",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Especialidad",
+      width: 150,
+    },
+    {
+      field: "address",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Domicilio",
+      width: 300,
+    },
+    {
+      field: "particularSigns",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Señales Particulares",
+      width: 300,
+    },
+
+    {
+      field: "description",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Descripción",
+      width: 300,
+    },
+    {
+      field: "createdAt",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Creado en",
+      width: 160,
+    },
+  ].filter(Boolean);
+
+  const columns2: GridColDef[] = [
+    {
+      field: "id",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "ID",
+      width: 22,
+    },
+    {
+      field: "mainPhoto",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Entrada",
+      width: 1000,
+      cellClassName: "imgCell",
+      renderCell: (params: GridRenderCellParams) =>
+        renderImageCell(params.value as string),
+    },
+    {
+      field: "fullName",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Datos",
+      width: search || model ? 200 : 220,
+      valueGetter: (params: {
+        row: { lastnameDad: string; lastnameMom: string; name: string };
+      }) => {
+        const lastnameDad = params.row.lastnameDad || "";
+        const lastnameMom = params.row.lastnameMom || "";
+        const name = params.row.name || "";
+        return `${lastnameDad}\n${lastnameMom}\n${name}`.trim();
+      },
+      renderCell: (params) => (
+        <div style={{ whiteSpace: "pre-line", wordWrap: "break-word" }}>
+          {params.value}
+        </div>
+      ),
+    },
+
     {
       field: "alias",
       headerClassName: "header",
@@ -523,16 +815,30 @@ export const Criminales: React.FC<FacialSearchProps> = ({
       }
     >
       {!search && !model && (
-        <div style={{ padding: 20, textAlign: "end" }}>
+        <div
+          style={{
+            padding: 20,
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Button
+            variant="contained"
+            onClick={toggleData}
+            startIcon={<RemoveRedEyeIcon />}
+          >
+            Cambiar Vista
+          </Button>
           <Button
             variant="contained"
             onClick={handleClickOpen}
-            startIcon={<AddCircleIcon></AddCircleIcon>}
+            startIcon={<AddCircleIcon />}
           >
             Nuevo Registro
           </Button>
         </div>
       )}
+
       <Box
         sx={{
           height: "100%",
@@ -584,37 +890,19 @@ export const Criminales: React.FC<FacialSearchProps> = ({
       >
         <DataGrid
           rows={rows}
-          columns={columns}
-          rowHeight={48}
+          columns={useAltColumns ? columns2 : columns} // Alterna columnas dinámicamente
+          rowHeight={rowHeight} // Alterna rowHeight entre 48 y 800
           getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 !== 0 ? "even" : "odd"
           }
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 10 },
-            },
-          }}
-          pageSizeOptions={[5, 10]}
+          paginationModel={paginationModel} // Controla la paginación dinámicamente
+          onPaginationModelChange={setPaginationModel}
+          pageSizeOptions={[1, 10]}
           hideFooterSelectedRowCount={!model}
           checkboxSelection={model}
-          onRowSelectionModelChange={
-            model
-              ? (selection) => {
-                  const selectedIDs = new Set(selection);
-                  const selectedRows = rows.filter((row) =>
-                    selectedIDs.has(row.id)
-                  );
-                  rowData(selectedRows);
-                }
-              : undefined
-          }
           showCellVerticalBorder
           components={{
-            Toolbar: () => (
-              <>
-                <CustomToolbar1 />
-              </>
-            ),
+            Toolbar: () => <CustomToolbar1 />,
           }}
           localeText={{
             ...esES.components.MuiDataGrid.defaultProps.localeText,
