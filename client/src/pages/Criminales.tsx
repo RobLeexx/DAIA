@@ -173,13 +173,15 @@ const numericOnlyOperators = [
 ];
 
 type RatingComponentProps = {
-  value: number;
+  value: string | number;
+  size?: RatingProps["size"];
 };
 
-const RatingComponent: React.FC<RatingComponentProps> = ({ value }) => {
+const RatingComponent: React.FC<RatingComponentProps> = ({ value, size }) => {
   return (
     <Rating
-      value={value}
+      value={typeof value === "string" ? Number(value) : value}
+      size={size}
       readOnly
       precision={0.5}
       style={{ color: "#064887" }}
