@@ -22,6 +22,7 @@ import {
   GridToolbarExport,
   GridRenderCellParams,
 } from "@mui/x-data-grid";
+import { Chip, Typography } from "@mui/material";
 import { getAllCriminals } from "../api/sketch.api";
 import { Box, Button } from "@mui/material";
 import Rating, { RatingProps } from "@mui/material/Rating";
@@ -523,127 +524,210 @@ export const Criminales: React.FC<FacialSearchProps> = ({
       headerClassName: "header",
       headerAlign: "center",
       headerName: "Entrada",
-      width: 1000,
+      width: 800,
       cellClassName: "imgCell",
       renderCell: (params: GridRenderCellParams) =>
         renderImageCell(params.value as string),
     },
     {
-      field: "fullName",
+      field: "fullData",
       headerClassName: "header",
       headerAlign: "center",
       headerName: "Datos",
-      width: search || model ? 200 : 220,
+      width: search || model ? 300 : 320,
       valueGetter: (params: {
-        row: { lastnameDad: string; lastnameMom: string; name: string };
+        row: {
+          ci: string;
+          lastname: string;
+          name: string;
+          age: number;
+          birthday: Date;
+          alias: string;
+          nationality: string;
+          description: string;
+          particularSigns: string;
+          specialty: string;
+          criminalRecord: string;
+          address: string;
+          phone: string;
+          relapse: number | null;
+          status: string;
+          gender: string;
+          dangerousness: string | number;
+        };
       }) => {
-        const lastnameDad = params.row.lastnameDad || "";
-        const lastnameMom = params.row.lastnameMom || "";
-        const name = params.row.name || "";
-        return `${lastnameDad}\n${lastnameMom}\n${name}`.trim();
+        const ci = params.row.ci || "Sin CI";
+        const lastname = params.row.lastname || "Sin Apellido";
+        const name = params.row.name || "Sin Nombre";
+        const age = calculateAge(params.row.birthday);
+        const birthday = params.row.birthday || "";
+        const alias = params.row.alias || "Sin Alias";
+        const nationality = params.row.nationality || "Sin Nacionalidad";
+        const description = params.row.description || "";
+        const particularSigns = params.row.particularSigns || "Ninguna";
+        const specialty = params.row.specialty || "";
+        const criminalRecord = params.row.criminalRecord || "Sin antecedentes";
+        const address = params.row.address || "Sin dirección";
+        const phone = params.row.phone || "Sin teléfono";
+        const relapse = params.row.relapse;
+        const status = params.row.status || "";
+        const gender = params.row.gender || "";
+        const dangerousness = params.row.dangerousness || 0;
+
+        const getRelapseColor = () => {
+          if (relapse == null) return "default";
+          if (relapse <= 3) return "success";
+          if (relapse <= 5) return "warning";
+          return "error";
+        };
+
+        const getStatusColor = () => {
+          if (status === "Arrestado" || status === "Aprehendido") return "info"; // azul
+          if (status === "Prófugo") return "warning"; // naranja
+          if (status === "Con Captura Internacional") return "error"; // rojo
+          return "default"; // valor por defecto
+        };
+
+        const getStatusColorGender = () => {
+          if (gender === "Masculino") return "info"; // azul
+          if (gender === "Femenino") return "default"; // rojo
+          return "default"; // valor por defecto
+        };
+
+        const relapseText = relapse != null ? relapse.toString() : "N/A";
+        return (
+          <>
+            <Typography component="span" fontWeight="bold">
+              Cedula:
+            </Typography>{" "}
+            {ci}
+            <br />
+            <Typography component="span" fontWeight="bold">
+              Apellido:
+            </Typography>{" "}
+            {lastname}
+            <br />
+            <Typography component="span" fontWeight="bold">
+              Nombre:
+            </Typography>{" "}
+            {name}
+            <br />
+            <Typography component="span" fontWeight="bold">
+              Edad:
+            </Typography>{" "}
+            {age}
+            <br />
+            <Typography component="span" fontWeight="bold">
+              Fecha de nacimiento:
+            </Typography>{" "}
+            {birthday}
+            <br />
+            <Typography component="span" fontWeight="bold">
+              Alias:
+            </Typography>{" "}
+            {alias}
+            <br />
+            <Typography component="span" fontWeight="bold">
+              Nacionalidad:
+            </Typography>{" "}
+            {nationality}
+            <br />
+            <Typography component="span" fontWeight="bold">
+              Descripción:
+            </Typography>{" "}
+            {description}
+            <br />
+            <Typography component="span" fontWeight="bold">
+              Señales Particulares:
+            </Typography>{" "}
+            {particularSigns}
+            <br />
+            <Typography component="span" fontWeight="bold">
+              Especialidad:
+            </Typography>{" "}
+            {specialty}
+            <br />
+            <Typography component="span" fontWeight="bold">
+              Antecedentes:
+            </Typography>{" "}
+            {criminalRecord}
+            <br />
+            <Typography component="span" fontWeight="bold">
+              Domicilio:
+            </Typography>{" "}
+            {address}
+            <br />
+            <Typography component="span" fontWeight="bold">
+              Teléfono:
+            </Typography>{" "}
+            {phone}
+            <hr />
+            <Typography component="span" fontWeight="bold">
+              Reincidencia:
+            </Typography>{" "}
+            <Chip
+              label={relapseText}
+              color={getRelapseColor()}
+              size="medium"
+              variant="filled"
+              sx={{
+                ml: 1,
+                ...(relapse == null && {
+                  backgroundColor: "action.disabledBackground",
+                }),
+              }}
+            />
+            <br />
+            <br />
+            <Chip
+              label={status || "N/A"}
+              color={getStatusColor()}
+              variant="filled"
+              size="medium"
+              sx={{
+                ml: 1,
+                fontWeight: 600,
+                ...(status === "Con Captura Internacional" && {
+                  borderWidth: "2px",
+                  borderColor: "error.dark",
+                }),
+              }}
+            />
+            <br />
+            <br />
+            <Chip
+              label={
+                (gender === "Femenino" && "Mujer") ||
+                (gender === "Masculino" && "Hombre")
+              }
+              color={getStatusColorGender()}
+              variant="filled"
+              size="medium"
+              sx={{
+                ml: 1,
+                fontWeight: 600,
+                ...(gender === "Femenino" && {
+                  backgroundColor: "rgba(255, 182, 193, 0.2)", // fondo rosado claro
+                  borderColor: "pink[500]", // borde rosado
+                  color: "pink[800]", // texto rosado oscuro
+                }),
+                ...(gender === "Masculino" && {
+                  borderWidth: "1.5px", // destacar más el borde azul
+                }),
+              }}
+            />
+            <br />
+            <br />
+            <div style={{ textAlign: "center", width: "100%" }}>
+              <RatingComponent value={dangerousness} size="large" />
+            </div>
+          </>
+        );
       },
       renderCell: (params) => (
         <div style={{ whiteSpace: "pre-line", wordWrap: "break-word" }}>
           {params.value}
         </div>
-      ),
-    },
-
-    {
-      field: "alias",
-      headerClassName: "header",
-      headerAlign: "center",
-      headerName: "Alias",
-      width: search || model ? 120 : 125,
-    },
-    {
-      field: "nationality",
-      headerClassName: "header",
-      headerAlign: "center",
-      headerName: "Nacionalidad",
-      width: 100,
-    },
-    {
-      field: "birthday",
-      headerClassName: "header",
-      headerAlign: "center",
-      headerName: "Edad",
-      width: 50,
-      valueGetter: (params: GridValueGetterParams) => {
-        const age = calculateAge(params.value as Date);
-        return age;
-      },
-    },
-    {
-      field: "ci",
-      headerClassName: "header",
-      headerAlign: "center",
-      headerName: "CI",
-      width: 120,
-    },
-    {
-      field: "phone",
-      headerClassName: "header",
-      headerAlign: "center",
-      headerName: "Contacto",
-      width: 90,
-    },
-    {
-      field: "relapse",
-      headerClassName: "header",
-      headerAlign: "center",
-      headerName: "Reincidencia",
-      width: 100,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      cellClassName: (params: GridCellParams<any, number>) => {
-        if (params.value == null) {
-          return "";
-        }
-        return clsx("status", {
-          green: params.value <= 3,
-          yellow: params.value <= 5,
-          orange: params.value <= 7,
-          red: params.value >= 8,
-        });
-      },
-    },
-    {
-      field: "status",
-      headerClassName: "header",
-      headerAlign: "center",
-      headerName: "Calidad",
-      width: 200,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      cellClassName: (params: GridCellParams<any, string>) => {
-        return clsx("status", {
-          blue: params.value === "Arrestado" || params.value === "Aprehendido",
-          orange: params.value === "Prófugo",
-          red: params.value === "Con Captura Internacional",
-        });
-      },
-    },
-    {
-      field: "gender",
-      headerClassName: "header",
-      headerAlign: "center",
-      headerName: "Género",
-      width: search || model ? 90 : 100,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      cellClassName: (params: GridCellParams<any, string>) => {
-        return clsx("gender", {
-          male: params.value === "Masculino",
-          woman: params.value === "Femenino",
-        });
-      },
-    },
-    {
-      field: "dangerousness",
-      headerClassName: "header",
-      headerAlign: "center",
-      headerName: "Peligrosidad",
-      width: search || model ? 135 : 140,
-      renderCell: (params: { value: number }) => (
-        <RatingComponent value={params.value} />
       ),
     },
     !model && {
@@ -714,54 +798,14 @@ export const Criminales: React.FC<FacialSearchProps> = ({
       ),
     },
     {
-      field: "criminalOrganization",
-      headerClassName: "header",
-      headerAlign: "center",
-      headerName: "Organización",
-      width: 150,
-    },
-    {
-      field: "criminalRecord",
-      headerClassName: "header",
-      headerAlign: "center",
-      headerName: "Antecedentes",
-      width: 150,
-    },
-    {
-      field: "specialty",
-      headerClassName: "header",
-      headerAlign: "center",
-      headerName: "Especialidad",
-      width: 150,
-    },
-    {
-      field: "address",
-      headerClassName: "header",
-      headerAlign: "center",
-      headerName: "Domicilio",
-      width: 300,
-    },
-    {
-      field: "particularSigns",
-      headerClassName: "header",
-      headerAlign: "center",
-      headerName: "Señales Particulares",
-      width: 300,
-    },
-
-    {
-      field: "description",
-      headerClassName: "header",
-      headerAlign: "center",
-      headerName: "Descripción",
-      width: 300,
-    },
-    {
       field: "createdAt",
       headerClassName: "header",
       headerAlign: "center",
       headerName: "Creado en",
       width: 160,
+    },
+    {
+      field: "lastname",
     },
   ].filter(Boolean);
 
