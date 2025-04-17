@@ -534,7 +534,7 @@ export const Criminales: React.FC<FacialSearchProps> = ({
       headerClassName: "header",
       headerAlign: "center",
       headerName: "Datos",
-      width: search || model ? 300 : 320,
+      width: 400,
       valueGetter: (params: {
         row: {
           ci: string;
@@ -565,7 +565,6 @@ export const Criminales: React.FC<FacialSearchProps> = ({
         const nationality = params.row.nationality || "Sin Nacionalidad";
         const description = params.row.description || "";
         const particularSigns = params.row.particularSigns || "Ninguna";
-        const specialty = params.row.specialty || "";
         const criminalRecord = params.row.criminalRecord || "Sin antecedentes";
         const address = params.row.address || "Sin dirección";
         const phone = params.row.phone || "Sin teléfono";
@@ -573,6 +572,16 @@ export const Criminales: React.FC<FacialSearchProps> = ({
         const status = params.row.status || "";
         const gender = params.row.gender || "";
         const dangerousness = params.row.dangerousness || 0;
+        const parseSpecialties = () => {
+          if (!params.row.specialty) return [];
+
+          const rawValue = String(params.row.specialty);
+          return rawValue
+            .split(",")
+            .map((item) => item.trim())
+            .filter((item) => item.length > 0); // Elimina valores vacíos
+        };
+        const specialties = parseSpecialties();
 
         const getRelapseColor = () => {
           if (relapse == null) return "default";
@@ -600,67 +609,86 @@ export const Criminales: React.FC<FacialSearchProps> = ({
             <Typography component="span" fontWeight="bold">
               Cedula:
             </Typography>{" "}
-            {ci}
+            <Typography component="span" variant="h6">
+              {ci}
+            </Typography>
             <br />
             <Typography component="span" fontWeight="bold">
               Apellido:
             </Typography>{" "}
-            {lastname}
+            <Typography component="span" variant="h6">
+              {lastname}
+            </Typography>
             <br />
             <Typography component="span" fontWeight="bold">
               Nombre:
             </Typography>{" "}
-            {name}
+            <Typography component="span" variant="h6">
+              {name}
+            </Typography>
             <br />
             <Typography component="span" fontWeight="bold">
               Edad:
             </Typography>{" "}
-            {age}
+            <Typography component="span" variant="h6">
+              {age}
+            </Typography>
             <br />
             <Typography component="span" fontWeight="bold">
               Fecha de nacimiento:
             </Typography>{" "}
-            {birthday}
+            <Typography component="span" variant="h6">
+              {birthday}
+            </Typography>
             <br />
             <Typography component="span" fontWeight="bold">
               Alias:
             </Typography>{" "}
-            {alias}
+            <Typography component="span" variant="h6">
+              {alias}
+            </Typography>
             <br />
             <Typography component="span" fontWeight="bold">
               Nacionalidad:
             </Typography>{" "}
-            {nationality}
+            <Typography component="span" variant="h6">
+              {nationality}
+            </Typography>
             <br />
             <Typography component="span" fontWeight="bold">
               Descripción:
             </Typography>{" "}
-            {description}
+            <Typography component="span" variant="h6">
+              {description}
+            </Typography>
             <br />
             <Typography component="span" fontWeight="bold">
               Señales Particulares:
             </Typography>{" "}
-            {particularSigns}
-            <br />
-            <Typography component="span" fontWeight="bold">
-              Especialidad:
-            </Typography>{" "}
-            {specialty}
+            <Typography component="span" variant="h6">
+              {particularSigns}
+            </Typography>
             <br />
             <Typography component="span" fontWeight="bold">
               Antecedentes:
             </Typography>{" "}
-            {criminalRecord}
+            <Typography component="span" variant="h6">
+              {criminalRecord}
+            </Typography>
             <br />
             <Typography component="span" fontWeight="bold">
               Domicilio:
             </Typography>{" "}
-            {address}
+            <Typography component="span" variant="h6">
+              {address}
+            </Typography>
             <br />
             <Typography component="span" fontWeight="bold">
               Teléfono:
             </Typography>{" "}
-            {phone}
+            <Typography component="span" variant="h6">
+              {phone}
+            </Typography>
             <hr />
             <Typography component="span" fontWeight="bold">
               Reincidencia:
@@ -685,16 +713,12 @@ export const Criminales: React.FC<FacialSearchProps> = ({
               variant="filled"
               size="medium"
               sx={{
-                ml: 1,
-                fontWeight: 600,
                 ...(status === "Con Captura Internacional" && {
                   borderWidth: "2px",
                   borderColor: "error.dark",
                 }),
               }}
             />
-            <br />
-            <br />
             <Chip
               label={
                 (gender === "Femenino" && "Mujer") ||
@@ -704,18 +728,37 @@ export const Criminales: React.FC<FacialSearchProps> = ({
               variant="filled"
               size="medium"
               sx={{
-                ml: 1,
-                fontWeight: 600,
                 ...(gender === "Femenino" && {
-                  backgroundColor: "rgba(255, 182, 193, 0.2)", // fondo rosado claro
-                  borderColor: "pink[500]", // borde rosado
-                  color: "pink[800]", // texto rosado oscuro
+                  backgroundColor: "rgba(255, 182, 193, 0.4)", // fondo rosado claro
+                  borderColor: "black", // borde rosado
+                  color: "black", // texto rosado oscuro
                 }),
                 ...(gender === "Masculino" && {
                   borderWidth: "1.5px", // destacar más el borde azul
                 }),
               }}
             />
+            <br />
+            <br />
+            {specialties.length > 0 ? (
+              specialties.map((spec, index) => (
+                <Chip
+                  key={`spec-${index}`}
+                  label={spec}
+                  size="medium"
+                  color="warning"
+                  variant="filled"
+                  sx={{
+                    marginRight: 0.1,
+                    marginTop: 1,
+                  }}
+                />
+              ))
+            ) : (
+              <Typography variant="body2" color="textSecondary">
+                Sin especialidades
+              </Typography>
+            )}
             <br />
             <br />
             <div style={{ textAlign: "center", width: "100%" }}>
@@ -807,15 +850,71 @@ export const Criminales: React.FC<FacialSearchProps> = ({
     {
       field: "lastname",
     },
+    {
+      field: "name",
+    },
+    {
+      field: "birthday",
+    },
+    {
+      field: "phone",
+    },
+    {
+      field: "address",
+    },
+    {
+      field: "alias",
+    },
+    {
+      field: "gender",
+    },
+    {
+      field: "ci",
+    },
+    {
+      field: "description",
+    },
+    {
+      field: "criminalRecord",
+    },
+    {
+      field: "criminalOrganization",
+    },
+    {
+      field: "nationality",
+    },
+    {
+      field: "dangerousness",
+    },
+    {
+      field: "relapse",
+      headerClassName: "header",
+      headerAlign: "center",
+      headerName: "Reincidencia",
+      width: 100,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      cellClassName: (params: GridCellParams<any, number>) => {
+        if (params.value == null) {
+          return "";
+        }
+        return clsx("status", {
+          green: params.value <= 3,
+          yellow: params.value <= 5,
+          orange: params.value <= 7,
+          red: params.value >= 8,
+        });
+      },
+    },
+    {
+      field: "particularSigns",
+    },
+    {
+      field: "status",
+    },
+    {
+      field: "specialty",
+    },
   ].filter(Boolean);
-
-  columns.forEach((col) => {
-    if (col.field === "dangerousness") {
-      col.filterOperators = ratingOnlyOperators;
-    } else if (col.field === "relapse") {
-      col.filterOperators = numericOnlyOperators;
-    }
-  });
 
   const CustomToolbar1 = () => (
     <GridToolbarContainer
@@ -849,6 +948,45 @@ export const Criminales: React.FC<FacialSearchProps> = ({
   const handleClose = () => {
     setOpen(false);
   };
+
+  const [visibleFields] = useState({
+    fullData: true,
+    actions: true,
+    createdAt: true,
+    lastname: false,
+    name: false,
+    birthday: false,
+    phone: false,
+    address: false,
+    alias: false,
+    gender: false,
+    ci: false,
+    description: false,
+    criminalRecord: false,
+    criminalOrganization: false,
+    nationality: false,
+    dangerousness: false,
+    relapse: false,
+    particularSigns: false,
+    status: false,
+    specialty: false,
+  });
+
+  columns.forEach((col) => {
+    if (col.field === "dangerousness") {
+      col.filterOperators = ratingOnlyOperators;
+    } else if (col.field === "relapse") {
+      col.filterOperators = numericOnlyOperators;
+    }
+  });
+
+  columns2.forEach((col) => {
+    if (col.field === "dangerousness") {
+      col.filterOperators = ratingOnlyOperators;
+    } else if (col.field === "relapse") {
+      col.filterOperators = numericOnlyOperators;
+    }
+  });
 
   return (
     <Box
@@ -939,6 +1077,7 @@ export const Criminales: React.FC<FacialSearchProps> = ({
           getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 !== 0 ? "even" : "odd"
           }
+          columnVisibilityModel={useAltColumns ? visibleFields : ""}
           paginationModel={paginationModel} // Controla la paginación dinámicamente
           onPaginationModelChange={setPaginationModel}
           pageSizeOptions={[1, 10]}
